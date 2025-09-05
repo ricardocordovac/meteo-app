@@ -1,42 +1,42 @@
 {
-       "version": 2,
-       "builds": [
-         {
-           "src": "package.json",
-           "use": "@vercel/static-build",
-           "config": {
-             "distDir": "dist/meteo-app",
-             "buildCommand": "npm install --legacy-peer-deps && npm run build -- --configuration production",
-             "installCommand": "npm install --legacy-peer-deps"
-           }
-         },
-         {
-           "src": "api/MeteoApi/Program.cs",
-           "use": "@vercel/node",
-           "config": {
-             "maxLambdaSize": "50mb"
-           }
-         }
-       ],
-       "routes": [
-         { "src": "/api/(.*)", "dest": "/api/MeteoApi/Program.cs" },
-         { "src": "/(.*)", "dest": "/" }
-       ],
-       "crons": [
-         {
-           "path": "/api/update-meteo",
-           "schedule": "0 0 * * *"
-         }
-       ],
-       "env": {
-         "SUPABASE_URL": "https://mdsirweaayrcqhyuxoxa.supabase.co",
-         "SUPABASE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kc2lyd2VhYXlyY3FoeXV4b3hhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMzE1MjIsImV4cCI6MjA3MjYwNzUyMn0.HsfMniSLxS7whm74kgajcA8fxwPIcR9-3kFTE1brDVU",
-         "NODE_VERSION": "20",
-         "CI": "false"
-       },
-       "build": {
-         "commands": [
-           "cd api/MeteoApi && dotnet publish -c Release -o ../../.vercel/output/functions/api/MeteoApi"
-         ]
-       }
-     }
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist/meteo-app",
+        "buildCommand": "npm install --legacy-peer-deps && npm run build -- --configuration production",
+        "installCommand": "npm install --legacy-peer-deps"
+      }
+    },
+    {
+      "src": "api/MeteoApi/Program.cs",
+      "use": "@vercel/node",
+      "config": {
+        "maxLambdaSize": "50mb"
+      }
+    }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/MeteoApi/Program.cs" },
+    { "src": "/(.*)", "dest": "/" }
+  ],
+  "crons": [
+    {
+      "path": "/api/update-meteo",
+      "schedule": "0 0 * * *"
+    }
+  ],
+  "env": {
+    "SUPABASE_URL": "https://mdsirweaayrcqhyuxoxa.supabase.co",
+    "SUPABASE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kc2lyd2VhYXlyY3FoeXV4b3hhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMzE1MjIsImV4cCI6MjA3MjYwNzUyMn0.HsfMniSLxS7whm74kgajcA8fxwPIcR9-3kFTE1brDVU",
+    "NODE_VERSION": "20",
+    "CI": "false"
+  },
+  "build": {
+    "commands": [
+      "cd api/MeteoApi && dotnet publish -c Release -o ../../.vercel/output/functions/api/MeteoApi"
+    ]
+  }
+}

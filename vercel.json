@@ -1,12 +1,19 @@
 {
      "version": 2,
-     "framework": "angular",
      "builds": [
-       { "src": "package.json", "use": "@vercel/ng" },
+       {
+         "src": "package.json",
+         "use": "@vercel/static-build",
+         "config": {
+           "distDir": "dist/meteo-app"
+         }
+       },
        {
          "src": "api/MeteoApi/Program.cs",
          "use": "@vercel/node",
-         "config": { "maxLambdaSize": "50mb" }
+         "config": {
+           "maxLambdaSize": "50mb"
+         }
        }
      ],
      "routes": [
@@ -21,7 +28,8 @@
      ],
      "env": {
        "SUPABASE_URL": "https://mdsirweaayrcqhyuxoxa.supabase.co",
-       "SUPABASE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kc2lyd2VhYXlyY3FoeXV4b3hhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMzE1MjIsImV4cCI6MjA3MjYwNzUyMn0.HsfMniSLxS7whm74kgajcA8fxwPIcR9-3kFTE1brDVU"
+       "SUPABASE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kc2lyd2VhYXlyY3FoeXV4b3hhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMzE1MjIsImV4cCI6MjA3MjYwNzUyMn0.HsfMniSLxS7whm74kgajcA8fxwPIcR9-3kFTE1brDVU",
+       "NODE_VERSION": "20"
      },
      "build": {
        "commands": [

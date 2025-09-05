@@ -9,10 +9,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{51796C61-45F0-434A-9D2C-D3ECE5ECDBA8}|MeteoApi.csproj|c:\\proyectos\\meteo-app\\meteo-app\\api\\meteoapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{51796C61-45F0-434A-9D2C-D3ECE5ECDBA8}|MeteoApi.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{51796C61-45F0-434A-9D2C-D3ECE5ECDBA8}|MeteoApi.csproj|c:\\proyectos\\meteo-app\\meteo-app\\api\\meteoapi\\vercel.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{51796C61-45F0-434A-9D2C-D3ECE5ECDBA8}|MeteoApi.csproj|solutionrelative:vercel.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,24 +18,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 1,
           "Children": [
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "vercel.json",
-              "DocumentMoniker": "C:\\Proyectos\\meteo-app\\meteo-app\\api\\MeteoApi\\vercel.json",
-              "RelativeDocumentMoniker": "vercel.json",
-              "ToolTip": "C:\\Proyectos\\meteo-app\\meteo-app\\api\\MeteoApi\\vercel.json",
-              "RelativeToolTip": "vercel.json",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAAAAoAAAAdAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-09-05T07:42:04.923Z"
-            },
             {
               "$type": "Document",
               "DocumentIndex": 1,
@@ -58,12 +38,16 @@
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Proyectos\\meteo-app\\meteo-app\\api\\MeteoApi\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "C:\\Proyectos\\meteo-app\\meteo-app\\api\\MeteoApi\\Program.cs*",
-              "RelativeToolTip": "Program.cs*",
-              "ViewState": "AgIAAFEAAAAAAAAAAAAAAGwAAAADAAAAAAAAAA==",
+              "ToolTip": "C:\\Proyectos\\meteo-app\\meteo-app\\api\\MeteoApi\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAGAAAAAAAAAAAAAYwGIAAAACAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-09-05T07:27:10.002Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
             }
           ]
         }

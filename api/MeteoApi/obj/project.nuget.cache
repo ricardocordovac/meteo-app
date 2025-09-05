@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "/nNkiYJ26VY=",
+  "dgSpecHash": "2XRHHM5b++0=",
   "success": true,
   "projectFilePath": "C:\\Proyectos\\meteo-app\\meteo-app\\api\\MeteoApi\\MeteoApi.csproj",
   "expectedPackageFiles": [
@@ -44,7 +44,7 @@
     {
       "code": "NU1603",
       "level": "Warning",
-      "message": "MeteoApi depende de Supabase (>= 0.1.2), pero no se encontró Supabase 0.1.2. Supabase 1.0.0 se resolvió en su lugar.",
+      "message": "MeteoApi depende de Supabase (>= 0.1.3), pero no se encontró Supabase 0.1.3. Supabase 1.0.0 se resolvió en su lugar.",
       "projectPath": "C:\\Proyectos\\meteo-app\\meteo-app\\api\\MeteoApi\\MeteoApi.csproj",
       "warningLevel": 1,
       "filePath": "C:\\Proyectos\\meteo-app\\meteo-app\\api\\MeteoApi\\MeteoApi.csproj",

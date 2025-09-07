@@ -11,14 +11,17 @@ import { SupabaseService } from '../services/supabase.service';
 })
 export class WeatherChartComponent implements OnInit {
   data: any[] = [];
+  error: string | null = null;
 
   constructor(private supabaseService: SupabaseService) {}
 
   async ngOnInit() {
     try {
       this.data = await this.supabaseService.getCurrentData();
-    } catch (error) {
-      console.error('Error loading data:', error);
+      console.log('Data loaded:', this.data);
+    } catch (error: any) {
+      this.error = error.message || 'Error loading data from Supabase';
+      console.error('Error in WeatherChartComponent:', error);
     }
   }
 }

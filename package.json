@@ -1,14 +1,6 @@
 {
   "name": "meteo-app",
   "version": "0.0.0",
-  "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "serve:ssr:meteo-app": "node dist/meteo-app/server/server.mjs"
-  },
   "private": true,
   "dependencies": {
     "@angular/animations": "^18.2.0",
@@ -22,6 +14,7 @@
     "@angular/router": "^18.2.0",
     "@angular/service-worker": "^18.2.0",
     "@angular/ssr": "^18.2.8",
+    "@supabase/supabase-js": "^2.57.2",
     "express": "^4.18.2",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",

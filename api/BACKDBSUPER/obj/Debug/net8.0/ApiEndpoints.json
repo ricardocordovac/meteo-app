@@ -1,0 +1,12 @@
+[
+  {
+    "ContainingType": "BACKDBSUPER.Controllers.WeatherController",
+    "Method": "UpdateMeteo",
+    "RelativePath": "api/Weather/update-meteo",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  }
+]

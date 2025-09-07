@@ -1,0 +1,6 @@
+@MeteoApiNew_HostAddress = http://localhost:5203
+
+GET {{MeteoApiNew_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

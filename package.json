@@ -1,6 +1,7 @@
 {
   "name": "meteo-app",
   "version": "0.0.0",
+
   "private": true,
   "dependencies": {
     "@angular/animations": "^18.2.0",

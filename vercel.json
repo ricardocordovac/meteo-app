@@ -19,6 +19,16 @@
         "Cache-Control": "public, max-age=31536000, immutable"
       }
     },
+
+    {
+      "src": "^/$",
+      "status": 302,
+      "headers": {
+        "Location": "/tabs/tab3"
+      }
+    },
+
+
     {
       "src": "/(.*)",
       "dest": "/index.html",

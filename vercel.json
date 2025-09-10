@@ -5,7 +5,7 @@
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "dist/meteo-app/browser",
+        "distDir": "dist/meteo-app",
         "buildCommand": "npm run vercel-build",
         "installCommand": "npm install --legacy-peer-deps"
       }

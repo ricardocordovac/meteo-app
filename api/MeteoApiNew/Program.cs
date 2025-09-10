@@ -19,10 +19,10 @@ app.MapGet("/api/update-meteo", async (
 {
   var locations = new[]
   {
-        new { name = "valdeolmos", lat = 40.637, lon = -3.456 },
-        new { name = "algete", lat = 40.597, lon = -3.497 },
-        new { name = "el_casar", lat = 40.705, lon = -3.428 },
-        new { name = "fuente_el_saz", lat = 40.632, lon = -3.511 }
+      new { name = "valdeolmos", lat = 40.6371, lon = -3.4562 },
+      new { name = "algete", lat = 40.5961, lon = -3.4974 },
+      new { name = "el_casar", lat = 40.7050, lon = -3.4280 },
+      new { name = "fuente_el_saz", lat = 40.6328, lon = -3.5139 }
     };
 
   var client = clientFactory.CreateClient();

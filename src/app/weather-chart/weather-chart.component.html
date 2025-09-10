@@ -1,25 +1,41 @@
-<div>
-  <h2>Current Weather Data</h2>
-  <div *ngIf="error" style="color: red;">
-    {{ error }}
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Datos Meteorológicos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Overlay gris mientras carga -->
+  <div *ngIf="loading" class="loading-overlay">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando datos...</p>
   </div>
-  <table *ngIf="data.length > 0; else noData">
-    <thead>
-      <tr>
-        <th>Location</th>
-        <th>Temperature (°C)</th>
-        <th>Updated At</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let item of data">
-        <td>{{ item.location }}</td>
-        <td>{{ item.temperature_2m }}</td>
-        <td>{{ item.created_at | date:'dd/MM/yyyy HH:mm' }}</td>
-      </tr>
-    </tbody>
-  </table>
-  <ng-template #noData>
-    <p>No data available</p>
-  </ng-template>
-</div>
+
+  <!-- Contenido normal -->
+  <div *ngIf="!loading">
+    <div *ngIf="error" style="color: red;">
+      {{ error }}
+    </div>
+
+    <table *ngIf="data.length > 0; else noData">
+      <thead>
+        <tr>
+          <th>Location</th>
+          <th>Temperature (°C)</th>
+          <th>Updated At</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of data">
+          <td>{{ item.location }}</td>
+          <td>{{ item.temperature_2m }}</td>
+          <td>{{ item.created_at | date:'dd/MM/yyyy HH:mm' }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <ng-template #noData>
+      <p>No data available</p>
+    </ng-template>
+  </div>
+</ion-content>

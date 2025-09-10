@@ -1,0 +1,7 @@
+{
+  "name": "meteo-app",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}

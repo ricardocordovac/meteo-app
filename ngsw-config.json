@@ -1,19 +1,12 @@
+
 {
-  "$schema": "./node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "assetGroups": [
     {
       "name": "app",
       "installMode": "prefetch",
       "resources": {
-        "files": [
-          "/favicon.ico",
-          "/index.csr.html",
-          "/index.html",
-          "/manifest.webmanifest",
-          "/*.css",
-          "/*.js"
-        ]
+        "files": ["/favicon.ico", "/index.html", "/manifest.webmanifest", "/*.css", "/*.js"]
       }
     },
     {
@@ -21,9 +14,18 @@
       "installMode": "lazy",
       "updateMode": "prefetch",
       "resources": {
-        "files": [
-          "/**/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"
-        ]
+        "files": ["/assets/**", "/*.(jpg|png|svg)"]
+      }
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "supabase-api",
+      "urls": ["https://mdsirweaayrcqhyuxoxa.supabase.co/rest/v1/current_data*"],
+      "cacheConfig": {
+        "maxSize": 50,
+        "maxAge": "1h",
+        "strategy": "freshness"
       }
     }
   ]

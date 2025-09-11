@@ -1,4 +1,5 @@
 {
+  "$schema": "./node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "assetGroups": [
     {
@@ -22,6 +23,20 @@
           "/assets/**",
           "/*.(png|jpg|jpeg|svg|webmanifest)"
         ]
+      }
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "api",
+      "urls": [
+        "https://mdsirweaayrcqhyuxoxa.supabase.co/**",
+        "https://api.open-meteo.com/**"
+      ],
+      "cacheConfig": {
+        "maxSize": 50,
+        "maxAge": "1d",
+        "strategy": "freshness"
       }
     }
   ]

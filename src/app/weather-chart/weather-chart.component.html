@@ -1,17 +1,14 @@
-<ion-header>
+<!-- <ion-header>
   <ion-toolbar color="primary">
     <ion-title>Datos Meteorológicos</ion-title>
   </ion-toolbar>
-</ion-header>
-
+</ion-header> -->
 <ion-content class="ion-padding">
-  <!-- Overlay gris mientras carga -->
   <div *ngIf="loading" class="loading-overlay">
     <ion-spinner name="crescent"></ion-spinner>
     <p>Cargando datos...</p>
   </div>
 
-  <!-- Contenido normal -->
   <div *ngIf="!loading">
     <div *ngIf="error" style="color: red;">
       {{ error }}

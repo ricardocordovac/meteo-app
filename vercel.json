@@ -5,7 +5,7 @@
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "dist/meteo-app",
+        "distDir": "dist",
         "buildCommand": "npm run vercel-build",
         "installCommand": "npm install --legacy-peer-deps"
       }
@@ -16,7 +16,7 @@
       "src": "^/$",
       "status": 302,
       "headers": {
-        "Location": "/tabs/tab3"
+        "Location": "/tabs/tab1"
       }
     },
     {
@@ -36,7 +36,7 @@
   ],
   "env": {
     "SUPABASE_URL": "https://mdsirweaayrcqhyuxoxa.supabase.co",
-    "SUPABASE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "SUPABASE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kc2lyd2VhYXlyY3FoeXV4b3hhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMzE1MjIsImV4cCI6MjA3MjYwNzUyMn0.HsfMniSLxS7whm74kgajcA8fxwPIcR9-3kFTE1brDVU",
     "NODE_VERSION": "20",
     "CI": "false"
   }

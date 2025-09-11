@@ -1,14 +1,11 @@
 import { Component } from '@angular/core';
-import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
+import { RouterOutlet } from '@angular/router';
+import { IonicModule } from '@ionic/angular';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [IonApp,IonRouterOutlet],
+  imports: [RouterOutlet, IonicModule],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
-  title = 'meteo-app';
-  today = new Date();
-}
+export class AppComponent {}

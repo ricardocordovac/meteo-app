@@ -1,26 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { IonicModule } from '@ionic/angular';
+import { CommonModule, DatePipe } from '@angular/common';
 import { SupabaseService } from '../services/supabase.service';
 import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
   IonSpinner
 } from '@ionic/angular/standalone';
-
-
-
-
 
 @Component({
   selector: 'app-weather-chart',
   standalone: true,
   imports: [
     CommonModule,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
+    DatePipe,
+    IonicModule,
     IonContent,
     IonSpinner
   ],

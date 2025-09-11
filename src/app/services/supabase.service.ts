@@ -2,31 +2,40 @@ import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from '../../environments/environment';
 
+
+
 @Injectable({
   providedIn: 'root'
 })
 export class SupabaseService {
   private supabase: SupabaseClient;
 
-  constructor() {
+constructor() {
+    console.log('Environment:', environment);
+    if (!environment.supabaseUrl || !environment.supabaseKey) {
+      throw new Error('Supabase URL or Key is missing');
+    }
     this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey, {
       auth: {
         autoRefreshToken: false,
         persistSession: false
       }
     });
+    console.log('Supabase initialized:', this.supabase);
   }
 
-  async getCurrentData(): Promise<any[]> {
+  async getDataByLocation(location: string): Promise<any[]> {
     try {
+      console.log('Fetching data for location:', location); // Depuración
       const { data, error } = await this.supabase
         .from('current_data')
         .select('location, temperature_2m, created_at')
-        .in('location', ['valdeolmos', 'algete', 'el_casar', 'fuente_el_saz'])
+        .eq('location', location)
         .order('created_at', { ascending: false })
-        .limit(4);
+        .limit(1);
 
       if (error) throw error;
+      console.log('Data fetched:', data); // Depuración
       return data || [];
     } catch (error) {
       console.error('Supabase error:', error);

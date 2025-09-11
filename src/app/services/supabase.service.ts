@@ -11,6 +11,10 @@ export class SupabaseService {
   private supabase: SupabaseClient;
 
 constructor() {
+      // ✅ Logs añadidos para depuración
+    console.log('Supabase URL:', environment.supabaseUrl);
+    console.log('Supabase Key:', environment.supabaseKey);
+
     console.log('Environment:', environment);
     if (!environment.supabaseUrl || !environment.supabaseKey) {
       throw new Error('Supabase URL or Key is missing');

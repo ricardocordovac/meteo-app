@@ -39,7 +39,7 @@ export class Tab3Page  implements OnInit  {
     }
   }
 
-    getWeatherIcon(temp: number): string {
+  getWeatherIcon(temp: number): string {
     if (temp > 25) return 'sunny';
     if (temp > 15) return 'cloud';
     if (temp > 5) return 'rainy';

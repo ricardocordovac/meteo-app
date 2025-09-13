@@ -1,10 +1,19 @@
-<ion-header collapse="condense">
+<ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title size="large">El Casar</ion-title>
+    <ion-title size="large">
+      El Casar
+    </ion-title>
   </ion-toolbar>
 </ion-header>
+
 <ion-content [fullscreen]="true">
-  <div *ngIf="loading" class="loading-overlay">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Tab 3</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <!-- Copiiado del Proyecto Inicial -->
+     <div *ngIf="loading" class="loading-overlay">
     <ion-spinner name="crescent"></ion-spinner>
     <p>Cargando datos...</p>
   </div>
@@ -34,4 +43,6 @@
       <p>No data available</p>
     </ng-template>
   </div>
+<!-- Fin del Proyecto Inicial -->
+  <app-explore-container name="Tab 3 page"></app-explore-container>
 </ion-content>

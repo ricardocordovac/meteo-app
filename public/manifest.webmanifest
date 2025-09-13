@@ -1,8 +1,6 @@
 {
-  "name": "meteo-app",
-  "short_name": "meteo-app",
-  "theme_color": "#1976d2",
-  "background_color": "#fafafa",
+  "name": "app",
+  "short_name": "app",
   "display": "standalone",
   "scope": "./",
   "start_url": "./",

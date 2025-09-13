@@ -8,7 +8,9 @@
       "resources": {
         "files": [
           "/favicon.ico",
+          "/index.csr.html",
           "/index.html",
+          "/manifest.webmanifest",
           "/*.css",
           "/*.js"
         ]
@@ -20,23 +22,8 @@
       "updateMode": "prefetch",
       "resources": {
         "files": [
-          "/assets/**",
-          "/*.(png|jpg|jpeg|svg|webmanifest)"
+          "/**/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"
         ]
-      }
-    }
-  ],
-  "dataGroups": [
-    {
-      "name": "api",
-      "urls": [
-        "https://mdsirweaayrcqhyuxoxa.supabase.co/**",
-        "https://api.open-meteo.com/**"
-      ],
-      "cacheConfig": {
-        "maxSize": 50,
-        "maxAge": "1d",
-        "strategy": "freshness"
       }
     }
   ]

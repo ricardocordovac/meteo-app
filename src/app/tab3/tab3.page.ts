@@ -1,20 +1,26 @@
 import { Component, OnInit  } from '@angular/core';
-import { IonicModule, IonIcon } from '@ionic/angular';
-
+import { IonHeader, IonToolbar, IonTitle, IonContent,IonSpinner,IonIcon } from '@ionic/angular/standalone';
+import { ExploreContainerComponent } from '../explore-container/explore-container.component';
 import { CommonModule, DatePipe } from '@angular/common';
 import { SupabaseService } from '../services/supabase.service';
-import { addIcons } from 'ionicons';
 import { sunny, cloud, rainy, snow } from 'ionicons/icons';
-
+import { addIcons } from 'ionicons';
 
 @Component({
   selector: 'app-tab3',
-  standalone: true,
-  imports: [IonicModule, CommonModule, DatePipe],
-  templateUrl: './tab3.page.html',
-  styleUrls: ['./tab3.page.scss']
+  templateUrl: 'tab3.page.html',
+  styleUrls: ['tab3.page.scss'],
+  imports: [IonHeader,
+            IonToolbar,
+            IonTitle,
+            IonContent,
+            IonSpinner,
+            IonIcon,
+            ExploreContainerComponent,
+            CommonModule,
+            DatePipe],
 })
-export class Tab3Page implements OnInit {
+export class Tab3Page  implements OnInit  {
   data: any[] = [];
   error: string | null = null;
   loading = true;
@@ -33,10 +39,11 @@ export class Tab3Page implements OnInit {
     }
   }
 
-  getWeatherIcon(temp: number): string {
+    getWeatherIcon(temp: number): string {
     if (temp > 25) return 'sunny';
     if (temp > 15) return 'cloud';
     if (temp > 5) return 'rainy';
     return 'snow';
   }
+
 }

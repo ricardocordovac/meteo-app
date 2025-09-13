@@ -1,5 +1,5 @@
-import { Component, OnInit  } from '@angular/core';
-import { IonHeader, IonToolbar, IonTitle, IonContent,IonSpinner,IonIcon } from '@ionic/angular/standalone';
+import { Component, OnInit  } from '@angular/core';
+import { IonHeader, IonToolbar, IonTitle, IonContent,IonSpinner,IonIcon, IonCard, IonCardHeader, IonCardTitle, IonCardContent } from '@ionic/angular/standalone';
 import { ExploreContainerComponent } from '../explore-container/explore-container.component';
 import { CommonModule, DatePipe } from '@angular/common';
 import { SupabaseService } from '../services/supabase.service';
@@ -16,12 +16,17 @@ import { addIcons } from 'ionicons';
             IonContent,
             IonSpinner,
             IonIcon,
+            IonCard,
+            IonCardHeader,
+            IonCardTitle,
+            IonCardContent,
             ExploreContainerComponent,
             CommonModule,
             DatePipe],
 })
 export class Tab1Page implements OnInit  {
   data: any[] = [];
+  dataf: any[] = [];
   error: string | null = null;
   loading = true;
 
@@ -31,7 +36,12 @@ export class Tab1Page implements OnInit  {
 
   async ngOnInit() {
     try {
-      this.data = await this.supabaseService.getDataByLocation('valdeolmos');
+      const [currentData, forecastData] = await Promise.all([
+        this.supabaseService.getDataByLocation('valdeolmos'),
+        this.supabaseService.getDataByLocationForecast('valdeolmos')
+      ]);
+      this.data = currentData;
+      this.dataf = forecastData;
     } catch (error: any) {
       this.error = error.message || 'Error loading data';
     } finally {

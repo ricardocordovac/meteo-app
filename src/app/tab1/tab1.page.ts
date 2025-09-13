@@ -20,7 +20,6 @@ import { addIcons } from 'ionicons';
             IonCardHeader,
             IonCardTitle,
             IonCardContent,
-            ExploreContainerComponent,
             CommonModule,
             DatePipe],
 })

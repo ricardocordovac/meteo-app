@@ -3,8 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\FastPC_Richi\\source\\repos\\Dockers\\BACKDBSUPER\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{840D5F15-4030-492A-A79C-55B81A9D4874}|BACKDBSUPER.csproj|c:\\users\\fastpc_richi\\source\\repos\\dockers\\backdbsuper\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{840D5F15-4030-492A-A79C-55B81A9D4874}|BACKDBSUPER.csproj|solutionrelative:dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}"
+      "AbsoluteMoniker": "D:0:0:{840D5F15-4030-492A-A79C-55B81A9D4874}|BACKDBSUPER.csproj|c:\\users\\fastpc_richi\\source\\repos\\dockers\\backdbsuper\\controllers\\weathercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{840D5F15-4030-492A-A79C-55B81A9D4874}|BACKDBSUPER.csproj|solutionrelative:controllers\\weathercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{840D5F15-4030-492A-A79C-55B81A9D4874}|BACKDBSUPER.csproj|c:\\users\\fastpc_richi\\source\\repos\\dockers\\backdbsuper\\models\\weatherdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{840D5F15-4030-492A-A79C-55B81A9D4874}|BACKDBSUPER.csproj|solutionrelative:models\\weatherdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{840D5F15-4030-492A-A79C-55B81A9D4874}|BACKDBSUPER.csproj|c:\\users\\fastpc_richi\\source\\repos\\dockers\\backdbsuper\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{840D5F15-4030-492A-A79C-55B81A9D4874}|BACKDBSUPER.csproj|solutionrelative:properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{840D5F15-4030-492A-A79C-55B81A9D4874}|BACKDBSUPER.csproj|c:\\users\\fastpc_richi\\source\\repos\\dockers\\backdbsuper\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
@@ -18,24 +26,50 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "C:\\Users\\FastPC_Richi\\source\\repos\\Dockers\\BACKDBSUPER\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "Properties\\launchSettings.json",
+              "ToolTip": "C:\\Users\\FastPC_Richi\\source\\repos\\Dockers\\BACKDBSUPER\\Properties\\launchSettings.json",
+              "RelativeToolTip": "Properties\\launchSettings.json",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-09-13T16:02:04.468Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "Dockerfile",
-              "DocumentMoniker": "C:\\Users\\FastPC_Richi\\source\\repos\\Dockers\\BACKDBSUPER\\Dockerfile",
-              "RelativeDocumentMoniker": "Dockerfile",
-              "ToolTip": "C:\\Users\\FastPC_Richi\\source\\repos\\Dockers\\BACKDBSUPER\\Dockerfile",
-              "RelativeToolTip": "Dockerfile",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAtAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-09-06T23:30:57.799Z",
+              "Title": "WeatherController.cs",
+              "DocumentMoniker": "C:\\Users\\FastPC_Richi\\source\\repos\\Dockers\\BACKDBSUPER\\Controllers\\WeatherController.cs",
+              "RelativeDocumentMoniker": "Controllers\\WeatherController.cs",
+              "ToolTip": "C:\\Users\\FastPC_Richi\\source\\repos\\Dockers\\BACKDBSUPER\\Controllers\\WeatherController.cs",
+              "RelativeToolTip": "Controllers\\WeatherController.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAQwBEAAAAhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-13T15:58:36.488Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "WeatherData.cs",
+              "DocumentMoniker": "C:\\Users\\FastPC_Richi\\source\\repos\\Dockers\\BACKDBSUPER\\Models\\WeatherData.cs",
+              "RelativeDocumentMoniker": "Models\\WeatherData.cs",
+              "ToolTip": "C:\\Users\\FastPC_Richi\\source\\repos\\Dockers\\BACKDBSUPER\\Models\\WeatherData.cs",
+              "RelativeToolTip": "Models\\WeatherData.cs",
+              "ViewState": "AgIAAEMAAAAAAAAAAAAowEwAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-13T15:58:26.442Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\FastPC_Richi\\source\\repos\\Dockers\\BACKDBSUPER\\appsettings.json",
               "RelativeDocumentMoniker": "appsettings.json",
@@ -43,7 +77,8 @@
               "RelativeToolTip": "appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-09-06T15:25:48.968Z"
+              "WhenOpened": "2025-09-06T15:25:48.968Z",
+              "EditorCaption": ""
             }
           ]
         }

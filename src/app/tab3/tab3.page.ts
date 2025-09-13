@@ -16,7 +16,6 @@ import { addIcons } from 'ionicons';
             IonContent,
             IonSpinner,
             IonIcon,
-            ExploreContainerComponent,
             CommonModule,
             DatePipe],
 })

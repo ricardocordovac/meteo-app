@@ -5,40 +5,31 @@
     </ion-toolbar>
   </ion-header>
 
-  <div class="ion-padding">
+  <div class="ion-padding control-tab-container">
     <ng-container *ngIf="isLoading">
       <ion-spinner name="crescent"></ion-spinner>
     </ng-container>
-
     <ng-container *ngIf="!isLoading && error">
       <ion-text color="danger">
         <p>{{ error }}</p>
       </ion-text>
     </ng-container>
-
     <ng-container *ngIf="!isLoading && !error">
-      <!-- Datos actuales -->
       <ion-card *ngIf="currentData.length > 0">
         <ion-card-header>
-          <ion-card-title>Datos actuales {{this.location}}</ion-card-title>
+          <ion-card-title>Datos actuales</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           <ion-list>
-             <ion-item>
-              <ion-label>Actualizado: {{ currentData[0].created_at | date:'short' }}</ion-label>
-            </ion-item>
             <ion-item>
               <ion-label>Temperatura: {{ currentData[0].temperature_2m }} °C</ion-label>
             </ion-item>
             <ion-item>
-              <ion-label>Fecha/Hora: {{ currentData[0].timestamp | date:'short' }} </ion-label>
+              <ion-label>Actualizado: {{ currentData[0].created_at | date:'short' }}</ion-label>
             </ion-item>
-
           </ion-list>
         </ion-card-content>
       </ion-card>
-
-      <!-- Datos de pronóstico -->
       <ion-card *ngIf="forecastData.length > 0">
         <ion-card-header>
           <ion-card-title>Pronóstico</ion-card-title>
@@ -46,16 +37,14 @@
         <ion-card-content>
           <ion-grid>
             <ion-row>
-              <ion-col size="3">Fecha/Hora</ion-col>
-              <ion-col size="3">Temperatura (°C)</ion-col>
-              <ion-col size="3">Precipitación (mm)</ion-col>
-              <ion-col size="3">Actualizado</ion-col>
+              <ion-col size="4">Fecha/Hora</ion-col>
+              <ion-col size="4">Temperatura (°C)</ion-col>
+              <ion-col size="4">Precipitación (mm)</ion-col>
             </ion-row>
             <ion-row *ngFor="let forecast of forecastData">
-              <ion-col size="3">{{ forecast.timestamp | date:'short' }}</ion-col>
-              <ion-col size="3">{{ forecast.temperature_2m }}</ion-col>
-              <ion-col size="3">{{ forecast.precipitation }}</ion-col>
-              <ion-col size="3">{{ forecast.created_at | date:'short' }}</ion-col>
+              <ion-col size="4">{{ forecast.timestamp | date:'short' }}</ion-col>
+              <ion-col size="4">{{ forecast.temperature_2m }}</ion-col>
+              <ion-col size="4">{{ forecast.precipitation }}</ion-col>
             </ion-row>
           </ion-grid>
         </ion-card-content>

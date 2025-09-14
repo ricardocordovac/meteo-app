@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { SupabaseService } from '../services/supabase.service';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
@@ -10,7 +10,8 @@ import { IonicModule } from '@ionic/angular';
   templateUrl: './control-tab.component.html',
   styleUrls: ['./control-tab.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule]
+  imports: [CommonModule, IonicModule],
+  encapsulation: ViewEncapsulation.None
 })
 export class ControlTabComponent implements OnInit {
   @Input() location: string = '';

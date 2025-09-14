@@ -1,48 +1,14 @@
-import { Component, OnInit  } from '@angular/core';
-import { IonHeader, IonToolbar, IonTitle, IonContent,IonSpinner,IonIcon } from '@ionic/angular/standalone';
-import { ExploreContainerComponent } from '../explore-container/explore-container.component';
-import { CommonModule, DatePipe } from '@angular/common';
-import { SupabaseService } from '../services/supabase.service';
-import { sunny, cloud, rainy, snow } from 'ionicons/icons';
-import { addIcons } from 'ionicons';
+import { Component } from '@angular/core';
+import { IonicModule } from '@ionic/angular';
+import { ControlTabComponent } from '../control-tab/control-tab.component';
 
 @Component({
   selector: 'app-tab3',
   templateUrl: 'tab3.page.html',
   styleUrls: ['tab3.page.scss'],
-  imports: [IonHeader,
-            IonToolbar,
-            IonTitle,
-            IonContent,
-            IonSpinner,
-            IonIcon,
-            CommonModule,
-            DatePipe],
+  standalone: true,
+  imports: [IonicModule, ControlTabComponent]
 })
-export class Tab3Page  implements OnInit  {
-  data: any[] = [];
-  error: string | null = null;
-  loading = true;
-
-  constructor(private supabaseService: SupabaseService) {
-    addIcons({ sunny, cloud, rainy, snow });
-  }
-
-  async ngOnInit() {
-    try {
-      this.data = await this.supabaseService.getDataByLocation('el_casar');
-    } catch (error: any) {
-      this.error = error.message || 'Error loading data';
-    } finally {
-      this.loading = false;
-    }
-  }
-
-  getWeatherIcon(temp: number): string {
-    if (temp > 25) return 'sunny';
-    if (temp > 15) return 'cloud';
-    if (temp > 5) return 'rainy';
-    return 'snow';
-  }
-
+export class Tab3Page {
+  location = 'el_casar';
 }

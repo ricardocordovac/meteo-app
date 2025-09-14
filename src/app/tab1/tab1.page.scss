@@ -36,3 +36,22 @@ th {
   text-align: center;
 }
 
+ion-card {
+  margin: 10px;
+}
+
+ion-grid {
+  font-size: 14px;
+}
+
+ion-col {
+  padding: 5px;
+  text-align: center;
+}
+
+ion-row:first-child {
+  font-weight: bold;
+  background-color: var(--ion-color-light);
+}
+
+

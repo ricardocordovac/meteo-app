@@ -14,7 +14,7 @@
     "vercel-build": "ng build --configuration production"
   },
   "private": true,
- "dependencies": {
+  "dependencies": {
     "@angular/animations": "^20.0.0",
     "@angular/common": "^20.0.0",
     "@angular/compiler": "^20.0.0",
@@ -23,6 +23,7 @@
     "@angular/platform-browser": "^20.0.0",
     "@angular/platform-browser-dynamic": "^20.0.0",
     "@angular/router": "^20.0.0",
+    "@angular/service-worker": "^20.3.1",
     "@capacitor/android": "^7.4.0",
     "@capacitor/app": "7.0.1",
     "@capacitor/core": "7.4.0",

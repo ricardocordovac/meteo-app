@@ -1,3 +1,10 @@
+/*
+  Authors : initappz (Rahul Jograna)
+  Website : https://initappz.com/
+  App Name : DateWate Dating This App Template Source code is licensed as per the
+  terms found in the Website https://initappz.com/license
+  Copyright and Good Faith Purchasers © 2025-present initappz.
+*/
 /**
  * Prevents Angular change detection from
  * running with certain Web Component callbacks

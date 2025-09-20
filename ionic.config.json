@@ -1,7 +1,7 @@
 {
-  "name": "meteo-app",
+  "name": "tinder-1",
   "integrations": {
     "capacitor": {}
   },
-  "type": "angular-standalone"
+  "type": "angular"
 }

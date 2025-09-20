@@ -1,0 +1,27 @@
+<ion-tabs (ionTabsDidChange)="changed($event)">
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button tab="home" *ngIf="activeTab === 'home'">
+      <ion-icon name="home"></ion-icon>
+      <ion-label>Home</ion-label>
+    </ion-tab-button>
+    <!-- Pestañas de DateWate comentadas -->
+    <!--
+    <ion-tab-button tab="maps">
+      <ion-icon name="map"></ion-icon>
+      <ion-label>Maps</ion-label>
+    </ion-tab-button>
+    <ion-tab-button tab="match">
+      <ion-icon name="heart"></ion-icon>
+      <ion-label>Match</ion-label>
+    </ion-tab-button>
+    <ion-tab-button tab="chats">
+      <ion-icon name="chatbubbles"></ion-icon>
+      <ion-label>Chats</ion-label>
+    </ion-tab-button>
+    <ion-tab-button tab="profile">
+      <ion-icon name="person"></ion-icon>
+      <ion-label>Profile</ion-label>
+    </ion-tab-button>
+    -->
+  </ion-tab-bar>
+</ion-tabs>

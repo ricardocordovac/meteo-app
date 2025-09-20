@@ -1,0 +1,262 @@
+/*
+  Authors : initappz (Rahul Jograna)
+  Website : https://initappz.com/
+  App Name : DateWate Dating This App Template Source code is licensed as per the
+  terms found in the Website https://initappz.com/license
+  Copyright and Good Faith Purchasers © 2025-present initappz.
+*/
+.tinder {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: rgba(205, 205, 205, 0.4);
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.tinder_status {
+  position: absolute;
+  top: 10%;
+  margin-top: -30px;
+  z-index: 2;
+  width: 100%;
+  text-align: center;
+  pointer-events: none;
+
+  .nope {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    float: right;
+    margin-right: 10px;
+    font-size: 2rem;
+    font-weight: bold;
+    transform: rotate(45deg);
+    border: 2px solid var(--ion-color-danger);
+    width: max-content;
+    color: var(--ion-color-danger);
+  }
+
+  .liked {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    float: left;
+    margin-left: 10px;
+    font-size: 2rem;
+    font-weight: bold;
+    transform: rotate(-45deg);
+    border: 2px solid var(--ion-color-success);
+    width: max-content;
+    color: var(--ion-color-success);
+  }
+
+  .superLiked {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    float: left;
+    margin-left: 10px;
+    font-size: 2rem;
+    font-weight: bold;
+
+    border: 2px solid rgb(0, 255, 229);
+    width: max-content;
+    color: rgb(0, 255, 229);
+    animation: fadeInUp 1s;
+  }
+}
+
+.tinder_cards {
+  text-align: center;
+  display: -webkit-box;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  flex-direction: column;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  .tinder_card {
+    display: inline-block;
+    width: 100%;
+    height: 75%;
+    border-radius: 8px;
+    overflow: visible;
+    position: absolute;
+    will-change: transform;
+    transition: all 0.3s ease-in-out;
+    margin-top: 10px;
+    cursor: -webkit-grab;
+    cursor: -moz-grab;
+    cursor: grab;
+
+    .user_image {
+      height: 100%;
+      width: 100%;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+
+      [userInfo] {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0px;
+        min-height: max-content;
+        border-bottom: 1px solid transparent !important;
+        overflow: hidden;
+        background-image: linear-gradient(180deg, #9818f887, #5260fff7);
+        text-align: left;
+        padding: 40px 0px;
+
+        .name {
+          color: white;
+          font-family: "semi-bold";
+          font-size: 24px;
+          padding: 5px;
+          display: flex;
+          align-items: center;
+
+          ion-icon {
+            color: #ffffff;
+            margin-left: 15px;
+          }
+        }
+
+        .sub_title {
+          color: white;
+          padding: 5px;
+          font-size: 18px;
+        }
+      }
+
+      .tinder_buttons {
+        position: absolute;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        bottom: -30px;
+        left: 0;
+        right: 0;
+
+        .btn_bg {
+          border-radius: 50%;
+          width: 50px;
+          height: 50px;
+          border: 0;
+          padding: 10px;
+          background: white;
+          text-align: center;
+
+          .btn_image {
+            width: 25px;
+          }
+        }
+
+        .btn_bg_main {
+          border-radius: 50%;
+          width: 55px;
+          height: 55px;
+          border: 0;
+          padding: 10px;
+          background: white;
+          text-align: center;
+
+          .btn_image {
+            width: 25px;
+            margin-top: 5px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.moving.tinderCard {
+  transition: none;
+  cursor: -webkit-grabbing;
+  cursor: -moz-grabbing;
+  cursor: grabbing;
+}
+
+.tinderStatus>div {
+  transition: all 0.3s ease-in-out;
+}
+
+
+.tinder_buttons {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+
+  .btn_bg {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    border: 0;
+    padding: 10px;
+    background: white;
+    text-align: center;
+
+    .btn_image {
+      width: 25px;
+    }
+  }
+
+  .btn_bg_main {
+    border-radius: 50%;
+    width: 55px;
+    height: 55px;
+    border: 0;
+    padding: 10px;
+    background: white;
+    text-align: center;
+
+    .btn_image {
+      width: 25px;
+      margin-top: 5px;
+    }
+  }
+}
+
+@-webkit-keyframes fadeInUp {
+  from {
+    opacity: 0;
+    -webkit-transform: translate3d(0, 100%, 0);
+    transform: translate3d(0, 100%, 0);
+  }
+
+  to {
+    opacity: 1;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    -webkit-transform: translate3d(0, 100%, 0);
+    transform: translate3d(0, 100%, 0);
+  }
+
+  to {
+    opacity: 1;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+}

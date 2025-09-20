@@ -1,0 +1,26 @@
+<div class="tinder">
+  <div class="tinder--status">
+    <ion-icon name="close" *ngIf="crossVisible"></ion-icon>
+    <ion-icon name="heart" *ngIf="heartVisible"></ion-icon>
+    <ion-icon name="star" *ngIf="haveSuperLike"></ion-icon>
+  </div>
+
+  <div class="tinder--cards">
+    <div class="tinder--card" *ngFor="let card of cards" #tinderCard>
+      <img [src]="card.image" />
+      <h3>{{ card.name }}</h3>
+    </div>
+  </div>
+
+  <div class="tinder--buttons">
+    <ion-button class="nope" (click)="userClickedButton($event, false)">
+      NOPE
+    </ion-button>
+    <ion-button class="super-like" (click)="superLike($event, true)">
+      SUPER LIKE
+    </ion-button>
+    <ion-button class="like" (click)="userClickedButton($event, true)">
+      LIKE
+    </ion-button>
+  </div>
+</div>

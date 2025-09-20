@@ -42,6 +42,19 @@
  *
  */
 
+/*
+  Polyfills for meteo-app, adapted from DateWate
+  Authors: initappz (Rahul Jograna), licensed per https://initappz.com/license
+*/
+import './zone-flags';
+
+/***************************************************************************************************
+ * Zone JS is required by default for Angular itself.
+ */
+/*
+  Polyfills for meteo-app, adapted from DateWate
+  Authors: initappz (Rahul Jograna), licensed per https://initappz.com/license
+*/
 import './zone-flags';
 
 /***************************************************************************************************
@@ -49,7 +62,15 @@ import './zone-flags';
  */
 import 'zone.js';  // Included with Angular CLI.
 
+// Extend Window interface to type Array.from
+interface WindowWithArrayFrom extends Window {
+  'Array.from': typeof Array.from;
+}
 
-/***************************************************************************************************
- * APPLICATION IMPORTS
- */
+// Polyfills for browser compatibility (Safari, older browsers)
+if (typeof window !== 'undefined' && !window['Promise']) {
+  window['Promise'] = Promise;
+}
+// if (typeof window !== 'undefined' && !window['Array.from']) {
+//   (window as WindowWithArrayFrom)['Array.from'] = Array.from.bind(Array);
+// }

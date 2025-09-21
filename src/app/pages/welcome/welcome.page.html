@@ -1,51 +1,75 @@
 <!--
-  Authors : initappz (Rahul Jograna)
-  Website : https://initappz.com/
-  App Name : DateWate Dating This App Template Source code is licensed as per the
-  terms found in the Website https://initappz.com/license
-  Copyright and Good Faith Purchasers © 2025-present initappz.
+  Authors: initappz (Rahul Jograna), adapted for meteo-app
+  Original: DateWate Dating, licensed per https://initappz.com/license
+  Copyright: © 2025-present initappz
 -->
-<ion-content class="ion-padding">
-  <div class="welcome-screen">
-    <div class="progress">
-      <div *ngFor="let item of [0,1,2]" [ngClass]="activeIndex == item ? 'active-dots':'dots'"></div>
+
+<!--
+  Authors: initappz (Rahul Jograna), adapted for meteo-app
+  Original: DateWate Dating, licensed per https://initappz.com/license
+  Copyright: © 2025-present initappz
+-->
+<ion-content fullscreen="true">
+  <!-- Loader (hourglass) -->
+  <div *ngIf="!loader" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+    <img src="assets/icons/weather.svg" style="height:100px;width:100px">
+  </div>
+
+  <!-- Welcome screen with 4 slides -->
+  <div *ngIf="loader">
+    <!-- Progress dots -->
+    <div style="display: flex; justify-content: center; margin: 10px 0;">
+      <div *ngFor="let item of [0,1,2,3]" [class]="activeIndex == item ? 'active-dot' : 'dot'"></div>
     </div>
     <swiper-container #swiper slides-per-view="1" (swiperslidechange)="changed()" [modules]="swiperModules">
-      <swiper-slide>
-        <div class="side-info">
-          <div class="top-content">
-            <div [ngStyle]="{'background-image': 'url(assets/images/sliders/1.png)'}" class="bg-image"></div>
-            <ion-label class="title">It's easy to find a <br> soul mate nearby & <br> around you </ion-label>
+      <swiper-slide *ngFor="let data of weatherData">
+        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh;">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <div style="font-size: 24px; font-weight: bold;">{{ data.location || 'N/A' }}</div>
+            <div style="font-size: 18px;">{{ (data.date || 'N/A') + ' ' + (data.time || 'N/A') }}</div>
           </div>
-          <ion-button expand="block" shape="round" color="primary" (click)="onNext()">
-            Next
-          </ion-button>
-        </div>
-      </swiper-slide>
-
-      <swiper-slide>
-        <div class="side-info">
-          <div class="top-content">
-            <div [ngStyle]="{'background-image': 'url(assets/images/sliders/2.png)'}" class="bg-image"></div>
-            <ion-label class="title">You can share, chat, <br> and video call with <br> you match </ion-label>
+          <div style="display: flex; align-items: center; margin-top: 20px;">
+            <div style="font-size: 48px; font-weight: bold;">{{ data.temp || 'N/A' }} °C</div>
+            <div style="font-size: 24px; margin-left: 10px;">{{ data.rain || '0.0' }} mm</div>
           </div>
-          <ion-button expand="block" shape="round" color="primary" (click)="onNext()">
-            Next
-          </ion-button>
-        </div>
-      </swiper-slide>
-
-      <swiper-slide>
-        <div class="side-info">
-          <div class="top-content">
-            <div [ngStyle]="{'background-image': 'url(assets/images/sliders/3.png)'}" class="bg-image"></div>
-            <ion-label class="title">Don't wait anymore, <br> find your soul mate <br> right now! </ion-label>
-          </div>
-          <ion-button expand="block" shape="round" color="primary" (click)="onNext()">
-            Next
-          </ion-button>
         </div>
       </swiper-slide>
     </swiper-container>
   </div>
 </ion-content>
+
+
+<!-- <ion-content class="ion-padding" fullscreen="true">
+
+  <div class="center_div-loader" *ngIf="!loader">
+    <div class="ripple-container">
+      <div class="thumb-lg ripple-trigger">
+        <img src="assets/icons/weather.svg" style="height:100px;width:100px" class="rounded_img b b-2x box-shadow">
+      </div>
+      <div class="ripple-1"></div>
+      <div class="ripple-2"></div>
+    </div>
+  </div>
+
+
+  <div class="welcome-screen" *ngIf="loader">
+
+    <div class="progress">
+      <div *ngFor="let item of [0,1,2,3]" [class.active-dots]="activeIndex == item" [class.dots]="activeIndex != item"></div>
+    </div>
+    <swiper-container #swiper slides-per-view="1" (swiperslidechange)="changed()" [modules]="swiperModules" navigation="true" pagination="false">
+      <swiper-slide *ngFor="let data of weatherData">
+        <div class="side-info">
+          <div class="top-content">
+            <ion-label class="location">{{ data.location || 'N/A' | titlecase }}</ion-label>
+            <ion-label class="date-time">{{ (data.date || 'N/A') + ' ' + (data.time || 'N/A') }}</ion-label>
+          </div>
+          <div class="bottom-content">
+            <ion-label class="temperature">{{ data.temp || 'N/A' }} °C</ion-label>
+            <ion-label class="rain">{{ data.rain || '0.0' }} mm</ion-label>
+          </div>
+        </div>
+      </swiper-slide>
+    </swiper-container>
+  </div>
+</ion-content> -->

@@ -1,7 +1,96 @@
 /*
-  Authors : initappz (Rahul Jograna)
-  Website : https://initappz.com/
-  App Name : DateWate Dating This App Template Source code is licensed as per the
-  terms found in the Website https://initappz.com/license
-  Copyright and Good Faith Purchasers © 2025-present initappz.
+  Authors: initappz (Rahul Jograna), adapted for meteo-app
+  Original: DateWate Dating, licensed per https://initappz.com/license
+  Copyright: © 2025-present initappz
 */
+.welcome-screen {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.top-content {
+  position: relative;
+  height: 50vh;
+  width: 100%;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.location {
+  font-size: 24px;
+  color: var(--ion-color-light);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+
+.date-time {
+  font-size: 18px;
+  color: var(--ion-color-light);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  margin-top: 10px;
+}
+
+.bottom-content {
+  position: absolute;
+  bottom: 10%;
+  left: 10%;
+  display: flex;
+  align-items: center;
+}
+
+.temperature {
+  font-size: 48px;
+  color: var(--ion-color-primary);
+}
+
+.rain {
+  font-size: 24px;
+  color: var(--ion-color-medium);
+  margin-left: 10px;
+}
+
+.progress {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0;
+  z-index: 1;
+}
+
+.active-dots, .dots {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ion-color-medium);
+  margin: 0 5px;
+}
+
+.active-dots {
+  background: var(--ion-color-primary);
+}
+
+swiper-container {
+  touch-action: pan-x pan-y;
+  height: 100%;
+}
+
+/* Media queries for basic responsiveness */
+@media (min-width: 768px) {
+  .temperature {
+    font-size: 32px;
+  }
+  .rain {
+    font-size: 18px;
+  }
+  .location {
+    font-size: 20px;
+  }
+  .date-time {
+    font-size: 16px;
+  }
+}

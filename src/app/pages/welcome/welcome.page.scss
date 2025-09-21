@@ -1,85 +1,116 @@
-/*
-  Authors: initappz (Rahul Jograna), adapted for meteo-app
-  Original: DateWate Dating, licensed per https://initappz.com/license
-  Copyright: © 2025-present initappz
-*/
-.welcome-screen {
+welcome-screen {
   display: flex;
   flex-direction: column;
   height: 100%;
   width: 100%;
 }
 
+.slide-content {
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .top-content {
   position: relative;
-  height: 50vh;
   width: 100%;
   min-height: 200px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background: transparent;
 }
 
 .location {
   font-size: 24px;
-  color: var(--ion-color-light);
+  color: var(--ion-color-light, #f4f5f8);
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
   text-align: center;
+  z-index: 2;
 }
 
 .date-time {
   font-size: 18px;
-  color: var(--ion-color-light);
+  color: var(--ion-color-light, #f4f5f8);
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
   text-align: center;
   margin-top: 10px;
+  z-index: 2;
 }
 
 .bottom-content {
-  position: absolute;
-  bottom: 10%;
-  left: 10%;
+  position: relative;
   display: flex;
   align-items: center;
+  justify-content: center;
+  background: transparent;
 }
 
 .temperature {
   font-size: 48px;
-  color: var(--ion-color-primary);
+  color: var(--ion-color-primary, #9818F8);
+  z-index: 2;
 }
 
 .rain {
   font-size: 24px;
-  color: var(--ion-color-medium);
+  color: var(--ion-color-medium, #92949c);
   margin-left: 10px;
+  z-index: 2;
 }
 
 .progress {
   display: flex;
   justify-content: center;
   margin: 10px 0;
-  z-index: 1;
+  z-index: 2;
 }
 
 .active-dots, .dots {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--ion-color-medium);
+  background: var(--ion-color-medium, #92949c);
   margin: 0 5px;
 }
 
 .active-dots {
-  background: var(--ion-color-primary);
+  background: var(--ion-color-primary, #9818F8);
 }
 
-swiper-container {
+.swiper {
   touch-action: pan-x pan-y;
   height: 100%;
+  overflow: visible;
 }
 
-/* Media queries for basic responsiveness */
+.swiper-button-prev,
+.swiper-button-next {
+  color: var(--ion-color-primary, #9818F8);
+  z-index: 3;
+}
+
+.swiper-pagination {
+  position: absolute;
+  bottom: 20px;
+  z-index: 3;
+}
+
+.swiper-pagination-bullet {
+  background: var(--ion-color-medium, #92949c);
+  opacity: 0.7;
+}
+
+.swiper-pagination-bullet-active {
+  background: var(--ion-color-primary, #9818F8);
+  opacity: 1;
+}
+
 @media (min-width: 768px) {
   .temperature {
     font-size: 32px;

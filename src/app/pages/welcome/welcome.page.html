@@ -12,7 +12,10 @@
         <div class="swiper-slide" *ngFor="let data of weatherData">
           <div class="slide-content" [style.background-image]="'url(/assets/backgrounds/' + data.background + ')'">
             <div class="top-content">
-              <div class="location">{{ data.location || 'N/A' | titlecase }}</div>
+              <div class="location">
+                <ion-icon name="location-outline"></ion-icon>
+                {{ data.location || 'N/A' | titlecase }}
+              </div>
               <div class="date-time">{{ (data.date || 'N/A') + ' ' + (data.time || 'N/A') }}</div>
             </div>
             <div class="bottom-content">

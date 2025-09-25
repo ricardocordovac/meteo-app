@@ -81,7 +81,13 @@ export class WelcomePage implements OnInit, AfterViewInit {
           const item = data[0] || {};
           console.log('Supabase data for', location, ':', item);
           const createdAt = item.created_at ? new Date(item.created_at) : null;
+          if (createdAt instanceof Date && createdAt.toString() !== 'Invalid Date') {
+          createdAt.setHours(createdAt.getHours() + 2); // Sumar 2 horas para Madrid (CEST)
+          }
           const timestamp = item.timestamp ? new Date(item.timestamp) : null;
+          if (timestamp instanceof Date && timestamp.toString() !== 'Invalid Date') {
+          timestamp.setHours(timestamp.getHours() + 2); // Sumar 2 horas para Madrid (CEST)
+          }
           const result = {
             location: String(item.location || location || 'N/A'),
             temp: item.temperature_2m != null ? Number(item.temperature_2m).toFixed(1) : 'N/A',
@@ -178,7 +184,8 @@ export class WelcomePage implements OnInit, AfterViewInit {
   // Parcialmente nublado
   if (weathercode === 2 && cloudcover >= 50 && isDay === 1) return 'parcialmentenublado.png';
 
-  // Nublado
+  // Nublado uno
+
   if (weathercode === 3 && isDay === 1) return 'nublado_cloudy.png';
 
   // Fallback

@@ -164,7 +164,7 @@ export class WelcomePage implements OnInit, AfterViewInit {
   if (windSpeed > 30) return 'vientofuerte.png';
 
   // Noche despejada
-  if (weathercode === 0 && isDay === 0) return 'noche despejada.png';
+  if (weathercode === 0 && isDay === 0) return 'nochedespejada.png';
 
   // Noche nublada
   if ((weathercode === 3 || weathercode >= 61) && isDay === 0) return 'nublado_cloudy.png';

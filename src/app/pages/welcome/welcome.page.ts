@@ -26,7 +26,11 @@ export class WelcomePage implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
-    this.loadWeatherData();
+   // this.loadWeatherData();
+   setTimeout(() => {
+      this.loader = true;
+      this.loadWeatherData();
+    }, 2000);
   }
 
   ngAfterViewInit() {
@@ -125,18 +129,75 @@ export class WelcomePage implements OnInit, AfterViewInit {
     }
   }
 
+
   mapWeatherToBackground(item: any): string {
-    const precipitation = Number(item.precipitation || 0);
-    const windSpeed = Number(item.wind_speed_10m || 0);
-    const humidity = Number(item.relative_humidity_2m || 0);
-    if (windSpeed > 15) return 'vientofuerte.png';
-    if (humidity > 80) return 'niebla.png';
-    if (precipitation > 20) return 'tormenta.png';
-    if (precipitation > 10) return 'lluvia.png';
-    if (precipitation > 5) return 'parcialnublado.png';
-    if (precipitation > 2) return 'nublado.png';
-    return 'soleado.png';
-  }
+  const weathercode = Number(item.weathercode ?? -1);
+  const isDay = Number(item.is_day ?? 1);
+  const cloudcover = Number(item.cloudcover ?? 0);
+  const temperature = Number(item.temperature_2m ?? 0);
+  const precipitation = Number(item.precipitation ?? 0);
+  const windSpeed = Number(item.wind_speed_10m ?? 0);
+  const visibility = Number(item.visibility ?? 100000); // en metros
+
+  // Tormenta
+  if ([95, 96, 99].includes(weathercode)) return 'tormenta_thunder.png';
+
+  // Lluvia
+  if ([61, 63, 65, 80, 81, 82].includes(weathercode)) return 'lluvia_rain.png';
+
+  // Llovizna
+  if ([51, 53, 55].includes(weathercode)) return 'llovisnaDrizzle.png';
+
+  // Nieve
+  if ([71, 73, 75, 77, 85, 86].includes(weathercode)) return 'helada_escarcha.png';
+
+  // Escarcha sin precipitación
+  if (temperature <= 0 && precipitation === 0 && [0, 1, 2, 3].includes(weathercode)) return 'helada_escarcha2.png';
+
+  // Niebla
+  if ([45, 48].includes(weathercode) || visibility < 1000) return 'nieblafog.png';
+
+  // Bruma / Calima
+  if ([0, 1, 2].includes(weathercode) && temperature > 25 && cloudcover < 30 && windSpeed < 10) return 'bruma_calima.png';
+
+  // Viento fuerte
+  if (windSpeed > 30) return 'vientofuerte.png';
+
+  // Noche despejada
+  if (weathercode === 0 && isDay === 0) return 'noche despejada.png';
+
+  // Noche nublada
+  if ((weathercode === 3 || weathercode >= 61) && isDay === 0) return 'nublado_cloudy.png';
+
+  // Despejado
+  if (weathercode === 0 && isDay === 1) return 'despejado_clear.png';
+
+  // Soleado
+  if ((weathercode === 1 || weathercode === 2) && cloudcover < 50 && isDay === 1) return 'soleado_sunny.png';
+
+  // Parcialmente nublado
+  if (weathercode === 2 && cloudcover >= 50 && isDay === 1) return 'parcialmentenublado.png';
+
+  // Nublado
+  if (weathercode === 3 && isDay === 1) return 'nublado_cloudy.png';
+
+  // Fallback
+  return 'eliminar.png';
+}
+
+
+  // mapWeatherToBackground(item: any): string {
+  //   const precipitation = Number(item.precipitation || 0);
+  //   const windSpeed = Number(item.wind_speed_10m || 0);
+  //   const humidity = Number(item.relative_humidity_2m || 0);
+  //   if (windSpeed > 15) return 'vientofuerte.png';
+  //   if (humidity > 80) return 'niebla.png';
+  //   if (precipitation > 20) return 'tormenta.png';
+  //   if (precipitation > 10) return 'lluvia.png';
+  //   if (precipitation > 5) return 'parcialnublado.png';
+  //   if (precipitation > 2) return 'nublado.png';
+  //   return 'soleado.png';
+  // }
 
   ngOnDestroy() {
     if (this.swiperInstance) {

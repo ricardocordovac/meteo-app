@@ -4,9 +4,9 @@
   </div>
 
   <div *ngIf="loader" class="welcome-screen">
-    <div class="progress">
+    <!-- <div class="progress">
       <div *ngFor="let item of [0,1,2,3]" [class.active-dots]="activeIndex == item" [class.dots]="activeIndex != item"></div>
-    </div>
+    </div> -->
     <div class="swiper" #swiper>
       <div class="swiper-wrapper">
         <div class="swiper-slide" *ngFor="let data of weatherData">
@@ -22,8 +22,8 @@
           </div>
         </div>
       </div>
-      <div class="swiper-button-prev"></div>
-      <div class="swiper-button-next"></div>
+      <!-- <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div> -->
       <div class="swiper-pagination"></div>
     </div>
   </div>

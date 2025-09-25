@@ -45,7 +45,9 @@ namespace BACKDBSUPER.Controllers
 
                 foreach (var loc in locations)
                 {
-                    var url = $"https://api.open-meteo.com/v1/forecast?latitude={loc.lat.ToString(CultureInfo.InvariantCulture)}&longitude={loc.lon.ToString(CultureInfo.InvariantCulture)}&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m,wind_direction_10m,dewpoint_2m,shortwave_radiation&hourly=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m,wind_direction_10m,et0_fao_evapotranspiration,shortwave_radiation,dewpoint_2m,soil_moisture_0_to_10cm,soil_temperature_0_to_10cm&timezone=auto";
+                   // var url = $"https://api.open-meteo.com/v1/forecast?latitude={loc.lat.ToString(CultureInfo.InvariantCulture)}&longitude={loc.lon.ToString(CultureInfo.InvariantCulture)}&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m,wind_direction_10m,dewpoint_2m,shortwave_radiation&hourly=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m,wind_direction_10m,et0_fao_evapotranspiration,shortwave_radiation,dewpoint_2m,soil_moisture_0_to_10cm,soil_temperature_0_to_10cm&timezone=auto";
+
+                    var url = $"https://api.open-meteo.com/v1/forecast?latitude={loc.lat.ToString(CultureInfo.InvariantCulture)}&longitude={loc.lon.ToString(CultureInfo.InvariantCulture)}&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m,wind_direction_10m,dewpoint_2m,shortwave_radiationet0_fao_evapotranspiration,soil_moisture_0_to_10cm,soil_temperature_0_to_10cm,weathercode,is_day,cloudcover,visibility,wind_gusts_10m,snowfall,apparent_temperature,precipitation_probability&hourly=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m,wind_direction_10m,et0_fao_evapotranspiration,shortwave_radiation,dewpoint_2m,soil_moisture_0_to_10cm,soil_temperature_0_to_10cmet0_fao_evapotranspiration,soil_moisture_0_to_10cm,soil_temperature_0_to_10cm,weathercode,is_day,cloudcover,visibility,wind_gusts_10m,snowfall,apparent_temperature,precipitation_probability&timezone=auto";
 
                     try
                     {
@@ -58,16 +60,29 @@ namespace BACKDBSUPER.Controllers
                         // Insertar datos actuales en current_data
                         var currentData = new current_data
                         {
-                            location = loc.name,
-                            timestamp = DateTime.UtcNow,
-                            temperature_2m = response.current.temperature_2m,
-                            relative_humidity_2m = response.current.relative_humidity_2m,
-                            precipitation = response.current.precipitation,
-                            wind_speed_10m = response.current.wind_speed_10m,
-                            wind_direction_10m = response.current.wind_direction_10m,
-                            dewpoint_2m = response.current.dewpoint_2m,
-                            shortwave_radiation = response.current.shortwave_radiation,
-                            created_at = DateTime.UtcNow
+                          location = loc.name,
+                          timestamp = DateTime.UtcNow,
+                          temperature_2m = response.current.temperature_2m,
+                          relative_humidity_2m = response.current.relative_humidity_2m,
+                          precipitation = response.current.precipitation,
+                          wind_speed_10m = response.current.wind_speed_10m,
+                          wind_direction_10m = response.current.wind_direction_10m,
+                          et0_fao_evapotranspiration = response.current.et0_fao_evapotranspiration,
+                          shortwave_radiation = response.current.shortwave_radiation,
+                          dewpoint_2m = response.current.dewpoint_2m,
+                          weathercode = response.current.weathercode,
+                          is_day = response.current.is_day,
+                          cloudcover = response.current.cloudcover,
+                          visibility = response.current.visibility,
+                          wind_gusts_10m = response.current.wind_gusts_10m,
+                          snowfall = response.current.snowfall,
+                          apparent_temperature = response.current.apparent_temperature,
+                          precipitation_probability = response.current.precipitation_probability,
+                          created_at = DateTime.UtcNow
+
+
+
+
                         };
 
                         await _supabase.From<current_data>().Insert(currentData);
@@ -77,19 +92,27 @@ namespace BACKDBSUPER.Controllers
                         {
                             await _supabase.From<forecast_data>().Insert(new forecast_data
                             {
-                                location = loc.name,
-                                timestamp = DateTime.Parse(response.hourly.time[i]),
-                                temperature_2m = response.hourly.temperature_2m?[i] ?? 0,
-                                relative_humidity_2m = response.hourly.relative_humidity_2m?[i] ?? 0,
-                                precipitation = response.hourly.precipitation?[i] ?? 0,
-                                wind_speed_10m = response.hourly.wind_speed_10m?[i] ?? 0,
-                                wind_direction_10m = response.hourly.wind_direction_10m?[i] ?? 0,
-                                et0_fao_evapotranspiration = response.hourly.et0_fao_evapotranspiration?[i] ?? 0,
-                                shortwave_radiation = response.hourly.shortwave_radiation?[i] ?? 0,
-                                dewpoint_2m = response.hourly.dewpoint_2m?[i] ?? 0,
-                                soil_moisture_0_to_10cm = response.hourly.soil_moisture_0_to_10cm?[i] ?? 0,
-                                soil_temperature_0_to_10cm = response.hourly.soil_temperature_0_to_10cm?[i] ?? 0,
-                                created_at = DateTime.UtcNow
+                              location = loc.name,
+                              timestamp = DateTime.Parse(response.hourly.time[i]),
+                              temperature_2m = response.hourly.temperature_2m?[i] ?? 0,
+                              relative_humidity_2m = response.hourly.relative_humidity_2m?[i] ?? 0,
+                              precipitation = response.hourly.precipitation?[i] ?? 0,
+                              wind_speed_10m = response.hourly.wind_speed_10m?[i] ?? 0,
+                              wind_direction_10m = response.hourly.wind_direction_10m?[i] ?? 0,
+                              et0_fao_evapotranspiration = response.hourly.et0_fao_evapotranspiration?[i] ?? 0,
+                              shortwave_radiation = response.hourly.shortwave_radiation?[i] ?? 0,
+                              dewpoint_2m = response.hourly.dewpoint_2m?[i] ?? 0,
+                              soil_moisture_0_to_10cm = response.hourly.soil_moisture_0_to_10cm?[i] ?? 0,
+                              soil_temperature_0_to_10cm = response.hourly.soil_temperature_0_to_10cm?[i] ?? 0,
+                              weathercode = response.hourly.weathercode?[i] ?? 0,
+                              is_day = response.hourly.is_day?[i] ?? 0,
+                              cloudcover = response.hourly.cloudcover?[i] ?? 0,
+                              visibility = response.hourly.visibility?[i] ?? 0,
+                              wind_gusts_10m = response.hourly.wind_gusts_10m?[i] ?? 0,
+                              snowfall = response.hourly.snowfall?[i] ?? 0,
+                              apparent_temperature = response.hourly.apparent_temperature?[i] ?? 0,
+                              precipitation_probability = response.hourly.precipitation_probability?[i] ?? 0,
+                               created_at = DateTime.UtcNow
                             });
                         }
                     }

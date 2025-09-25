@@ -53,7 +53,7 @@
 
 .temperature {
   font-size: 48px;
-  color: var(--ion-color-primary, #9818F8);
+  color: var(--ion-color-primary, #030303);
   z-index: 2;
 }
 
@@ -80,7 +80,7 @@
 }
 
 .active-dots {
-  background: var(--ion-color-primary, #9818F8);
+  background: var(--ion-color-primary, #020202);
 }
 
 .swiper {
@@ -122,7 +122,7 @@
 }
 
 .swiper-pagination-bullet-active {
-  background: var(--ion-color-primary, #9818F8);
+  background: var(--ion-color-primary, #050505);
   opacity: 1;
 }
 

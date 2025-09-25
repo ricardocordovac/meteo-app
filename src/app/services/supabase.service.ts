@@ -11,6 +11,20 @@ interface WeatherData {
   timestamp: string;
   wind_speed_10m: number;
   relative_humidity_2m: number;
+  shortwave_radiation: number;
+  wind_direction_10m: number;
+  weathercode: number;
+  is_day: number;
+  cloudcover: number;
+  visibility: number;
+  wind_gusts_10m: number;
+  snowfall: number;
+  apparent_temperature: number;
+  precipitation_probability: number;
+  et0_fao_evapotranspiration: number;
+  soil_moisture_0_to_10cm: number;
+  soil_temperature_0_to_10cm: number;
+  dewpoint_2m: number;
 }
 
 @Injectable({
@@ -40,7 +54,11 @@ export class SupabaseService {
       console.log('Fetching data for location:', location);
       const { data, error } = await this.supabase
         .from('current_data')
-        .select('location, temperature_2m, created_at, precipitation, timestamp, wind_speed_10m, relative_humidity_2m')
+        .select('location, temperature_2m, created_at, precipitation, timestamp, wind_speed_10m, relative_humidity_2m, wind_direction_10m,shortwave_radiation,weathercode,is_day,cloudcover,visibility,wind_gusts_10m,snowfall,apparent_temperature,precipitation_probability,et0_fao_evapotranspiration,soil_moisture_0_to_10cm,soil_temperature_0_to_10cm,dewpoint_2m ')
+
+       // .select('location, temperature_2m, created_at, precipitation, timestamp, wind_speed_10m, relative_humidity_2m')
+
+
         .eq('location', location)
         .order('created_at', { ascending: false })
         .limit(1);

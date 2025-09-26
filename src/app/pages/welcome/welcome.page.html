@@ -1,12 +1,9 @@
 <ion-content fullscreen="true">
-  <div *ngIf="!loader" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
-    <img src="assets/icons/weather.svg" style="height:100px;width:100px">
+  <div *ngIf="!loader" class="loader-container">
+    <ion-spinner name="circular" class="custom-spinner"></ion-spinner>
   </div>
 
   <div *ngIf="loader" class="welcome-screen">
-    <!-- <div class="progress">
-      <div *ngFor="let item of [0,1,2,3]" [class.active-dots]="activeIndex == item" [class.dots]="activeIndex != item"></div>
-    </div> -->
     <div class="swiper" #swiper>
       <div class="swiper-wrapper">
         <div class="swiper-slide" *ngFor="let data of weatherData">
@@ -25,8 +22,6 @@
           </div>
         </div>
       </div>
-      <!-- <div class="swiper-button-prev"></div>
-      <div class="swiper-button-next"></div> -->
       <div class="swiper-pagination"></div>
     </div>
   </div>

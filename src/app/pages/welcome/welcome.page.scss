@@ -54,29 +54,23 @@
   z-index: 2;
 }
 
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: transparent;
+}
 
-
-// .bottom-content {
-//   position: relative;
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   background: transparent;
-// }
-
-// .temperature {
-//   font-size: 48px;
-//   color: var(--ion-color-primary, #030303);
-//   z-index: 2;
-// }
-
-// .rain {
-//   font-size: 24px;
-//   color: var(--ion-color-medium, #92949c);
-//   margin-left: 10px;
-//   z-index: 2;
-// }
-
+.custom-spinner {
+  --color: var(--ion-color-primary, #9818F8); /* Color del spinner */
+  --size: 64px; /* Tamaño del spinner */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
 
 
 .bottom-content {

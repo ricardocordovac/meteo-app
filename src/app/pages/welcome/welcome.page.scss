@@ -1,3 +1,75 @@
+ion-content {
+  --padding-start: 0 !important;
+  --padding-end: 0 !important;
+  --padding-top: 0 !important;
+  --padding-bottom: 0 !important;
+  --overflow: hidden !important;
+}
+
+.center_div-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+  margin: 0 !important;
+  padding: 0 !important;
+  position: relative;
+  background: transparent;
+}
+
+.ripple-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+}
+
+.thumb-lg.ripple-trigger {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+}
+
+.rounded_img {
+  border-radius: 50%;
+  display: block;
+  object-fit: contain;
+}
+
+.ripple-1, .ripple-2 {
+  position: absolute;
+  border: 4px solid #F4A261;
+  opacity: 1;
+  border-radius: 50%;
+  animation: ripple 1.8s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+.ripple-2 {
+  animation-delay: -0.9s;
+}
+
+@keyframes ripple {
+  0% {
+    top: 50px;
+    left: 50px;
+    width: 0;
+    height: 0;
+    opacity: 1;
+  }
+  100% {
+    top: 0px;
+    left: 0px;
+    width: 100px;
+    height: 100px;
+    opacity: 0;
+  }
+}
+
 .welcome-screen {
   display: flex;
   flex-direction: column;

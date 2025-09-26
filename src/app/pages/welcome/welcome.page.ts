@@ -30,7 +30,7 @@ export class WelcomePage implements OnInit, AfterViewInit {
    setTimeout(() => {
       this.loader = true;
       this.loadWeatherData();
-    }, 500);
+    }, 1000);
   }
 
   ngAfterViewInit() {

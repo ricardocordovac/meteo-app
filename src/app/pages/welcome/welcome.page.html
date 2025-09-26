@@ -1,4 +1,40 @@
 <ion-content fullscreen="true">
+  <div *ngIf="!loader" class="center_div-loader">
+    <div class="ripple-container">
+      <div class="thumb-lg ripple-trigger">
+        <img src="assets/backgrounds/weather.svg" style="height:100px;width:100px" class="rounded_img">
+      </div>
+      <div class="ripple-1"></div>
+      <div class="ripple-2"></div>
+    </div>
+  </div>
+
+  <div *ngIf="loader" class="welcome-screen">
+    <div class="swiper" #swiper>
+      <div class="swiper-wrapper">
+        <div class="swiper-slide" *ngFor="let data of weatherData">
+          <div class="slide-content" [style.background-image]="'url(/assets/backgrounds/' + data.background + ')'">
+            <div class="top-content">
+              <div class="location">
+                <ion-icon name="location-outline"></ion-icon>
+                {{ data.location || 'N/A' | titlecase }}
+              </div>
+              <div class="date-time">{{ (data.date || 'N/A') + ' ' + (data.time || 'N/A') }}</div>
+            </div>
+            <div class="bottom-content">
+              <div class="temperature">{{ data.temp || 'N/A' }} °C</div>
+              <div class="rain">{{ data.rain || '0.0' }} mm</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </div>
+</ion-content>
+
+
+<!-- <ion-content fullscreen="true">
   <div *ngIf="!loader" class="loader-container">
     <ion-spinner name="circular" class="custom-spinner"></ion-spinner>
   </div>
@@ -25,4 +61,4 @@
       <div class="swiper-pagination"></div>
     </div>
   </div>
-</ion-content>
+</ion-content> -->

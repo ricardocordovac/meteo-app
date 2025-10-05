@@ -186,8 +186,19 @@ export class WelcomePage implements OnInit, AfterViewInit {
     let background = 'eliminar.png'; // Fallback
     const accessories: string[] = [];
 
-    // Viento fuerte (prioridad alta)
-    if (windSpeed > WIND_SPEED_THRESHOLD) {
+    // Noche con viento fuerte y sin lluvia (prioridad alta)
+    if (windSpeed > WIND_SPEED_THRESHOLD && isDay === 0 && precipitation === 0) {
+      background = 'vientofuerte_noche.png';
+      accessories.push('cortaviento');
+      if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) {
+        accessories.push('bufanda');
+      }
+      if (temperature < TEMPERATURE_VERY_COLD_THRESHOLD || apparentTemperature < TEMPERATURE_VERY_COLD_THRESHOLD) {
+        accessories.push('abrigo-polar');
+      }
+    }
+    // Viento fuerte (día o con lluvia)
+    else if (windSpeed > WIND_SPEED_THRESHOLD) {
       background = 'vientofuerte.png';
       accessories.push('cortaviento');
       if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) {
@@ -197,7 +208,7 @@ export class WelcomePage implements OnInit, AfterViewInit {
         accessories.push('abrigo-polar');
       }
     }
-    // Noche despejada (solo si no hay viento fuerte)
+    // Noche despejada
     else if (weatherCode === 0 && isDay === 0) {
       background = 'nochedespejada.png';
     }

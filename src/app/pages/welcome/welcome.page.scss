@@ -3,14 +3,19 @@ ion-content {
   --padding-end: 0 !important;
   --padding-top: 0 !important;
   --padding-bottom: 0 !important;
-  --overflow: hidden !important;
+  --overflow: auto !important; /* Permitir scroll si excede */
+  height: 100dvh; /* Dynamic viewport para iOS y Android */
+  display: flex;
+  flex-direction: column;
+  --ion-safe-area-top: env(safe-area-inset-top); /* Respeta barra superior */
+  --ion-safe-area-bottom: env(safe-area-inset-bottom); /* Respeta barra inferior */
 }
 
 .center_div-loader {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: 100dvh;
   width: 100vw;
   margin: 0 !important;
   padding: 0 !important;
@@ -75,50 +80,52 @@ ion-content {
   flex-direction: column;
   height: 100%;
   width: 100%;
+  flex: 1;
 }
 
 .slide-content {
   background-size: cover;
   background-position: center;
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  flex: 1;
+  padding-bottom: calc(var(--ion-safe-area-bottom, 0px) + 40px); /* Espacio para barra inferior */
 }
 
 .top-content {
-  position: absolute; /* Posicionar en la parte superior */
-  top: 20px; /* Padding desde el borde superior */
+  position: relative; /* Cambiado de absolute para flex */
   width: 100%;
-  min-height: 250px; /* Mantener espacio para iconos */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   background: transparent;
+  padding: 20px 0; /* Espacio superior e inferior */
 }
 
 .location {
-  font-size: 32px; /* Más grande para legibilidad */
-  color: #ffffff; /* Blanco puro */
-  font-family: 'Roboto', sans-serif; /* Consistente con .temperature */
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Sombra para contraste */
+  font-size: 32px;
+  color: #ffffff;
+  font-family: 'Roboto', sans-serif;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
   text-align: center;
   z-index: 2;
   display: flex;
-  align-items: center; /* Alinear icono y texto */
+  align-items: center;
 }
 
 .location ion-icon {
-  font-size: 28px; /* Ligeramente más pequeño que el texto */
-  color: #ffffff; /* Blanco puro */
-  margin-right: 8px; /* Espacio entre icono y texto */
+  font-size: 28px;
+  color: #ffffff;
+  margin-right: 8px;
 }
 
 .date-time {
-  font-size: 20px; /* Más grande, pero menor que .location */
-  color: #ffffff; /* Blanco puro */
+  font-size: 20px;
+  color: #ffffff;
   font-family: 'Roboto', sans-serif;
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
   text-align: center;
@@ -126,22 +133,19 @@ ion-content {
   z-index: 2;
 }
 
-
 .prototype-image {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 40px; /* Aumentado de 20px a 40px para bajar una línea más */
+  margin-top: 20px;
   z-index: 2;
 }
 
 .prototype-img {
-  width: 200px; /* Ajusta el tamaño según necesites */
+  width: 200px;
   height: auto;
   object-fit: contain;
 }
-
-
 
 .feels-like {
   font-size: 24px;
@@ -149,20 +153,19 @@ ion-content {
   font-family: 'Roboto', sans-serif;
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
   text-align: center;
-  margin-top: 20px; /* Espacio debajo de la imagen */
+  margin-top: 20px;
   z-index: 2;
 }
 
 .feels-like strong {
-  font-weight: bold; /* Negrita para apparentTemp */
+  font-weight: bold;
 }
-
 
 .weather-icons {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  margin-top: 15px; /* Espacio entre feels-like e iconos */
+  margin-top: 15px;
   width: 100%;
   max-width: 300px;
 }
@@ -193,13 +196,13 @@ ion-content {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 100dvh;
   background: transparent;
 }
 
 .custom-spinner {
-  --color: var(--ion-color-primary, #9818F8); /* Color del spinner */
-  --size: 64px; /* Tamaño del spinner */
+  --color: var(--ion-color-primary, #9818F8);
+  --size: 64px;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -207,31 +210,30 @@ ion-content {
   z-index: 10;
 }
 
-
 .bottom-content {
-  position: absolute; /* Posicionar en la esquina inferior */
-  bottom: 20px; /* Padding desde el borde inferior */
-  left: 20px; /* Padding desde el borde izquierdo */
+  width: 100%;
   display: flex;
-  align-items: flex-start; /* Alinear al inicio verticalmente */
-  justify-content: flex-start; /* Alinear al inicio horizontalmente */
+  align-items: flex-start;
+  justify-content: flex-start;
   background: transparent;
-  width: 100%; /* Ocupar todo el ancho */
+  padding: 10px 20px;
+  margin-top: auto;
+  padding-bottom: calc(var(--ion-safe-area-bottom, 0px) + 30px); /* Espacio para barra inferior */
 }
 
 .temperature-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 20px; /* Espacio antes de la temperatura */
+  margin-top: 20px;
   z-index: 2;
 }
 
 .temperature {
-  font-size: 6vh; /* Reducido de 8vh para uniformidad */
+  font-size: 6vh;
   color: #ffffff;
   font-family: 'Roboto', sans-serif;
-  font-weight: lighter; /* Variante más delgada (puede usar Roboto-Light si está disponible) */
+  font-weight: lighter;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
   z-index: 2;
 }
@@ -242,7 +244,6 @@ ion-content {
   margin-left: 10px;
   z-index: 2;
 }
-
 
 .progress {
   display: flex;
@@ -266,13 +267,14 @@ ion-content {
 .swiper {
   width: 100%;
   height: 100%;
-  touch-action: pan-x; /* Solo permitir gestos horizontales */
+  touch-action: pan-x;
   overflow: hidden;
+  flex: 1; /* Ocupa el espacio restante */
 }
 
 .swiper-wrapper {
   display: flex;
-  flex-direction: row; /* Forzar layout horizontal */
+  flex-direction: row;
 }
 
 .swiper-slide {
@@ -294,6 +296,7 @@ ion-content {
   position: absolute;
   bottom: 20px;
   z-index: 3;
+  padding-bottom: calc(var(--ion-safe-area-bottom, 0px) + 20px); /* Espacio para barra inferior */
 }
 
 .swiper-pagination-bullet {
@@ -335,10 +338,10 @@ ion-content {
     font-size: 16px;
   }
   .prototype-img {
-    width: 150px; /* Tamaño ajustado para pantallas grandes */
+    width: 150px;
   }
   .feels-like {
-    font-size: 20px; /* Ajuste para pantallas grandes */
+    font-size: 20px;
   }
   .icon-text {
     font-size: 10px;

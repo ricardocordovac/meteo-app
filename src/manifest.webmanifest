@@ -1,4 +1,11 @@
 {
+  "name": "meteo-app",
+  "short_name": "Meteo",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
   "icons": [
     {
       "src": "assets/icons/icon-48.webp",

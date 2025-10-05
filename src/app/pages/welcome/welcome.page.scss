@@ -137,12 +137,13 @@ ion-content {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 20px;
+  margin-top: 10px;
   z-index: 2;
 }
 
 .prototype-img {
-  width: 200px;
+  width: 150px;
+  height: 150px;
   height: auto;
   object-fit: contain;
 }

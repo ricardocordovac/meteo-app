@@ -103,7 +103,7 @@ ion-content {
   justify-content: center;
   align-items: center;
   background: transparent;
-  padding: calc(var(--ion-safe-area-top, 0px) + 20px) 0 20px 0; /* Ajuste para barra superior e inferior */
+  padding: calc(var(--ion-safe-area-top, 0px) + 30px) 0 20px 0; /* Aumentado 10px en padding-top */
 }
 
 .location {
@@ -137,7 +137,7 @@ ion-content {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 20px; /* Aumentado de 10px a 20px para más espacio */
+  margin-top: 20px;
   z-index: 2;
 }
 

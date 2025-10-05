@@ -160,7 +160,7 @@ export class WelcomePage implements OnInit, AfterViewInit {
     }
   }
 
-mapWeatherToBackgroundAccesories(item: any): { background: string, accessories: string[] } {
+  mapWeatherToBackgroundAccesories(item: any): { background: string, accessories: string[] } {
     const weatherCode = Number(item.weathercode ?? -1);
     const isDay = Number(item.is_day ?? 1);
     const cloudcover = Number(item.cloudcover ?? 0);
@@ -172,54 +172,21 @@ mapWeatherToBackgroundAccesories(item: any): { background: string, accessories: 
     const relativeHumidity = Number(item.relative_humidity_2m ?? 0);
     const apparentTemperature = Number(item.apparent_temperature ?? 0);
 
+    // Definir constantes dentro de la función (ajustar según tu proyecto)
+    const WIND_SPEED_THRESHOLD = 15; // Umbral para viento fuerte (m/s)
+    const TEMPERATURE_COLD_THRESHOLD = 10; // Ejemplo, ajusta si tienes un valor
+    const APPARENT_TEMPERATURE_COLD_THRESHOLD = 5; // Ejemplo, ajusta si tienes un valor
+    const TEMPERATURE_VERY_COLD_THRESHOLD = 0; // Ejemplo, ajusta si tienes un valor
+    const VISIBILITY_FOG_THRESHOLD = 1000; // Ejemplo, ajusta si tienes un valor
+    const HUMIDITY_FOG_THRESHOLD = 90; // Ejemplo, ajusta si tienes un valor
+    const TEMPERATURE_HOT_THRESHOLD = 25; // Ejemplo, ajusta si tienes un valor
+    const CLOUDCOVER_CLEAR_THRESHOLD = 20; // Ejemplo, ajusta si tienes un valor
+    const WIND_SPEED_CALM_THRESHOLD = 5; // Ejemplo, ajusta si tienes un valor
+
     let background = 'eliminar.png'; // Fallback
     const accessories: string[] = [];
 
-    // Tormenta
-    if ([95, 96, 99].includes(weatherCode)) {
-      background = 'tormenta_thunder.png';
-      accessories.push('paraguas', 'impermeable');
-    }
-
-    // Lluvia
-    if ([61, 63, 65, 80, 81, 82].includes(weatherCode)) {
-      background = 'lluvia_rain.png';
-      accessories.push('paraguas', 'impermeable');
-      if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) {
-        accessories.push('abrigo-polar'); // Ajustado a nombre de fichero
-      }
-    }
-
-    // Llovizna
-    if ([51, 53, 55].includes(weatherCode)) {
-      background = 'llovisnaDrizzle.png';
-      accessories.push('paraguas');
-    }
-
-    // Nieve
-    if ([71, 73, 75, 77, 85, 86].includes(weatherCode)) {
-      background = 'helada_escarcha.png';
-      accessories.push('abrigo-polar', 'botas'); // Ajustado a nombre de fichero
-    }
-
-    // Escarcha sin precipitación
-    if (temperature <= TEMPERATURE_VERY_COLD_THRESHOLD && precipitation === 0 && [0, 1, 2, 3].includes(weatherCode)) {
-      background = 'helada_escarcha2.png';
-      accessories.push('bufanda', 'guantes');
-    }
-
-    // Niebla
-    if ([45, 48].includes(weatherCode) || visibility < VISIBILITY_FOG_THRESHOLD || relativeHumidity > HUMIDITY_FOG_THRESHOLD) {
-      background = 'nieblafog.png';
-      accessories.push('bufanda');
-    }
-
-    // Bruma / Calima
-    if ([0, 1, 2].includes(weatherCode) && temperature > TEMPERATURE_HOT_THRESHOLD && cloudcover < CLOUDCOVER_CLEAR_THRESHOLD && windSpeed < WIND_SPEED_CALM_THRESHOLD) {
-      background = 'bruma_calima.png';
-    }
-
-    // Viento fuerte
+    // Viento fuerte (prioridad alta)
     if (windSpeed > WIND_SPEED_THRESHOLD) {
       background = 'vientofuerte.png';
       accessories.push('cortaviento');
@@ -227,41 +194,72 @@ mapWeatherToBackgroundAccesories(item: any): { background: string, accessories: 
         accessories.push('bufanda');
       }
       if (temperature < TEMPERATURE_VERY_COLD_THRESHOLD || apparentTemperature < TEMPERATURE_VERY_COLD_THRESHOLD) {
-        accessories.push('abrigo-polar'); // Ajustado a nombre de fichero
+        accessories.push('abrigo-polar');
       }
     }
-
-    // Noche despejada
-    if (weatherCode === 0 && isDay === 0) {
+    // Noche despejada (solo si no hay viento fuerte)
+    else if (weatherCode === 0 && isDay === 0) {
       background = 'nochedespejada.png';
     }
-
     // Noche nublada
-    if ((weatherCode === 3 || weatherCode >= 61) && isDay === 0) {
+    else if ((weatherCode === 3 || weatherCode >= 61) && isDay === 0) {
       background = 'nublado_cloudy.png';
       accessories.push('bufanda');
     }
-
-    // Despejado
-    if (weatherCode === 0 && isDay === 1) {
+    // Despejado (día)
+    else if (weatherCode === 0 && isDay === 1) {
       background = 'despejado_clear.png';
     }
-
     // Soleado
-    if ((weatherCode === 1 || weatherCode === 2) && cloudcover < CLOUDCOVER_CLEAR_THRESHOLD && isDay === 1) {
+    else if ((weatherCode === 1 || weatherCode === 2) && cloudcover < CLOUDCOVER_CLEAR_THRESHOLD && isDay === 1) {
       background = 'soleado_sunny.png';
       accessories.push('gafas', 'gorra');
     }
-
     // Parcialmente nublado
-    if (weatherCode === 2 && cloudcover >= CLOUDCOVER_CLEAR_THRESHOLD && isDay === 1) {
+    else if (weatherCode === 2 && cloudcover >= CLOUDCOVER_CLEAR_THRESHOLD && isDay === 1) {
       background = 'parcialmentenublado.png';
     }
-
-    // Nublado
-    if (weatherCode === 3 && isDay === 1) {
+    // Nublado (día)
+    else if (weatherCode === 3 && isDay === 1) {
       background = 'nublado_cloudy.png';
       accessories.push('bufanda');
+    }
+    // Tormenta
+    else if ([95, 96, 99].includes(weatherCode)) {
+      background = 'tormenta_thunder.png';
+      accessories.push('paraguas', 'impermeable');
+    }
+    // Lluvia
+    else if ([61, 63, 65, 80, 81, 82].includes(weatherCode)) {
+      background = 'lluvia_rain.png';
+      accessories.push('paraguas', 'impermeable');
+      if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) {
+        accessories.push('abrigo-polar');
+      }
+    }
+    // Llovizna
+    else if ([51, 53, 55].includes(weatherCode)) {
+      background = 'llovisnaDrizzle.png';
+      accessories.push('paraguas');
+    }
+    // Nieve
+    else if ([71, 73, 75, 77, 85, 86].includes(weatherCode)) {
+      background = 'helada_escarcha.png';
+      accessories.push('abrigo-polar', 'botas');
+    }
+    // Escarcha sin precipitación
+    else if (temperature <= TEMPERATURE_VERY_COLD_THRESHOLD && precipitation === 0 && [0, 1, 2, 3].includes(weatherCode)) {
+      background = 'helada_escarcha2.png';
+      accessories.push('bufanda', 'guantes');
+    }
+    // Niebla
+    else if ([45, 48].includes(weatherCode) || visibility < VISIBILITY_FOG_THRESHOLD || relativeHumidity > HUMIDITY_FOG_THRESHOLD) {
+      background = 'nieblafog.png';
+      accessories.push('bufanda');
+    }
+    // Bruma / Calima
+    else if ([0, 1, 2].includes(weatherCode) && temperature > TEMPERATURE_HOT_THRESHOLD && cloudcover < CLOUDCOVER_CLEAR_THRESHOLD && windSpeed < WIND_SPEED_CALM_THRESHOLD) {
+      background = 'bruma_calima.png';
     }
 
     // Remove duplicates
@@ -270,6 +268,117 @@ mapWeatherToBackgroundAccesories(item: any): { background: string, accessories: 
       accessories: [...new Set(accessories)].filter(acc => acc)
     };
   }
+
+// mapWeatherToBackgroundAccesories(item: any): { background: string, accessories: string[] } {
+//     const weatherCode = Number(item.weathercode ?? -1);
+//     const isDay = Number(item.is_day ?? 1);
+//     const cloudcover = Number(item.cloudcover ?? 0);
+//     const temperature = Number(item.temperature_2m ?? 0);
+//     const precipitation = Number(item.precipitation ?? 0);
+//     const windSpeed = Number(item.wind_speed_10m ?? 0);
+//     const visibility = Number(item.visibility ?? 100000); // en metros
+//     const precipitationProbability = Number(item.precipitation_probability ?? 0);
+//     const relativeHumidity = Number(item.relative_humidity_2m ?? 0);
+//     const apparentTemperature = Number(item.apparent_temperature ?? 0);
+
+//     let background = 'eliminar.png'; // Fallback
+//     const accessories: string[] = [];
+
+//     // Tormenta
+//     if ([95, 96, 99].includes(weatherCode)) {
+//       background = 'tormenta_thunder.png';
+//       accessories.push('paraguas', 'impermeable');
+//     }
+
+//     // Lluvia
+//     if ([61, 63, 65, 80, 81, 82].includes(weatherCode)) {
+//       background = 'lluvia_rain.png';
+//       accessories.push('paraguas', 'impermeable');
+//       if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) {
+//         accessories.push('abrigo-polar'); // Ajustado a nombre de fichero
+//       }
+//     }
+
+//     // Llovizna
+//     if ([51, 53, 55].includes(weatherCode)) {
+//       background = 'llovisnaDrizzle.png';
+//       accessories.push('paraguas');
+//     }
+
+//     // Nieve
+//     if ([71, 73, 75, 77, 85, 86].includes(weatherCode)) {
+//       background = 'helada_escarcha.png';
+//       accessories.push('abrigo-polar', 'botas'); // Ajustado a nombre de fichero
+//     }
+
+//     // Escarcha sin precipitación
+//     if (temperature <= TEMPERATURE_VERY_COLD_THRESHOLD && precipitation === 0 && [0, 1, 2, 3].includes(weatherCode)) {
+//       background = 'helada_escarcha2.png';
+//       accessories.push('bufanda', 'guantes');
+//     }
+
+//     // Niebla
+//     if ([45, 48].includes(weatherCode) || visibility < VISIBILITY_FOG_THRESHOLD || relativeHumidity > HUMIDITY_FOG_THRESHOLD) {
+//       background = 'nieblafog.png';
+//       accessories.push('bufanda');
+//     }
+
+//     // Bruma / Calima
+//     if ([0, 1, 2].includes(weatherCode) && temperature > TEMPERATURE_HOT_THRESHOLD && cloudcover < CLOUDCOVER_CLEAR_THRESHOLD && windSpeed < WIND_SPEED_CALM_THRESHOLD) {
+//       background = 'bruma_calima.png';
+//     }
+
+//     // Viento fuerte
+//     if (windSpeed > WIND_SPEED_THRESHOLD) {
+//       background = 'vientofuerte.png';
+//       accessories.push('cortaviento');
+//       if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) {
+//         accessories.push('bufanda');
+//       }
+//       if (temperature < TEMPERATURE_VERY_COLD_THRESHOLD || apparentTemperature < TEMPERATURE_VERY_COLD_THRESHOLD) {
+//         accessories.push('abrigo-polar'); // Ajustado a nombre de fichero
+//       }
+//     }
+
+//     // Noche despejada
+//     if (weatherCode === 0 && isDay === 0) {
+//       background = 'nochedespejada.png';
+//     }
+
+//     // Noche nublada
+//     if ((weatherCode === 3 || weatherCode >= 61) && isDay === 0) {
+//       background = 'nublado_cloudy.png';
+//       accessories.push('bufanda');
+//     }
+
+//     // Despejado
+//     if (weatherCode === 0 && isDay === 1) {
+//       background = 'despejado_clear.png';
+//     }
+
+//     // Soleado
+//     if ((weatherCode === 1 || weatherCode === 2) && cloudcover < CLOUDCOVER_CLEAR_THRESHOLD && isDay === 1) {
+//       background = 'soleado_sunny.png';
+//       accessories.push('gafas', 'gorra');
+//     }
+
+//     // Parcialmente nublado
+//     if (weatherCode === 2 && cloudcover >= CLOUDCOVER_CLEAR_THRESHOLD && isDay === 1) {
+//       background = 'parcialmentenublado.png';
+//     }
+
+//     // Nublado
+//     if (weatherCode === 3 && isDay === 1) {
+//       background = 'nublado_cloudy.png';
+//       accessories.push('bufanda');
+//     }
+
+//     // Remove duplicates
+//     return {
+//       background: background,
+//       accessories: [...new Set(accessories)].filter(acc => acc)
+//     };
+//   }
 
   // mapWeatherToBackgroundAccesories(item: any): { background: string, accessories: string[] } {
   //   const weatherCode = Number(item.weathercode ?? -1);

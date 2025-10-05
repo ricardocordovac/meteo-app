@@ -91,7 +91,7 @@ ion-content {
   position: absolute; /* Posicionar en la parte superior */
   top: 20px; /* Padding desde el borde superior */
   width: 100%;
-  min-height: 100px; /* Reducido para mejor espaciado */
+  min-height: 250px; /* Mantener espacio para iconos */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -126,6 +126,69 @@ ion-content {
   z-index: 2;
 }
 
+
+.prototype-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 40px; /* Aumentado de 20px a 40px para bajar una línea más */
+  z-index: 2;
+}
+
+.prototype-img {
+  width: 200px; /* Ajusta el tamaño según necesites */
+  height: auto;
+  object-fit: contain;
+}
+
+
+
+.feels-like {
+  font-size: 24px;
+  color: #ffffff;
+  font-family: 'Roboto', sans-serif;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  margin-top: 20px; /* Espacio debajo de la imagen */
+  z-index: 2;
+}
+
+.feels-like strong {
+  font-weight: bold; /* Negrita para apparentTemp */
+}
+
+
+.weather-icons {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin-top: 15px; /* Espacio entre feels-like e iconos */
+  width: 100%;
+  max-width: 300px;
+}
+
+.icon-left, .icon-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 20px;
+}
+
+.weather-icon {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
+.icon-text {
+  font-size: 14px;
+  color: #ffffff;
+  font-family: 'Roboto', sans-serif;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  margin-top: 5px;
+}
+
 .loader-container {
   display: flex;
   justify-content: center;
@@ -156,11 +219,20 @@ ion-content {
   width: 100%; /* Ocupar todo el ancho */
 }
 
+.temperature-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px; /* Espacio antes de la temperatura */
+  z-index: 2;
+}
+
 .temperature {
-  font-size: 8vh; /* 1/5 de la altura de la pantalla */
-  color: #ffffff; /* Blanco puro */
-  font-family: 'Roboto', sans-serif; /* Fuente meteorológica */
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Sombra para legibilidad */
+  font-size: 6vh; /* Reducido de 8vh para uniformidad */
+  color: #ffffff;
+  font-family: 'Roboto', sans-serif;
+  font-weight: lighter; /* Variante más delgada (puede usar Roboto-Light si está disponible) */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
   z-index: 2;
 }
 
@@ -234,6 +306,21 @@ ion-content {
   opacity: 1;
 }
 
+.accessories-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  z-index: 2;
+}
+
+.accessory-icon {
+  width: 100px;
+  height: 100px;
+  margin: 5px;
+}
+
 @media (min-width: 768px) {
   .temperature {
     font-size: 32px;
@@ -246,5 +333,14 @@ ion-content {
   }
   .date-time {
     font-size: 16px;
+  }
+  .prototype-img {
+    width: 150px; /* Tamaño ajustado para pantallas grandes */
+  }
+  .feels-like {
+    font-size: 20px; /* Ajuste para pantallas grandes */
+  }
+  .icon-text {
+    font-size: 10px;
   }
 }

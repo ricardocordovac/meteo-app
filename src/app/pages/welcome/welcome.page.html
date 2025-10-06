@@ -34,17 +34,18 @@
                 Se siente como <strong>{{ data.apparentTemp || 'N/A' }}</strong> °C
               </div>
 
-               <div class="weather-icons">
-                  <div class="icon-left">
-                    <img src="assets/icons/lluvia64.png" alt="Precipitation" class="weather-icon">
+                 <div class="weather-icons">
+                  <div class="icon-item">
+                    <img [ngClass]="{'weather-icon': true, 'day': data.isDay === 1, 'night': data.isDay === 0}"
+                         src="assets/icons/lluvia64.png" alt="Precipitation">
                     <div class="icon-text">{{ data.precipitation || 'N/A' }} mm</div>
                   </div>
-                  <div class="icon-right">
-                    <img src="assets/icons/viento64.png" alt="Wind Speed" class="weather-icon">
+                  <div class="icon-item">
+                    <img [ngClass]="{'weather-icon': true, 'day': data.isDay === 1, 'night': data.isDay === 0}"
+                         src="assets/icons/viento64.png" alt="Wind Speed">
                     <div class="icon-text">{{ data.windSpeed || 'N/A' }} km/h</div>
                   </div>
                 </div>
-
             </div>
             <div class="bottom-content">
               <!-- <div class="temperature">{{ data.temp || 'N/A' }} °C</div>
@@ -61,38 +62,4 @@
   </div>
 </ion-content>
 
-<!-- <ion-content fullscreen="true">
-  <div *ngIf="!loader" class="center_div-loader">
-    <div class="ripple-container">
-      <div class="thumb-lg ripple-trigger">
-        <img src="assets/backgrounds/weather.svg" style="height:50px;width:50px" class="rounded_img">
-      </div>
-      <div class="ripple-1"></div>
-      <div class="ripple-2"></div>
-    </div>
-  </div>
-
-  <div *ngIf="loader" class="welcome-screen">
-    <div class="swiper" #swiper>
-      <div class="swiper-wrapper">
-        <div class="swiper-slide" *ngFor="let data of weatherData">
-          <div class="slide-content" [style.background-image]="'url(/assets/backgrounds/' + data.background + ')'">
-            <div class="top-content">
-              <div class="location">
-                <ion-icon name="location-outline"></ion-icon>
-                {{ data.location || 'N/A' | titlecase }}
-              </div>
-              <div class="date-time">{{ (data.date || 'N/A') + ' ' + (data.time || 'N/A') }}</div>
-            </div>
-            <div class="bottom-content">
-              <div class="temperature">{{ data.temp || 'N/A' }} °C</div>
-              <div class="rain">{{ data.rain || '0.0' }} mm</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="swiper-pagination"></div>
-    </div>
-  </div>
-</ion-content> -->
 

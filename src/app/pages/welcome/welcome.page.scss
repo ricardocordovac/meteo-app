@@ -181,7 +181,19 @@ ion-content {
   width: 64px;
   height: 64px;
   object-fit: contain;
+  transition: color 0.3s ease; /* Suaviza el cambio de color */
 }
+
+.weather-icon.day {
+  color: #333333; /* Gris oscuro para fondos diurnos luminosos */
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5); /* Sombra para contraste */
+}
+
+.weather-icon.night {
+  color: #ffffff; /* Blanco para fondos nocturnos oscuros */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Sombra para definición */
+}
+
 
 .icon-text {
   font-size: 14px;

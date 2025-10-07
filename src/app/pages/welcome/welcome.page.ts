@@ -214,7 +214,7 @@ mapWeatherToBackgroundAccesories(item: any): { background: string, accessories: 
     }
     // Noche nublada
     else if ((weatherCode === 3 || weatherCode >= 61) && isDay === 0) {
-      background = 'nublado_cloudy.png';
+      background = 'noche_nublada_luna.png';
       accessories.push('bufanda');
     }
     // Despejado (día)

@@ -21,4 +21,5 @@ export interface WeatherData {
   soil_moisture_0_to_10cm?: number;
   soil_temperature_0_to_10cm?: number;
   dewpoint_2m?: number;
+  background_image_url?: string;
 }

@@ -33,6 +33,7 @@ export class MeteoroService {
         return {
           ...matchedCondition,
           bbackground: matchedCondition.image_url || `${matchedCondition.tipo_clima}.jpg`,
+          background_image_url: data.background_image_url ||  '/assets/backgrounds/soleado.jpg',
           description: matchedCondition.descripcion,
           location: data.location,
           temp: data.temperature_2m || 'N/A',

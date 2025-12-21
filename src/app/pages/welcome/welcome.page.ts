@@ -230,6 +230,7 @@ export class WelcomePage implements OnInit, AfterViewInit {
           date: createdAt,
           time: createdAt?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) || 'N/A',
           background: data?.background || '/assets/backgrounds/soleado.jpg',
+          background_image_url: data?.background_image_url || '/assets/backgrounds/soleado.jpg',
           description: data?.description || 'N/A'
         };
       })
@@ -244,6 +245,7 @@ export class WelcomePage implements OnInit, AfterViewInit {
         date: null,
         time: 'N/A',
         background: '/assets/backgrounds/soleado.jpg',
+        background_image_url: '/assets/backgrounds/soleado.jpg',
         description: 'N/A'
       }));
     }
@@ -264,6 +266,7 @@ export class WelcomePage implements OnInit, AfterViewInit {
       date: null,
       time: 'N/A',
       background: '/assets/backgrounds/soleado.jpg',
+      background_image_url: '/assets/backgrounds/soleado.jpg',
       description: 'N/A'
     }));
     this.cdr.detectChanges();

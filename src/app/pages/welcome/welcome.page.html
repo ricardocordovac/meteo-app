@@ -13,7 +13,7 @@
     <div class="swiper" #swiper>
       <div class="swiper-wrapper">
         <div class="swiper-slide" *ngFor="let data of weatherData">
-          <div class="slide-content" [style.background-image]="'url(/assets/backgrounds/' + data.background + ')'">
+          <div class="slide-content" [style.background-image]="'url(' + data.background + ')'">
             <div class="top-content">
 
               <div class="location">

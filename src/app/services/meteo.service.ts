@@ -106,4 +106,18 @@ export class MeteoroService {
       return weathercode >= min && weathercode <= (max || min);
     });
   }
+
+  // === OBTENER CLIMA ACTUAL (NUEVO MÉTODO) ===
+  async getCurrentWeather(location: string): Promise<WeatherData | null> {
+    try {
+      const weatherData = await this.supabaseService.getDataByLocation(location);
+      if (!weatherData.length) return null;
+
+      return weatherData[0] as WeatherData;
+    } catch (error) {
+      console.error('Error obteniendo clima actual:', error);
+      return null;
+    }
+  }
+
 }

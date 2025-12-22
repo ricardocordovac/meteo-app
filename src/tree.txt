@@ -1,0 +1,421 @@
+Listado de rutas de carpetas
+El n£mero de serie del volumen es EEA9-7C90
+C:.
+|   favicon.ico
+|   favicon.png
+|   global.scss
+|   index.html
+|   main.ts
+|   manifest.webmanifest
+|   polyfills.ts
+|   test.ts
+|   tree.txt
+|   zone-flags.ts
+|   
++---app
+|   |   app-routing.module.ts
+|   |   app.component.html
+|   |   app.component.scss
+|   |   app.component.spec.ts
+|   |   app.component.ts
+|   |   app.module.ts
+|   |   
+|   +---components
+|   |   |   components.module.ts
+|   |   |   
+|   |   \---cards
+|   |           cards.component.html
+|   |           cards.component.scss
+|   |           cards.component.spec.ts
+|   |           cards.component.ts
+|   |           
+|   +---explore-container
+|   |       explore-container.component.html
+|   |       explore-container.component.scss
+|   |       explore-container.component.spec.ts
+|   |       explore-container.component.ts
+|   |       
+|   +---interfaces
+|   |       weather-data.interface.ts
+|   |       
+|   +---pages
+|   |   +---home
+|   |   |       home-routing.module.ts
+|   |   |       home.module.ts
+|   |   |       home.page.html
+|   |   |       home.page.scss
+|   |   |       home.page.spec.ts
+|   |   |       home.page.ts
+|   |   |       
+|   |   +---tabs
+|   |   |       tabs-routing.module.ts
+|   |   |       tabs.module.ts
+|   |   |       tabs.page.html
+|   |   |       tabs.page.scss
+|   |   |       tabs.page.spec.ts
+|   |   |       tabs.page.ts
+|   |   |       
+|   |   \---welcome
+|   |           welcome-routing.module.ts
+|   |           welcome.module.ts
+|   |           welcome.page.html
+|   |           welcome.page.scss
+|   |           welcome.page.spec.ts
+|   |           welcome.page.ts
+|   |           
+|   \---services
+|           meteo.service.ts
+|           supabase.service.ts
+|           util.service.spec.ts
+|           util.service.ts
+|           
++---assets
+|   |   shapes.svg
+|   |   
+|   +---backgrounds
+|   |   |   calima.jpg
+|   |   |   calma.jpg
+|   |   |   caluroso.jpg
+|   |   |   clara.jpg
+|   |   |   crepusculo.jpg
+|   |   |   CyD_TmCo_PrF_ViB_VsNi_all.webp
+|   |   |   CyD_TmCo_PrG_ViFF_VsNi_all.webp
+|   |   |   CyD_TmCo_PrLL_ViM_VsNi_all.webp
+|   |   |   CyD_TmCo_PrLL_ViNA_VsE_all.webp
+|   |   |   CyD_TmCo_PrM_ViM_VsR_all.webp
+|   |   |   CyD_TmCo_PrM_ViNA_VsNi_all.webp
+|   |   |   CyD_TmCo_PrNA_ViB_VsNi_all.webp
+|   |   |   CyD_TmCo_PrNA_ViFF_VsR_all.webp
+|   |   |   CyD_TmCo_PrS_ViC_VsE_all.webp
+|   |   |   CyD_TmCo_PrS_ViFF_VsE_all.webp
+|   |   |   CyD_TmC_PrF_ViB_VsR_all.webp
+|   |   |   CyD_TmC_PrF_ViFF_VsNi_all.webp
+|   |   |   CyD_TmC_PrG_ViFF_VsR_all.webp
+|   |   |   CyD_TmC_PrLL_ViM_VsR_all.webp
+|   |   |   CyD_TmC_PrLL_ViNA_VsNi_all.webp
+|   |   |   CyD_TmC_PrM_ViNA_VsNi_all.webp
+|   |   |   CyD_TmC_PrNA_ViB_VsR_all.webp
+|   |   |   CyD_TmC_PrNA_ViFF_VsE_all.webp
+|   |   |   CyD_TmC_PrS_ViB_VsE_all.webp
+|   |   |   CyD_TmC_PrS_ViFF_VsR_all.webp
+|   |   |   CyD_TmC_PrS_ViM_VsR_all.webp
+|   |   |   CyD_TmC_PrS_ViNA_VsNi_all.webp
+|   |   |   CyD_TmF_PrF_ViFF_VsR_all.webp
+|   |   |   CyD_TmF_PrG_ViNA_VsR_all.webp
+|   |   |   CyD_TmF_PrLL_ViC_VsNi_all.webp
+|   |   |   CyD_TmF_PrLL_ViFF_VsNi_all.webp
+|   |   |   CyD_TmF_PrLL_ViFF_VsR_all.webp
+|   |   |   CyD_TmF_PrM_ViC_VsR_all.webp
+|   |   |   CyD_TmF_PrNA_ViB_VsE_all.webp
+|   |   |   CyD_TmF_PrNA_ViM_VsR_all.webp
+|   |   |   CyD_TmF_PrS_ViB_VsE_all.webp
+|   |   |   CyD_TmF_PrS_ViFF_VsNi_all.webp
+|   |   |   CyD_TmF_PrS_ViNA_VsE_all.webp
+|   |   |   CyD_TmM_PrF_ViC_VsNi_all.webp
+|   |   |   CyD_TmM_PrG_ViB_VsNi_all.webp
+|   |   |   CyD_TmM_PrLL_ViC_VsR_all.webp
+|   |   |   CyD_TmM_PrLL_ViFF_VsR_all.webp
+|   |   |   CyD_TmM_PrLL_ViM_VsE_all.webp
+|   |   |   CyD_TmM_PrM_ViM_VsR_all.webp
+|   |   |   CyD_TmM_PrNA_ViC_VsE_all.webp
+|   |   |   CyD_TmM_PrNA_ViFF_VsE_all.webp
+|   |   |   CyD_TmM_PrS_ViC_VsNi_all.webp
+|   |   |   CyD_TmM_PrS_ViFF_VsE_all.webp
+|   |   |   CyD_TmM_PrS_ViNA_VsE_all.webp
+|   |   |   CyD_TmW_PrF_ViFF_VsR_all.webp
+|   |   |   CyD_TmW_PrG_ViB_VsR_all.webp
+|   |   |   CyD_TmW_PrG_ViNA_VsNi_all.webp
+|   |   |   CyD_TmW_PrLL_ViB_VsR_all.webp
+|   |   |   CyD_TmW_PrLL_ViFF_VsE_all.webp
+|   |   |   CyD_TmW_PrM_ViB_VsNi_all.webp
+|   |   |   CyD_TmW_PrM_ViFF_VsE_all.webp
+|   |   |   CyD_TmW_PrNA_ViFF_VsNi_all.webp
+|   |   |   CyD_TmW_PrNA_ViNA_VsNi_all.webp
+|   |   |   CyD_TmW_PrS_ViC_VsE_all.webp
+|   |   |   CyD_TmW_PrS_ViNA_VsNi_all.webp
+|   |   |   CyN_TmCo_PrF_ViB_VsR_all.webp
+|   |   |   CyN_TmCo_PrF_ViFF_VsNi_all.webp
+|   |   |   CyN_TmCo_PrG_ViB_VsR_all.webp
+|   |   |   CyN_TmCo_PrG_ViNA_VsE_all.webp
+|   |   |   CyN_TmCo_PrLL_ViC_VsR_all.webp
+|   |   |   CyN_TmCo_PrLL_ViFF_VsR_all.webp
+|   |   |   CyN_TmCo_PrM_ViB_VsNi_all.webp
+|   |   |   CyN_TmCo_PrNA_ViC_VsR_all.webp
+|   |   |   CyN_TmCo_PrNA_ViFF_VsNi_all.webp
+|   |   |   CyN_TmCo_PrN_ViC_VsNi_all.webp
+|   |   |   CyN_TmC_PrF_ViM_VsR_all.webp
+|   |   |   CyN_TmC_PrG_ViB_VsNi_all.webp
+|   |   |   CyN_TmC_PrG_ViFF_VsR_all.webp
+|   |   |   CyN_TmC_PrLL_ViB_VsR_all.webp
+|   |   |   CyN_TmC_PrLL_ViFF_VsR_all.webp
+|   |   |   CyN_TmC_PrLL_ViNA_VsE_all.webp
+|   |   |   CyN_TmC_PrM_ViFF_VsR_all.webp
+|   |   |   CyN_TmC_PrNA_ViFF_VsNi_all.webp
+|   |   |   CyN_TmC_PrNA_ViM_VsE_all.webp
+|   |   |   CyN_TmC_PrS_ViB_VsN_all.webp
+|   |   |   CyN_TmC_PrS_ViFF_VsNi_all.webp
+|   |   |   CyN_TmF_PrF_ViM_VsNi_all.webp
+|   |   |   CyN_TmF_PrG_ViC_VsR_all.webp
+|   |   |   CyN_TmF_PrG_ViFF_VsNi_all.webp
+|   |   |   CyN_TmF_PrLL_ViB_VsNi_all.webp
+|   |   |   CyN_TmF_PrLL_ViNA_VsE_all.webp
+|   |   |   CyN_TmF_PrM_ViFF_VsE_all.webp
+|   |   |   CyN_TmF_PrM_ViM_VsR_all.webp
+|   |   |   CyN_TmF_PrNA_ViC_VsNi_all.webp
+|   |   |   CyN_TmF_PrNA_ViNA_VsE_all.webp
+|   |   |   CyN_TmF_PrS_ViB_VsE_all.webp
+|   |   |   CyN_TmF_PrS_ViFF_VsE_all.webp
+|   |   |   CyN_TmM_PrF_ViB_VsNi_all.webp
+|   |   |   CyN_TmM_PrG_ViC_VsR_all.webp
+|   |   |   CyN_TmM_PrG_ViFF_VsR_all.webp
+|   |   |   CyN_TmM_PrLL_ViC_VsR_all.webp
+|   |   |   CyN_TmM_PrLL_ViFF_VsE_all.webp
+|   |   |   CyN_TmM_PrM_ViB_VsE_all.webp
+|   |   |   CyN_TmM_PrM_ViNA_VsNi_all.webp
+|   |   |   CyN_TmM_PrNA_ViB_VsR_all.webp
+|   |   |   CyN_TmM_PrNA_ViNA_VsE_all.webp
+|   |   |   CyN_TmM_PrS_ViN_VsN_all.webp
+|   |   |   CyN_TmW_PrF_ViNA_VsE_all.webp
+|   |   |   CyN_TmW_PrG_ViFF_VsNi_all.webp
+|   |   |   CyN_TmW_PrLL_ViFF_VsNi_all.webp
+|   |   |   CyN_TmW_PrLL_ViNA_VsR_all.webp
+|   |   |   CyN_TmW_PrM_ViC_VsNi_all.webp
+|   |   |   CyN_TmW_PrM_ViFF_VsR_all.webp
+|   |   |   CyN_TmW_PrNA_ViB_VsE_all.webp
+|   |   |   CyN_TmW_PrNA_ViFF_VsE_all.webp
+|   |   |   CyN_TmW_PrS_ViC_VsE_all.webp
+|   |   |   CyN_TmW_PrS_ViC_VsNi_all.webp
+|   |   |   CyT_TmCo_PrF_ViM_VsR_all.webp
+|   |   |   CyT_TmCo_PrG_ViFF_VsNi_all.webp
+|   |   |   CyT_TmCo_PrLL_ViC_VsNi_all.webp
+|   |   |   CyT_TmCo_PrLL_ViFF_VsE_all.webp
+|   |   |   CyT_TmCo_PrM_ViNA_VsNi_all.webp
+|   |   |   CyT_TmCo_PrNA_ViB_VsR_all.webp
+|   |   |   CyT_TmCo_PrS_ViC_VsE_all.webp
+|   |   |   CyT_TmCo_PrS_ViNA_VsE_all.webp
+|   |   |   CyT_TmC_PrF_ViNA_VsNi_all.webp
+|   |   |   CyT_TmC_PrG_ViM_VsR_all.webp
+|   |   |   CyT_TmC_PrLL_ViFF_VsNi_all.webp
+|   |   |   CyT_TmC_PrLL_ViM_VsR_all.webp
+|   |   |   CyT_TmC_PrM_ViB_VsR_all.webp
+|   |   |   CyT_TmC_PrM_ViFF_VsNi_all.webp
+|   |   |   CyT_TmC_PrNA_ViC_VsE_all.webp
+|   |   |   CyT_TmC_PrNA_ViFF_VsE_all.webp
+|   |   |   CyT_TmC_PrS_ViB_VsE_all.webp
+|   |   |   CyT_TmF_PrF_ViC_VsR_all.webp
+|   |   |   CyT_TmF_PrG_ViFF_VsR_all.webp
+|   |   |   CyT_TmF_PrG_ViM_VsR_all.webp
+|   |   |   CyT_TmF_PrLL_ViFF_VsE_all.webp
+|   |   |   CyT_TmF_PrM_ViB_VsR_all.webp
+|   |   |   CyT_TmF_PrM_ViFF_VsNi_all.webp
+|   |   |   CyT_TmF_PrNA_ViC_VsE_all.webp
+|   |   |   CyT_TmF_PrNA_ViFF_VsNi_all.webp
+|   |   |   CyT_TmF_PrS_ViC_VsR_all.webp
+|   |   |   CyT_TmM_PrF_ViC_VsNi_all.webp
+|   |   |   CyT_TmM_PrG_ViFF_VsNi_all.webp
+|   |   |   CyT_TmM_PrG_ViNA_VsR_all.webp
+|   |   |   CyT_TmM_PrLL_ViFF_VsNi_all.webp
+|   |   |   CyT_TmM_PrLL_ViNA_VsE_all.webp
+|   |   |   CyT_TmM_PrM_ViB_VsNi_all.webp
+|   |   |   CyT_TmM_PrNA_ViFF_VsR_all.webp
+|   |   |   CyT_TmM_PrS_ViNA_VsE_all.webp
+|   |   |   CyT_TmM_PrS_ViNA_VsR_all.webp
+|   |   |   CyT_TmW_PrF_ViM_VsR_all.webp
+|   |   |   CyT_TmW_PrG_ViC_VsR_all.webp
+|   |   |   CyT_TmW_PrLL_ViB_VsNi_all.webp
+|   |   |   CyT_TmW_PrLL_ViC_VsR_all.webp
+|   |   |   CyT_TmW_PrLL_ViNA_VsNi_all.webp
+|   |   |   CyT_TmW_PrM_ViNA_VsR_all.webp
+|   |   |   CyT_TmW_PrNA_ViB_VsNi_all.webp
+|   |   |   CyT_TmW_PrNA_ViM_VsE_all.webp
+|   |   |   CyT_TmW_PrS_ViFF_VsN_all.webp
+|   |   |   extremo.jpg
+|   |   |   frio.jpg
+|   |   |   humedad_alta.jpg
+|   |   |   humedad_baja.jpg
+|   |   |   humedad_normal.jpg
+|   |   |   lluvia_fuerte.jpg
+|   |   |   lluvia_ligera.jpg
+|   |   |   niebla.jpg
+|   |   |   nieve_intensa.jpg
+|   |   |   nieve_ligera.jpg
+|   |   |   ninguno.jpg
+|   |   |   nublado.jpg
+|   |   |   polen_alto.jpg
+|   |   |   polen_bajo.jpg
+|   |   |   prototipo.png
+|   |   |   reducida.jpg
+|   |   |   seco.jpg
+|   |   |   sin_calima.jpg
+|   |   |   sin_nieve.jpg
+|   |   |   soleado.jpg
+|   |   |   suelo_encharcado.jpg
+|   |   |   suelo_humedo.jpg
+|   |   |   suelo_seco.jpg
+|   |   |   templado.jpg
+|   |   |   tormenta.jpg
+|   |   |   uv_alto.jpg
+|   |   |   uv_bajo.jpg
+|   |   |   uv_extremo.jpg
+|   |   |   uv_moderado.jpg
+|   |   |   uv_muy_alto.jpg
+|   |   |   viento_fuerte.jpg
+|   |   |   viento_moderado.jpg
+|   |   |   weather.svg
+|   |   |   
+|   |   \---temp
+|   |           calma.jpeg
+|   |           caluroso.jpeg
+|   |           clara.jpeg
+|   |           extremo.jpeg
+|   |           helada.jpg
+|   |           humedad_alta.jpeg
+|   |           humedad_baja.jpeg
+|   |           humedad_normal.jpeg
+|   |           lluvia_fuerte.jpeg
+|   |           nieve_intensa.jpeg
+|   |           noche_estrellada.jpg
+|   |           ola_de_calor.jpg
+|   |           parcialmente_nublado.jpg
+|   |           polen_alto.jpeg
+|   |           polen_bajo.jpeg
+|   |           reducida.jpeg
+|   |           sin_calima.jpeg
+|   |           sin_nieve.jpeg
+|   |           suelo_encharcado.jpeg
+|   |           suelo_humedo.jpeg
+|   |           suelo_seco.jpeg
+|   |           uv_alto.jpeg
+|   |           uv_bajo.jpeg
+|   |           uv_extremo.jpeg
+|   |           uv_moderado.jpeg
+|   |           uv_muy_alto.jpeg
+|   |           viento_moderado.jpeg
+|   |           
+|   +---fonts
+|   |       NunitoSans-Bold.ttf
+|   |       NunitoSans-Medium.ttf
+|   |       NunitoSans-Regular.ttf
+|   |       NunitoSans-SemiBold.ttf
+|   |       
+|   +---icon
+|   |       favicon.png
+|   |       
+|   +---icons
+|   |       abrigo-polar.png
+|   |       bk_icono-bufanda.png
+|   |       botas.png
+|   |       cortaviento-abrigo-polar.png
+|   |       cortaviento-bufanda.png
+|   |       cortaviento.png
+|   |       gafas-gorra.png
+|   |       gafas.png
+|   |       gorra.png
+|   |       gorra1.png
+|   |       guantes-botas.png
+|   |       guantes.png
+|   |       guantes1.png
+|   |       icon-128.webp
+|   |       icon-192.webp
+|   |       icon-256.webp
+|   |       icon-48.webp
+|   |       icon-512.webp
+|   |       icon-72.webp
+|   |       icon-96.webp
+|   |       icono-abrigo-polar.png
+|   |       icono-botas.png
+|   |       icono-bufanda.png
+|   |       icono-cortaviento-abrigo-polar.png
+|   |       icono-cortaviento-bufanda.png
+|   |       icono-cortaviento.png
+|   |       icono-gafas-gorra.png
+|   |       icono-gafas.png
+|   |       icono-gorra.png
+|   |       icono-gorra1.png
+|   |       icono-guantes-botas.png
+|   |       icono-guantes.png
+|   |       icono-guantes1.png
+|   |       icono-impermeable.png
+|   |       icono-paraguas-abrigo.png
+|   |       icono-paraguas-impermeable.png
+|   |       icono-paraguas.png
+|   |       icono-paraguas1.png
+|   |       imgpn1.png
+|   |       impermeable.png
+|   |       lluvia32.png
+|   |       lluvia64.png
+|   |       paraguas-abrigo.png
+|   |       paraguas-impermeable.png
+|   |       paraguas.png
+|   |       paraguas1.png
+|   |       viento32.png
+|   |       viento64.png
+|   |       weather.svg
+|   |       
+|   +---images
+|   |   |   algete.png
+|   |   |   auth.png
+|   |   |   check.png
+|   |   |   close.png
+|   |   |   crown-color.png
+|   |   |   crown.png
+|   |   |   DAY.jpg
+|   |   |   elcasar.png
+|   |   |   extra-image.png
+|   |   |   favicon.ico
+|   |   |   favourite.png
+|   |   |   fingerprint.png
+|   |   |   fuentesaz.png
+|   |   |   heart.png
+|   |   |   logo.png
+|   |   |   MORNING.jpg
+|   |   |   NIGHT.jpg
+|   |   |   shapes.svg
+|   |   |   up-down.png
+|   |   |   valdeolmos.png
+|   |   |   
+|   |   +---avatar
+|   |   |       1.jpg
+|   |   |       10.jpg
+|   |   |       11.jpg
+|   |   |       12.jpg
+|   |   |       13.jpg
+|   |   |       14.jpg
+|   |   |       15.jpg
+|   |   |       16.jpg
+|   |   |       17.jpg
+|   |   |       18.jpg
+|   |   |       19.jpg
+|   |   |       2.jpg
+|   |   |       20.jpg
+|   |   |       3.jpg
+|   |   |       4.jpg
+|   |   |       5.jpg
+|   |   |       6.jpg
+|   |   |       7.jpg
+|   |   |       8.jpg
+|   |   |       9.jpg
+|   |   |       
+|   |   +---chat-extra
+|   |   |       attach.png
+|   |   |       calendar.png
+|   |   |       gif.png
+|   |   |       location-pin.png
+|   |   |       mic.png
+|   |   |       photo-camera.png
+|   |   |       
+|   |   \---sliders
+|   |           1.png
+|   |           2.png
+|   |           3.png
+|   |           
+|   \---json
+|           country.json
+|           
++---environments
+|       environment.prod.ts
+|       environment.ts
+|       
+\---theme
+        variables.scss
+        

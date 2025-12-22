@@ -49,9 +49,10 @@ async ngOnInit() {
       const current = await this.meteoService.getCurrentWeather('valdeolmos');  // Cambia pueblo si quieres
       if (current && current.background_image_url) {
         const fileName = current.background_image_url.split('/').pop();  // Extrae nombre .webp
+        const cacheBuster = new Date().getTime();  // Timestamp único
         this.backgroundStyle = {
-          'background-image': `url(/assets/backgrounds/${fileName})`,
-          'background-size': 'cover',
+        'background-image': `url(/assets/backgrounds/${fileName}?v=${cacheBuster})`,
+        'background-size': 'cover',
           'background-position': 'center',
           'background-repeat': 'no-repeat'
         };

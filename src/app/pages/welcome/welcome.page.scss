@@ -86,13 +86,14 @@ ion-content {
 .slide-content {
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  flex: 1;
-  padding-bottom: calc(var(--ion-safe-area-bottom, 0px) + 40px); /* Espacio para barra inferior */
+  padding-top: calc(var(--ion-safe-area-top, 0px) + 80px);
+  padding-bottom: calc(var(--ion-safe-area-bottom, 0px) + 40px);
 }
 
 .top-content {
@@ -106,16 +107,201 @@ ion-content {
   padding: calc(var(--ion-safe-area-top, 0px) + 80px) 0 20px 0; /* Aumentado 50px en padding-top */
 }
 
+/* NOMBRE PUEBLO */
 .location {
+  font-size: 36px;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+  margin-bottom: 20px;
+}
+// .location {
+//   font-size: 32px;
+//   color: #ffffff;
+//   font-family: 'Roboto', sans-serif;
+//   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+//   text-align: center;
+//   z-index: 2;
+//   display: flex;
+//   align-items: center;
+// }
+
+
+/* TEMPERATURA GIGANTE (RELLENA HUECO PROTOTIPO) */
+.temperature-container {
+  margin: 40px 0 30px 0;
+}
+
+.temperature {
+  font-size: 100px;  // GIGANTE
+  font-weight: 300;
+  color: #ffffff;
+  text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.9);
+  line-height: 1;
+}
+// .temperature-container {
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   margin-top: 20px;
+//   z-index: 2;
+// }
+
+// .temperature {
+//   font-size: 6vh;
+//   color: #ffffff;
+//   font-family: 'Roboto', sans-serif;
+//   font-weight: lighter;
+//   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+//   z-index: 2;
+// }
+
+/* SENSACIÓN TÉRMICA */
+.feels-like {
   font-size: 32px;
   color: #ffffff;
-  font-family: 'Roboto', sans-serif;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-  text-align: center;
-  z-index: 2;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
+  margin-bottom: 50px;
+}
+
+.feels-like strong {
+  font-weight: 700;
+}
+
+// .feels-like {
+//   font-size: 24px;
+//   color: #ffffff;
+//   font-family: 'Roboto', sans-serif;
+//   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+//   text-align: center;
+//   margin-top: 20px;
+//   z-index: 2;
+// }
+
+// .feels-like strong {
+//   font-weight: bold;
+// }
+
+/* INDICADORES */
+.weather-icons {
   display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 40px;
+  width: 100%;
+  max-width: 400px;
+}
+
+// .weather-icons {
+//   display: flex;
+//   justify-content: center;
+//   align-items: flex-start;
+//   margin-top: 15px;
+//   width: 100%;
+//   max-width: 300px;
+// }
+
+.icon-item {
+  display: flex;
+  flex-direction: column;
   align-items: center;
 }
+
+.weather-icon {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.8));
+}
+
+// .weather-icon {
+//   width: 64px;
+//   height: 64px;
+//   object-fit: contain;
+//   transition: color 0.3s ease; /* Suaviza el cambio de color */
+// }
+
+
+.icon-text {
+  font-size: 20px;
+  color: #ffffff;
+  font-weight: 600;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+  margin-top: 10px;
+}
+
+// .icon-text {
+//   font-size: 14px;
+//   color: #ffffff;
+//   font-family: 'Roboto', sans-serif;
+//   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+//   text-align: center;
+//   margin-top: 5px;
+// }
+
+/* SWIPER */
+
+.icon-text {
+  font-size: 20px;
+  color: #ffffff;
+  font-weight: 600;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.9);
+  margin-top: 10px;
+}
+
+/* SWIPER */
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-pagination {
+  bottom: 20px;
+  padding-bottom: calc(var(--ion-safe-area-bottom, 0px) + 10px);
+}
+
+.swiper-pagination-bullet {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.swiper-pagination-bullet-active {
+  background: #ffffff;
+}
+
+
+// .swiper {
+//   width: 100%;
+//   height: 100%;
+//   touch-action: pan-x;
+//   overflow: hidden;
+//   flex: 1; /* Ocupa el espacio restante */
+// }
+
+
+// .swiper-pagination {
+//   position: absolute;
+//   bottom: 20px;
+//   z-index: 3;
+//   padding-bottom: calc(var(--ion-safe-area-bottom, 0px) + 20px); /* Espacio para barra inferior */
+// }
+
+
+
+// .swiper-pagination-bullet {
+//   background: var(--ion-color-medium, #92949c);
+//   opacity: 0.7;
+// }
+
+// .swiper-pagination-bullet-active {
+//   background: var(--ion-color-primary, #050505);
+//   opacity: 1;
+// }
+
+
+
+
+
+
 
 .location ion-icon {
   font-size: 28px;
@@ -147,28 +333,7 @@ ion-content {
   object-fit: contain;
 }
 
-.feels-like {
-  font-size: 24px;
-  color: #ffffff;
-  font-family: 'Roboto', sans-serif;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-  text-align: center;
-  margin-top: 20px;
-  z-index: 2;
-}
 
-.feels-like strong {
-  font-weight: bold;
-}
-
-.weather-icons {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  margin-top: 15px;
-  width: 100%;
-  max-width: 300px;
-}
 
 .icon-left, .icon-right {
   display: flex;
@@ -177,12 +342,6 @@ ion-content {
   margin: 0 20px;
 }
 
-.weather-icon {
-  width: 64px;
-  height: 64px;
-  object-fit: contain;
-  transition: color 0.3s ease; /* Suaviza el cambio de color */
-}
 
 .weather-icon.day {
   color: #333333; /* Gris oscuro para fondos diurnos luminosos */
@@ -195,14 +354,6 @@ ion-content {
 }
 
 
-.icon-text {
-  font-size: 14px;
-  color: #ffffff;
-  font-family: 'Roboto', sans-serif;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-  text-align: center;
-  margin-top: 5px;
-}
 
 .loader-container {
   display: flex;
@@ -233,22 +384,6 @@ ion-content {
   padding-bottom: calc(var(--ion-safe-area-bottom, 0px) + 30px); /* Espacio para barra inferior */
 }
 
-.temperature-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 20px;
-  z-index: 2;
-}
-
-.temperature {
-  font-size: 6vh;
-  color: #ffffff;
-  font-family: 'Roboto', sans-serif;
-  font-weight: lighter;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-  z-index: 2;
-}
 
 .rain {
   font-size: 24px;
@@ -276,13 +411,6 @@ ion-content {
   background: var(--ion-color-primary, #020202);
 }
 
-.swiper {
-  width: 100%;
-  height: 100%;
-  touch-action: pan-x;
-  overflow: hidden;
-  flex: 1; /* Ocupa el espacio restante */
-}
 
 .swiper-wrapper {
   display: flex;
@@ -304,22 +432,6 @@ ion-content {
   height: 40px;
 }
 
-.swiper-pagination {
-  position: absolute;
-  bottom: 20px;
-  z-index: 3;
-  padding-bottom: calc(var(--ion-safe-area-bottom, 0px) + 20px); /* Espacio para barra inferior */
-}
-
-.swiper-pagination-bullet {
-  background: var(--ion-color-medium, #92949c);
-  opacity: 0.7;
-}
-
-.swiper-pagination-bullet-active {
-  background: var(--ion-color-primary, #050505);
-  opacity: 1;
-}
 
 .accessories-container {
   display: flex;
@@ -336,26 +448,45 @@ ion-content {
   margin: 5px;
 }
 
-@media (min-width: 768px) {
-  .temperature {
-    font-size: 32px;
-  }
-  .rain {
-    font-size: 18px;
-  }
-  .location {
-    font-size: 20px;
-  }
-  .date-time {
-    font-size: 16px;
-  }
-  .prototype-img {
-    width: 150px;
-  }
-  .feels-like {
-    font-size: 20px;
-  }
-  .icon-text {
-    font-size: 10px;
-  }
+/* RESPONSIVE MÓVILES PEQUEÑOS */
+
+@media (max-height: 700px) {
+  .location { font-size: 32px; }
+  .temperature { font-size: 80px; }
+  .feels-like { font-size: 28px; }
+  .icon-text { font-size: 18px; }
+  .weather-icon { width: 64px; height: 64px; }
 }
+
+@media (max-height: 600px) {
+  .location { font-size: 28px; }
+  .temperature { font-size: 65px; }
+  .feels-like { font-size: 24px; }
+  .icon-text { font-size: 16px; }
+  .weather-icon { width: 56px; height: 56px; }
+  .temperature-container { margin: 20px 0; }
+}
+
+// @media (min-width: 768px) {
+//   .temperature {
+//     font-size: 32px;
+//   }
+//   .rain {
+//     font-size: 18px;
+//   }
+//   .location {
+//     font-size: 20px;
+//   }
+//   .date-time {
+//     font-size: 16px;
+//   }
+//   .prototype-img {
+//     width: 150px;
+//   }
+//   .feels-like {
+//     font-size: 20px;
+//   }
+//   .icon-text {
+//     font-size: 10px;
+//   }
+// }

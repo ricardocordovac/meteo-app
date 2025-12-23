@@ -7,7 +7,7 @@
 */
 import { Component, OnInit } from '@angular/core';
 import { UtilService } from 'src/app/services/util.service';
-import { MeteoroService } from 'src/app/services/meteo.service';
+import { MeteoService } from 'src/app/services/meteo.service';
 // Comentar importación no usada
 /*
 import { ModalController } from '@ionic/angular';
@@ -27,7 +27,7 @@ export class HomePage implements OnInit {
 
   constructor(
     public util: UtilService,
-    private meteoService: MeteoroService  // ← AÑADIDO
+    private meteoService: MeteoService  // ← AÑADIDO
   ) {
     // this.loader = false;
     // setTimeout(() => {

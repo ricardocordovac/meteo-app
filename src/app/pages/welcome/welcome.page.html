@@ -2,7 +2,7 @@
   <div *ngIf="!loader" class="center_div-loader">
     <div class="ripple-container">
       <div class="thumb-lg ripple-trigger">
-        <img src="assets/backgrounds/weather.svg" style="height:50px;width:50px" class="rounded_img">
+        <img src="assets/icons/weather.svg" style="height:100px;width:100px" class="rounded_img b b-2x box-shadow">
       </div>
       <div class="ripple-1"></div>
       <div class="ripple-2"></div>
@@ -13,46 +13,28 @@
     <div class="swiper" #swiper>
       <div class="swiper-wrapper">
         <div class="swiper-slide" *ngFor="let data of weatherData">
-          <div class="slide-content" [style.background-image]="'url(' + data.background_image_url + ')'">
+          <div class="slide-content" [style.background-image]="'url(/assets/backgrounds/' + (data.background_image_url.split('/').pop() || 'soleado.jpg') + ')'">
             <div class="top-content">
-
-              <div class="location">
-
-                {{ data.location || 'N/A' | titlecase }}
+              <div class="location">{{ data.location | titlecase }}</div>
+              <div class="date-time">{{ getCustomDate(data.date) }} {{ data.time }}</div>
+              <div class="temperature-container">
+                <div class="temperature">{{ data.temp }}°C</div>
               </div>
-
-              <div class="date-time">{{ data.date ? getCustomDate(data.date) + ' ' + (data.time || 'N/A') : 'N/A' }}</div>
-               <div class="temperature-container">
-                <div class="temperature">{{ data.temp || 'N/A' }} °C</div>
-              </div>
-
-               <div class="prototype-image">
-                <img src="assets/backgrounds/prototipo.png" alt="Prototipo" class="prototype-img">
-              </div>
-
               <div class="feels-like">
-                Se siente como <strong>{{ data.apparentTemp || 'N/A' }}</strong> °C
+                Se siente como <strong>{{ data.apparentTemp }}°C</strong>
               </div>
-
-                 <div class="weather-icons">
-                  <div class="icon-item">
-                    <img [ngClass]="{'weather-icon': true, 'day': data.isDay === 1, 'night': data.isDay === 0}"
-                         src="assets/icons/lluvia64.png" alt="Precipitation">
-                    <div class="icon-text">{{ data.precipitation || 'N/A' }} mm</div>
-                  </div>
-                  <div class="icon-item">
-                    <img [ngClass]="{'weather-icon': true, 'day': data.isDay === 1, 'night': data.isDay === 0}"
-                         src="assets/icons/viento64.png" alt="Wind Speed">
-                    <div class="icon-text">{{ data.windSpeed || 'N/A' }} km/h</div>
-                  </div>
+              <div class="weather-icons">
+                <div class="icon-item">
+                  <img [ngClass]="{'weather-icon': true, 'day': data.isDay === 1, 'night': data.isDay === 0}"
+                       src="assets/icons/lluvia64.png" alt="Lluvia">
+                  <div class="icon-text">{{ data.precipitation }} mm</div>
                 </div>
-            </div>
-            <div class="bottom-content">
-              <!-- <div class="temperature">{{ data.temp || 'N/A' }} °C</div>
-              <div class="rain">{{ data.rain || '0.0' }} mm</div> -->
-              <!-- <div class="accessories-container">
-                <img *ngFor="let accessory of data.accessories" [src]="'assets/icons/icono-' + accessory + '.png'" class="accessory-icon">
-              </div> -->
+                <div class="icon-item">
+                  <img [ngClass]="{'weather-icon': true, 'day': data.isDay === 1, 'night': data.isDay === 0}"
+                       src="assets/icons/viento64.png" alt="Viento">
+                  <div class="icon-text">{{ data.windSpeed }} km/h</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -61,5 +43,3 @@
     </div>
   </div>
 </ion-content>
-
-

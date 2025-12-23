@@ -6,7 +6,7 @@ import { environment } from '../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
-export class MeteoroService {
+export class MeteoService {
   constructor(private supabaseService: SupabaseService) {}
 
   // Obtener condición meteorológica basada en datos y tabla NegocioMeteorologico
@@ -45,7 +45,7 @@ export class MeteoroService {
       }
       return null;
     } catch (error) {
-      console.error('Error en MeteoroService:', error);
+      console.error('Error en MeteoService:', error);
       return null;
     }
   }

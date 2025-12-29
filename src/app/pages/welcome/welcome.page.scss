@@ -329,8 +329,8 @@ ion-content {
 // }
 
 .temperature {
-  font-size: 100px;  // GIGANTE
-  font-weight: 300;
+  font-size: 80px;  // GIGANTE
+  font-weight: 280;
   color: #ffffff;
   text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.9);
   line-height: 1;
@@ -343,7 +343,7 @@ ion-content {
   font-size: 30px;
   color: #ffffff;
   text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
-  margin-bottom: 15px;  /* ← Menos que antes */
+  margin-bottom: 8px;  /* ← Menos que antes */
 }
 // .feels-like {
 //   font-size: 32px;
@@ -362,8 +362,8 @@ ion-content {
   display: flex;
   justify-content: center;
   gap: 30px;
-  margin-top: 5px;
-  margin-bottom: 10px;
+  margin-top: 3px;
+  margin-bottom: 5px;
 }
 // .weather-icons {
 //   display: flex;
@@ -408,7 +408,7 @@ ion-content {
   width: 240px;     /* ← Ajustado para móvil (antes 150px → más presencia) */
   height: auto;
   object-fit: contain;
-  max-height: 38vh; /* ← Máximo 35% altura pantalla */
+  max-height: 30vh; /* ← Máximo 35% altura pantalla */
 }
 
 // .prototype-image {

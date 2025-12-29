@@ -83,161 +83,7 @@ ion-content {
   flex: 1;
 }
 
-.slide-content {
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  padding-top: calc(var(--ion-safe-area-top, 0px) + 80px);
-  padding-bottom: calc(var(--ion-safe-area-bottom, 0px) + 40px);
-}
 
-.top-content {
-  position: relative;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background: transparent;
-  padding: calc(var(--ion-safe-area-top, 0px) + 80px) 0 20px 0; /* Aumentado 50px en padding-top */
-}
-
-/* NOMBRE PUEBLO */
-.location {
-  font-size: 36px;
-  font-weight: 700;
-  color: #ffffff;
-  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
-  margin-bottom: 20px;
-}
-// .location {
-//   font-size: 32px;
-//   color: #ffffff;
-//   font-family: 'Roboto', sans-serif;
-//   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-//   text-align: center;
-//   z-index: 2;
-//   display: flex;
-//   align-items: center;
-// }
-
-
-/* TEMPERATURA GIGANTE (RELLENA HUECO PROTOTIPO) */
-.temperature-container {
-  margin: 40px 0 30px 0;
-}
-
-.temperature {
-  font-size: 100px;  // GIGANTE
-  font-weight: 300;
-  color: #ffffff;
-  text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.9);
-  line-height: 1;
-}
-// .temperature-container {
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   margin-top: 20px;
-//   z-index: 2;
-// }
-
-// .temperature {
-//   font-size: 6vh;
-//   color: #ffffff;
-//   font-family: 'Roboto', sans-serif;
-//   font-weight: lighter;
-//   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-//   z-index: 2;
-// }
-
-/* SENSACIÓN TÉRMICA */
-.feels-like {
-  font-size: 32px;
-  color: #ffffff;
-  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
-  margin-bottom: 50px;
-}
-
-.feels-like strong {
-  font-weight: 700;
-}
-
-// .feels-like {
-//   font-size: 24px;
-//   color: #ffffff;
-//   font-family: 'Roboto', sans-serif;
-//   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-//   text-align: center;
-//   margin-top: 20px;
-//   z-index: 2;
-// }
-
-// .feels-like strong {
-//   font-weight: bold;
-// }
-
-/* INDICADORES */
-.weather-icons {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 40px;
-  width: 100%;
-  max-width: 400px;
-}
-
-// .weather-icons {
-//   display: flex;
-//   justify-content: center;
-//   align-items: flex-start;
-//   margin-top: 15px;
-//   width: 100%;
-//   max-width: 300px;
-// }
-
-.icon-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.weather-icon {
-  width: 72px;
-  height: 72px;
-  object-fit: contain;
-  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.8));
-}
-
-// .weather-icon {
-//   width: 64px;
-//   height: 64px;
-//   object-fit: contain;
-//   transition: color 0.3s ease; /* Suaviza el cambio de color */
-// }
-
-
-.icon-text {
-  font-size: 20px;
-  color: #ffffff;
-  font-weight: 600;
-  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
-  margin-top: 10px;
-}
-
-// .icon-text {
-//   font-size: 14px;
-//   color: #ffffff;
-//   font-family: 'Roboto', sans-serif;
-//   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-//   text-align: center;
-//   margin-top: 5px;
-// }
 
 /* SWIPER */
 
@@ -269,69 +115,7 @@ ion-content {
 }
 
 
-// .swiper {
-//   width: 100%;
-//   height: 100%;
-//   touch-action: pan-x;
-//   overflow: hidden;
-//   flex: 1; /* Ocupa el espacio restante */
-// }
 
-
-// .swiper-pagination {
-//   position: absolute;
-//   bottom: 20px;
-//   z-index: 3;
-//   padding-bottom: calc(var(--ion-safe-area-bottom, 0px) + 20px); /* Espacio para barra inferior */
-// }
-
-
-
-// .swiper-pagination-bullet {
-//   background: var(--ion-color-medium, #92949c);
-//   opacity: 0.7;
-// }
-
-// .swiper-pagination-bullet-active {
-//   background: var(--ion-color-primary, #050505);
-//   opacity: 1;
-// }
-
-
-
-
-
-
-
-.location ion-icon {
-  font-size: 28px;
-  color: #ffffff;
-  margin-right: 8px;
-}
-
-.date-time {
-  font-size: 20px;
-  color: #ffffff;
-  font-family: 'Roboto', sans-serif;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-  text-align: center;
-  margin-top: 12px;
-  z-index: 2;
-}
-
-.prototype-image {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 20px;
-  z-index: 2;
-}
-
-.prototype-img {
-  width: 150px;
-  height: auto;
-  object-fit: contain;
-}
 
 
 
@@ -467,26 +251,200 @@ ion-content {
   .temperature-container { margin: 20px 0; }
 }
 
-// @media (min-width: 768px) {
-//   .temperature {
-//     font-size: 32px;
-//   }
-//   .rain {
-//     font-size: 18px;
-//   }
-//   .location {
-//     font-size: 20px;
-//   }
-//   .date-time {
-//     font-size: 16px;
-//   }
-//   .prototype-img {
-//     width: 150px;
-//   }
-//   .feels-like {
-//     font-size: 20px;
-//   }
-//   .icon-text {
-//     font-size: 10px;
-//   }
+
+
+// .slide-content {
+//   background-size: cover;
+//   background-position: center;
+//   background-repeat: no-repeat;
+//   height: 100%;
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: flex-start;
+//   align-items: center;
+//   padding-top: calc(var(--ion-safe-area-top, 0px) + 80px);
+//   padding-bottom: calc(var(--ion-safe-area-bottom, 0px) + 40px);
+// }
+
+// .top-content {
+//   position: relative;
+//   width: 100%;
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: center;
+//   align-items: center;
+//   background: transparent;
+//   padding: calc(var(--ion-safe-area-top, 0px) + 80px) 0 20px 0; /* Aumentado 50px en padding-top */
+// }
+
+.slide-content {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding-top: calc(var(--ion-safe-area-top, 0px) + 40px);  /* ← REDUCIDO de 80px a 40px */
+  padding-bottom: calc(var(--ion-safe-area-bottom, 0px) + 40px);
+}
+
+.top-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0 20px;  /* ← QUITADO padding-top grande */
+  margin-top: 20px; /* ← Espacio suave desde arriba */
+}
+
+/* NOMBRE PUEBLO */
+/* SUBIR LOCATION */
+.location {
+  font-size: 36px;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+  margin-bottom: 10px;  /* ← Menos espacio abajo */
+  margin-top: 0;
+}
+// .location {
+//   font-size: 36px;
+//   font-weight: 700;
+//   color: #ffffff;
+//   text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+//   margin-bottom: 20px;
+// }
+
+
+.location ion-icon {
+  font-size: 28px;
+  color: #ffffff;
+  margin-right: 8px;
+}
+
+/* REDUCIR ESPACIOS ENTRE ELEMENTOS */
+.date-time {
+  font-size: 20px;
+  color: #ffffff;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  margin-bottom: 15px;  /* ← Menos margen */
+}
+
+// .date-time {
+//   font-size: 20px;
+//   color: #ffffff;
+//   font-family: 'Roboto', sans-serif;
+//   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+//   text-align: center;
+//   margin-top: 12px;
+//   z-index: 2;
+// }
+
+
+/* TEMPERATURA GIGANTE (RELLENA HUECO PROTOTIPO) */
+.temperature-container {
+  margin: 20px 0 20px 0;  /* ← Reducido */
+}
+// .temperature-container {
+//   margin: 40px 0 30px 0;
+// }
+
+.temperature {
+  font-size: 100px;  // GIGANTE
+  font-weight: 300;
+  color: #ffffff;
+  text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.9);
+  line-height: 1;
+}
+
+
+
+/* SENSACIÓN TÉRMICA */
+.feels-like {
+  font-size: 32px;
+  color: #ffffff;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
+  margin-bottom: 30px;  /* ← Menos que antes */
+}
+// .feels-like {
+//   font-size: 32px;
+//   color: #ffffff;
+//   text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
+//   margin-bottom: 50px;
+// }
+
+.feels-like strong {
+  font-weight: 700;
+}
+
+
+/* INDICADORES */
+.weather-icons {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+// .weather-icons {
+//   display: flex;
+//   justify-content: center;
+//   flex-wrap: wrap;
+//   gap: 40px;
+//   width: 100%;
+//   max-width: 400px;
+// }
+
+.icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.weather-icon {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.8));
+}
+
+
+.icon-text {
+  font-size: 20px;
+  color: #ffffff;
+  font-weight: 600;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+  margin-top: 10px;
+}
+
+/* IMAGEN OUTFIT CENTRADA Y AJUSTADA */
+.prototype-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0;  /* ← Espacio equilibrado arriba/abajo */
+}
+
+.prototype-img {
+  width: 220px;     /* ← Ajustado para móvil (antes 150px → más presencia) */
+  height: auto;
+  object-fit: contain;
+  max-height: 35vh; /* ← Máximo 35% altura pantalla */
+}
+
+// .prototype-image {
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   margin-top: 20px;
+//   z-index: 2;
+// }
+
+// .prototype-img {
+//   width: 150px;
+//   height: auto;
+//   object-fit: contain;
 // }

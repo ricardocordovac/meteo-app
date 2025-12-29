@@ -20,6 +20,14 @@
               <div class="temperature-container">
                 <div class="temperature">{{ data.temp }}°C</div>
               </div>
+
+
+              <div class="prototype-image">
+                <img [src]="data.outfit_image_url || 'assets/backgrounds/prototipo.png'"
+                    alt="Recomendación outfit" class="prototype-img">
+              </div>
+
+
               <div class="feels-like">
                 Se siente como <strong>{{ data.apparentTemp }}°C</strong>
               </div>

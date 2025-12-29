@@ -253,30 +253,6 @@ ion-content {
 
 
 
-// .slide-content {
-//   background-size: cover;
-//   background-position: center;
-//   background-repeat: no-repeat;
-//   height: 100%;
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: flex-start;
-//   align-items: center;
-//   padding-top: calc(var(--ion-safe-area-top, 0px) + 80px);
-//   padding-bottom: calc(var(--ion-safe-area-bottom, 0px) + 40px);
-// }
-
-// .top-content {
-//   position: relative;
-//   width: 100%;
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: center;
-//   align-items: center;
-//   background: transparent;
-//   padding: calc(var(--ion-safe-area-top, 0px) + 80px) 0 20px 0; /* Aumentado 50px en padding-top */
-// }
-
 .slide-content {
   background-size: cover;
   background-position: center;
@@ -286,8 +262,8 @@ ion-content {
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  padding-top: calc(var(--ion-safe-area-top, 0px) + 40px);  /* ← REDUCIDO de 80px a 40px */
-  padding-bottom: calc(var(--ion-safe-area-bottom, 0px) + 40px);
+  padding-top: calc(var(--ion-safe-area-top, 0px) + 15px);   /* ← Más arriba (de 40px a 15px) */
+  padding-bottom: calc(var(--ion-safe-area-bottom, 0px) + 20px);
 }
 
 .top-content {
@@ -296,8 +272,8 @@ ion-content {
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  padding: 0 20px;  /* ← QUITADO padding-top grande */
-  margin-top: 20px; /* ← Espacio suave desde arriba */
+  margin-top: 5px;   /* ← Casi nada arriba */
+  padding: 0 20px;
 }
 
 /* NOMBRE PUEBLO */
@@ -307,7 +283,7 @@ ion-content {
   font-weight: 700;
   color: #ffffff;
   text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
-  margin-bottom: 10px;  /* ← Menos espacio abajo */
+  margin-bottom: 5px;  /* ← Menos espacio abajo */
   margin-top: 0;
 }
 // .location {
@@ -330,7 +306,7 @@ ion-content {
   font-size: 20px;
   color: #ffffff;
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-  margin-bottom: 15px;  /* ← Menos margen */
+  margin-bottom: 8px;  /* ← Menos margen */
 }
 
 // .date-time {
@@ -346,7 +322,7 @@ ion-content {
 
 /* TEMPERATURA GIGANTE (RELLENA HUECO PROTOTIPO) */
 .temperature-container {
-  margin: 20px 0 20px 0;  /* ← Reducido */
+  margin: 10px 0 10px 0;  /* ← Reducido */
 }
 // .temperature-container {
 //   margin: 40px 0 30px 0;
@@ -364,10 +340,10 @@ ion-content {
 
 /* SENSACIÓN TÉRMICA */
 .feels-like {
-  font-size: 32px;
+  font-size: 30px;
   color: #ffffff;
   text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
-  margin-bottom: 30px;  /* ← Menos que antes */
+  margin-bottom: 15px;  /* ← Menos que antes */
 }
 // .feels-like {
 //   font-size: 32px;
@@ -385,9 +361,9 @@ ion-content {
 .weather-icons {
   display: flex;
   justify-content: center;
-  gap: 40px;
-  margin-top: 10px;
-  margin-bottom: 20px;
+  gap: 30px;
+  margin-top: 5px;
+  margin-bottom: 10px;
 }
 // .weather-icons {
 //   display: flex;
@@ -425,14 +401,14 @@ ion-content {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 10px 0;  /* ← Espacio equilibrado arriba/abajo */
+  margin: 5px 0 10px 0;  /* ← Espacio equilibrado arriba/abajo */
 }
 
 .prototype-img {
-  width: 220px;     /* ← Ajustado para móvil (antes 150px → más presencia) */
+  width: 240px;     /* ← Ajustado para móvil (antes 150px → más presencia) */
   height: auto;
   object-fit: contain;
-  max-height: 35vh; /* ← Máximo 35% altura pantalla */
+  max-height: 38vh; /* ← Máximo 35% altura pantalla */
 }
 
 // .prototype-image {

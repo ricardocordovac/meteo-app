@@ -231,6 +231,7 @@ export class WelcomePage implements OnInit, AfterViewInit {
           time: createdAt?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) || 'N/A',
           background: data?.background || '/assets/backgrounds/soleado.jpg',
           background_image_url: data?.background_image_url || '/assets/backgrounds/soleado.jpg',
+          outfit_image_url: data?.outfit_image_url ||  '/assets/backgrounds/prototipo.png',
           description: data?.description || 'N/A'
         };
       })
@@ -246,6 +247,7 @@ export class WelcomePage implements OnInit, AfterViewInit {
         time: 'N/A',
         background: '/assets/backgrounds/soleado.jpg',
         background_image_url: '/assets/backgrounds/soleado.jpg',
+        outfit_image_url:'/assets/backgrounds/prototipo.png',
         description: 'N/A'
       }));
     }
@@ -267,6 +269,7 @@ export class WelcomePage implements OnInit, AfterViewInit {
       time: 'N/A',
       background: '/assets/backgrounds/soleado.jpg',
       background_image_url: '/assets/backgrounds/soleado.jpg',
+      outfit_image_url:'/assets/backgrounds/prototipo.png',
       description: 'N/A'
     }));
     this.cdr.detectChanges();

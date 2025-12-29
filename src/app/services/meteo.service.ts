@@ -40,7 +40,9 @@ export class MeteoService {
           apparentTemp: data.apparent_temperature || 'N/A',
           precipitation: data.precipitation || 'N/A',
           windSpeed: data.wind_speed_10m || 'N/A',
-          isDay: data.is_day
+          isDay: data.is_day,
+          outfit_image_url:data.outfit_image_url,
+
         };
       }
       return null;

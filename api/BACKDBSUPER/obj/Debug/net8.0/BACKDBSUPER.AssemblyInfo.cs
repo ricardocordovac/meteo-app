@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BACKDBSUPER")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b55258b8dee30528aeebc69309bbd1bb6da49f0a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+089f24d529b78ee4c751ae8f270b0eb9e312eab8")]
 [assembly: System.Reflection.AssemblyProductAttribute("BACKDBSUPER")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BACKDBSUPER")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

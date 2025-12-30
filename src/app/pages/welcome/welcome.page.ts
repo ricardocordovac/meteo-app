@@ -558,6 +558,18 @@ getCustomDate(date: Date | null): string {
   }).replace(/^\w+/, match => match.charAt(0).toUpperCase() + match.slice(1)); // Capitaliza el día
 }
 
+getDisplayLocation(internalLocation: string): string {
+  if (!internalLocation) return 'N/A';
+
+  const map: { [key: string]: string } = {
+    'valdeolmos': 'Valdeolmos-Alalpardo',
+    'algete': 'Algete',
+    'el_casar': 'El Casar',
+    'fuente_el_saz': 'Fuente el Saz'
+  };
+
+  return map[internalLocation.toLowerCase()] || internalLocation;
+}
 
   ngOnDestroy() {
     if (this.swiperInstance) {

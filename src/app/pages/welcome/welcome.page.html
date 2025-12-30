@@ -15,7 +15,7 @@
         <div class="swiper-slide" *ngFor="let data of weatherData">
           <div class="slide-content" [style.background-image]="'url(/assets/backgrounds/' + (data.background_image_url.split('/').pop() || 'soleado.jpg') + ')'">
             <div class="top-content">
-              <div class="location">{{ data.location | titlecase }}</div>
+              <div class="location">{{ getDisplayLocation(data.location) | titlecase }}</div>
               <div class="date-time">{{ getCustomDate(data.date) }} {{ data.time }}</div>
               <div class="temperature-container">
                 <div class="temperature">{{ data.temp }}°C</div>

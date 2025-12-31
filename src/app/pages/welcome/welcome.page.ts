@@ -562,7 +562,7 @@ getDisplayLocation(internalLocation: string): string {
   if (!internalLocation) return 'N/A';
 
   const map: { [key: string]: string } = {
-    'valdeolmos': 'Valdeolmos-Alalpardo',
+    'valdeolmos': 'Valdeolmos',
     'algete': 'Algete',
     'el_casar': 'El Casar',
     'fuente_el_saz': 'Fuente el Saz'

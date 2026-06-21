@@ -50,7 +50,10 @@
               "node_modules/swiper/swiper-bundle.min.css"
             ],
             "scripts": [],
-            "browser": "src/main.ts"
+            "browser": "src/main.ts",
+             "allowedCommonJsDependencies": [
+              "lottie-web"
+              ]
           },
           "configurations": {
             "production": {

@@ -15,10 +15,18 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { provideHttpClient } from '@angular/common/http';
 
+import { provideLottieOptions } from 'ngx-lottie';
+import player from 'lottie-web';
+
+
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, HammerModule,],
-  providers: [provideHttpClient(), { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  imports: [BrowserModule,  IonicModule.forRoot(), AppRoutingModule, HammerModule,],
+  providers: [provideHttpClient(),    provideLottieOptions({
+      player: () => player,
+    }),
+     { provide: RouteReuseStrategy,
+       useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],
 })
 export class AppModule { }

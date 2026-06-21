@@ -9,11 +9,18 @@ import { IonicModule } from '@ionic/angular';
 import { WelcomePage } from './welcome.page';
 import { WelcomePageRoutingModule } from './welcome-routing.module';
 
+
+// --- NUEVA IMPORTACIÓN PARA LOTTIE ---
+import { LottieComponent } from 'ngx-lottie';
+// -------------------------------------
+
+
 @NgModule({
   imports: [
     CommonModule,
     IonicModule,
-    WelcomePageRoutingModule
+    WelcomePageRoutingModule,
+    LottieComponent
   ],
   declarations: [WelcomePage],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

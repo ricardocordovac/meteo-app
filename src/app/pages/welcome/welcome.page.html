@@ -1,53 +1,87 @@
-<ion-content fullscreen="true">
+<ion-content [fullscreen]="true" [forceOverscroll]="false">
+  <!-- LOADER -->
   <div *ngIf="!loader" class="center_div-loader">
     <div class="ripple-container">
       <div class="thumb-lg ripple-trigger">
-        <img src="assets/icons/weather.svg" style="height:100px;width:100px" class="rounded_img b b-2x box-shadow">
+        <img src="assets/icons/weather.svg" class="rounded_img">
       </div>
       <div class="ripple-1"></div>
       <div class="ripple-2"></div>
     </div>
   </div>
 
-  <div *ngIf="loader" class="welcome-screen">
-    <div class="swiper" #swiper>
-      <div class="swiper-wrapper">
-        <div class="swiper-slide" *ngFor="let data of weatherData">
-          <div class="slide-content" [style.background-image]="'url(/assets/backgrounds/' + (data.background_image_url.split('/').pop() || 'soleado.jpg') + ')'">
-            <div class="top-content">
-              <div class="location">{{ getDisplayLocation(data.location) | titlecase }}</div>
-              <div class="date-time">{{ getCustomDate(data.date) }} {{ data.time }}</div>
-              <div class="temperature-container">
-                <div class="temperature">{{ data.temp }}°C</div>
-              </div>
+  <!-- CONTENEDOR POR CAPAS -->
+  <div *ngIf="loader" class="main-layered-container" [ngClass]="{'is-ios': isIos, 'is-android': isAndroid}">
 
-
-              <div class="prototype-image">
-                <img [src]="data.outfit_image_url || 'assets/backgrounds/prototipo.png'"
-                    alt="Recomendación outfit" class="prototype-img">
-              </div>
-
-
-              <div class="feels-like">
-                Se siente como <strong>{{ data.apparentTemp }}°C</strong>
-              </div>
-              <div class="weather-icons">
-                <div class="icon-item">
-                  <img [ngClass]="{'weather-icon': true, 'day': data.isDay === 1, 'night': data.isDay === 0}"
-                       src="assets/icons/lluvia64.png" alt="Lluvia">
-                  <div class="icon-text">{{ data.precipitation }} mm</div>
-                </div>
-                <div class="icon-item">
-                  <img [ngClass]="{'weather-icon': true, 'day': data.isDay === 1, 'night': data.isDay === 0}"
-                       src="assets/icons/viento64.png" alt="Viento">
-                  <div class="icon-text">{{ data.windSpeed }} km/h</div>
-                </div>
-              </div>
+    <!-- CAPA 0: FONDO DINÁMICO -->
+    <div class="swiper-background-layer">
+      <div class="swiper" #swiper>
+        <div class="swiper-wrapper">
+          <div class="swiper-slide" *ngFor="let data of weatherData">
+            <div class="dynamic-bg" [style.background-image]="'url(/assets/backgrounds/' + (data.background_image_url.split('/').pop() || 'soleado.jpg') + ')'">
+              <div class="bg-overlay"></div>
             </div>
           </div>
         </div>
       </div>
-      <div class="swiper-pagination"></div>
     </div>
+
+    <!-- CAPA 1: HEADER (TEMPERATURA MASIVA) -->
+    <div class="weather-header" *ngIf="weatherData[activeIndex]">
+      <div class="location-chip">
+        <ion-icon name="location-sharp"></ion-icon>
+        <span>{{ weatherData[activeIndex].location | titlecase }}</span>
+      </div>
+      <div class="massive-temp">
+        {{ weatherData[activeIndex].temp }}<span class="degree-symbol">°C</span>
+      </div>
+      <div class="date-label">{{ getCustomDate(weatherData[activeIndex].date) }}</div>
+    </div>
+
+    <!-- CAPA 2: PERSONAJE FLOTANTE -->
+    <div class="character-layer" *ngIf="weatherData[activeIndex]">
+      <img [src]="weatherData[activeIndex].outfit_image_url" class="anime-floating-img">
+    </div>
+
+    <!-- CAPA 3: BOTTOM SHEET (CRISTAL) -->
+    <ion-modal
+      [isOpen]="true"
+      [initialBreakpoint]="0.35"
+      [breakpoints]="[0.35, 0.65, 0.95]"
+      [backdropDismiss]="false"
+      handle="true"
+      class="glass-modal">
+      <ng-template>
+        <ion-content class="glass-content">
+          <div class="glass-wrapper">
+            <!-- Grid de Smart Chips con Iconos Lottie -->
+            <div class="chips-grid">
+              <div class="weather-pill">
+                <ng-lottie [options]="{ path: 'assets/lottie/indicator-temp.json' }" class="pill-lottie"></ng-lottie>
+                <div class="pill-info">
+                  <span class="label">Sensación</span>
+                  <span class="value">{{ weatherData[activeIndex]?.apparentTemp }}°C</span>
+                </div>
+              </div>
+              <div class="weather-pill">
+                <ng-lottie [options]="{ path: 'assets/lottie/indicator-wind.json' }" class="pill-lottie"></ng-lottie>
+                <div class="pill-info">
+                  <span class="label">Viento</span>
+                  <span class="value">{{ weatherData[activeIndex]?.windSpeed }} km/h</span>
+                </div>
+              </div>
+              <!-- Añadir aquí los otros 4 chips (Humedad, UV, etc.) -->
+            </div>
+
+            <!-- Selector de Modo del Render 3 -->
+            <div class="mode-tabs">
+              <div class="tab-item active">USER</div>
+              <div class="tab-item">PRO</div>
+              <div class="tab-item">AGRO</div>
+            </div>
+          </div>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
   </div>
 </ion-content>

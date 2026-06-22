@@ -7,6 +7,7 @@ import { UtilService } from 'src/app/services/util.service';
 import SwiperCore from 'swiper';
 import { Navigation, Pagination } from 'swiper/modules';
 import { AnimationOptions } from 'ngx-lottie';
+import mapAnimation from '../../../assets/lottie/map.json';
 
 SwiperCore.use([Navigation, Pagination]);
 
@@ -67,7 +68,16 @@ export class WelcomePage implements OnInit, AfterViewInit {
   activeIndex: number = 0;
 
 
+  mapLottieOptions: AnimationOptions = {
+    animationData: mapAnimation, // Esto evita el XMLHttpRequest
+    loop: true,
+    autoplay: true,
+    renderer: 'svg' // Más estable en Safari
+  };
+
   private swiperInstance?: SwiperCore;
+
+
 
   constructor(
     public util: UtilService,

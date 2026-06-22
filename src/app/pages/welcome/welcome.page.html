@@ -28,8 +28,8 @@
 
         <div class="header-text-column">
           <div class="location-info">
-            <span class="town-name">{{ getDisplayLocation(weatherData[activeIndex].location) | uppercase }}</span><span> 📍</span>
-            <span class="header-date">{{ getCustomDate(weatherData[activeIndex].date) }}</span>
+ <div class="town-name">{{ getDisplayLocation(weatherData[activeIndex].location) | uppercase }}</div>
+  <div class="header-date">{{ getCustomDate(weatherData[activeIndex].date) }}</div>
           </div>
           <div class="massive-temp-center">
             {{ weatherData[activeIndex].temp }}<span class="degree">°C</span>
@@ -40,7 +40,8 @@
           <div class="alert-pill"><span>🔥</span> CALOR EXTREMO</div>
 
           <div class="interactive-map-block" (click)="openLocationDetailModal()">
-            <ng-lottie [options]="{ path: '/assets/lottie/map.json' }"></ng-lottie>
+           <ng-lottie [options]="{ path: '/assets/lottie/map.json' }"></ng-lottie>
+           <ng-lottie [options]="mapLottieOptions"></ng-lottie>
           </div>
         </div>
 

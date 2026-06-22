@@ -26,23 +26,23 @@
 
     <div class="weather-header-frame" *ngIf="weatherData[activeIndex]">
 
-  <div class="header-text-column">
-    <div class="location-info">
-      <span class="town-name">{{ getDisplayLocation(weatherData[activeIndex].location) | uppercase }}</span>
-      <span class="header-date">{{ getCustomDate(weatherData[activeIndex].date) }}</span>
-    </div>
-    <div class="massive-temp-center">
-      {{ weatherData[activeIndex].temp }}<span class="degree">°C</span>
-    </div>
-  </div>
+        <div class="header-text-column">
+          <div class="location-info">
+            <span class="town-name">{{ getDisplayLocation(weatherData[activeIndex].location) | uppercase }}</span><span> 📍</span>
+            <span class="header-date">{{ getCustomDate(weatherData[activeIndex].date) }}</span>
+          </div>
+          <div class="massive-temp-center">
+            {{ weatherData[activeIndex].temp }}<span class="degree">°C</span>
+          </div>
+        </div>
 
-  <div class="header-visual-column">
-    <div class="alert-pill"><span>🔥</span> CALOR EXTREMO</div>
+        <div class="header-visual-column">
+          <div class="alert-pill"><span>🔥</span> CALOR EXTREMO</div>
 
-    <div class="interactive-map-block" (click)="openLocationDetailModal()">
-      <ng-lottie [options]="{ path: 'assets/lottie/map.json' }"></ng-lottie>
-    </div>
-  </div>
+          <div class="interactive-map-block" (click)="openLocationDetailModal()">
+            <ng-lottie [options]="{ path: '/assets/lottie/map.json' }"></ng-lottie>
+          </div>
+        </div>
 
 </div>
 

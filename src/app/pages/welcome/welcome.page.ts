@@ -9,6 +9,26 @@ import { Navigation, Pagination } from 'swiper/modules';
 import { AnimationOptions } from 'ngx-lottie';
 import mapAnimation from '../../../assets/lottie/map.json';
 
+// Grupo A
+import sunnyAnimation from '../../../assets/lottie/weather-sunny.json';
+import nightAnimation from '../../../assets/lottie/weather-night.json';
+import cloudyDayAnimation from '../../../assets/lottie/weather-partly-cloudy-day.json';
+import cloudyNightAnimation from '../../../assets/lottie/weather-partly-cloudy-night.json';
+import cloudyAnimation from '../../../assets/lottie/weather-cloudy.json';
+import drizzleAnimation from '../../../assets/lottie/weather-drizzle.json';
+import rainAnimation from '../../../assets/lottie/weather-rain.json';
+import stormAnimation from '../../../assets/lottie/weather-storm.json';
+import snowAnimation from '../../../assets/lottie/weather-snow.json';
+import fogAnimation from '../../../assets/lottie/weather-fog.json';
+// Grupo B (Indicadores)
+import tempIndicator from '../../../assets/lottie/indicator-temp.json';
+import humidityIndicator from '../../../assets/lottie/indicator-humidity.json';
+import windIndicator from '../../../assets/lottie/indicator-wind.json';
+import uvIndicator from '../../../assets/lottie/indicator-uv.json';
+import rainChanceIndicator from '../../../assets/lottie/indicator-rain-chance.json';
+import earthIndicator from '../../../assets/lottie/indicator-earth.json';
+
+
 SwiperCore.use([Navigation, Pagination]);
 
 // Constants for weather thresholds (adjustable)
@@ -22,6 +42,8 @@ const VISIBILITY_FOG_THRESHOLD = 1000; // metros
 const TEMPERATURE_HOT_THRESHOLD = 25; // °C
 const CLOUDCOVER_CLEAR_THRESHOLD = 50; // %
 const WIND_SPEED_CALM_THRESHOLD = 10; // km/h
+
+
 
 interface WeatherDisplay {
   location: string;
@@ -74,6 +96,88 @@ export class WelcomePage implements OnInit, AfterViewInit {
     autoplay: true,
     renderer: 'svg' // Más estable en Safari
   };
+
+// --- Grupo A: Condiciones Meteorológicas ---
+sunnyLottieOptions: AnimationOptions = {
+  animationData: sunnyAnimation,
+  loop: true, autoplay: true, renderer: 'svg'
+};
+
+nightLottieOptions: AnimationOptions = {
+  animationData: nightAnimation,
+  loop: true, autoplay: true, renderer: 'svg'
+};
+
+cloudyDayLottieOptions: AnimationOptions = {
+  animationData: cloudyDayAnimation,
+  loop: true, autoplay: true, renderer: 'svg'
+};
+
+cloudyNightLottieOptions: AnimationOptions = {
+  animationData: cloudyNightAnimation,
+  loop: true, autoplay: true, renderer: 'svg'
+};
+
+cloudyLottieOptions: AnimationOptions = {
+  animationData: cloudyAnimation,
+  loop: true, autoplay: true, renderer: 'svg'
+};
+
+drizzleLottieOptions: AnimationOptions = {
+  animationData: drizzleAnimation,
+  loop: true, autoplay: true, renderer: 'svg'
+};
+
+rainLottieOptions: AnimationOptions = {
+  animationData: rainAnimation,
+  loop: true, autoplay: true, renderer: 'svg'
+};
+
+stormLottieOptions: AnimationOptions = {
+  animationData: stormAnimation,
+  loop: true, autoplay: true, renderer: 'svg'
+};
+
+snowLottieOptions: AnimationOptions = {
+  animationData: snowAnimation,
+  loop: true, autoplay: true, renderer: 'svg'
+};
+
+fogLottieOptions: AnimationOptions = {
+  animationData: fogAnimation,
+  loop: true, autoplay: true, renderer: 'svg'
+};
+
+// --- Grupo B: Indicadores (Smart Chips) ---
+tempIndicatorOptions: AnimationOptions = {
+  animationData: tempIndicator,
+  loop: true, autoplay: true, renderer: 'svg'
+};
+
+humidityIndicatorOptions: AnimationOptions = {
+  animationData: humidityIndicator,
+  loop: true, autoplay: true, renderer: 'svg'
+};
+
+windIndicatorOptions: AnimationOptions = {
+  animationData: windIndicator,
+  loop: true, autoplay: true, renderer: 'svg'
+};
+
+uvIndicatorOptions: AnimationOptions = {
+  animationData: uvIndicator,
+  loop: true, autoplay: true, renderer: 'svg'
+};
+
+rainChanceIndicatorOptions: AnimationOptions = {
+  animationData: rainChanceIndicator,
+  loop: true, autoplay: true, renderer: 'svg'
+};
+
+earthIndicatorOptions: AnimationOptions = {
+  animationData: earthIndicator,
+  loop: true, autoplay: true, renderer: 'svg'
+};
 
   private swiperInstance?: SwiperCore;
 
@@ -373,6 +477,10 @@ openLocationDetailModal() {
   // Aquí dispararemos el ModalController o cambiaremos la bandera para pintar la Fase 2.
 }
 
+
+// onAnimationCreated(animationItem: any) {
+//   console.log('Lottie cargado:', animationItem);
+// }
   ngOnDestroy() {
     if (this.swiperInstance) {
       this.swiperInstance.destroy(true, true);

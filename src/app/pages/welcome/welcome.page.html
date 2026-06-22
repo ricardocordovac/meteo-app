@@ -25,48 +25,24 @@
     </div>
 
     <div class="weather-header-frame" *ngIf="weatherData[activeIndex]">
-  <div class="header-text-column">
-    <div class="location-info">
-      <div class="town-name">{{ getDisplayLocation(weatherData[activeIndex].location) | uppercase }}</div>
-      <div class="header-date">{{ getCustomDate(weatherData[activeIndex].date) }}</div>
-    </div>
-    <div class="massive-temp-center">
-      {{ weatherData[activeIndex].temp }}<span class="degree">°C</span>
-    </div>
-  </div>
-
-  <div class="header-visual-column">
-    <div class="alert-pill"><span>🔥</span> CALOR EXTREMO</div>
-    <div class="interactive-map-block" (click)="openLocationDetailModal()">
-      <ng-lottie [options]="mapLottieOptions"></ng-lottie>
-    </div>
-  </div>
-</div>
-
-    <!-- <div class="weather-header-frame" *ngIf="weatherData[activeIndex]">
-
-        <div class="header-text-column">
-          <div class="location-info">
- <div class="town-name">{{ getDisplayLocation(weatherData[activeIndex].location) | uppercase }}</div>
-  <div class="header-date">{{ getCustomDate(weatherData[activeIndex].date) }}</div>
-          </div>
-          <div class="massive-temp-center">
-            {{ weatherData[activeIndex].temp }}<span class="degree">°C</span>
-          </div>
+      <div class="header-text-column">
+        <div class="location-info">
+          <div class="town-name">{{ getDisplayLocation(weatherData[activeIndex].location) | uppercase }}</div>
+          <div class="header-date">{{ getCustomDate(weatherData[activeIndex].date) }}</div>
         </div>
-
-        <div class="header-visual-column">
-          <div class="alert-pill"><span>🔥</span> CALOR EXTREMO</div>
-
-          <div class="interactive-map-block" (click)="openLocationDetailModal()">
-
-           <ng-lottie [options]="mapLottieOptions"></ng-lottie>
-          </div>
+        <div class="massive-temp-center">
+          {{ weatherData[activeIndex].temp }}<span class="degree">°C</span>
         </div>
+      </div>
 
+      <div class="header-visual-column">
+        <!-- <div class="alert-pill"><span>🔥</span> CALOR EXTREMO</div> -->
+        <div class="interactive-map-block" (click)="openLocationDetailModal()">
+          <ng-lottie [options]="mapLottieOptions"></ng-lottie>
+
+        </div>
+      </div>
     </div>
-
-    -->
 
     <div class="character-layer" *ngIf="weatherData[activeIndex]">
       <img [src]="weatherData[activeIndex].outfit_image_url" class="anime-floating-img" alt="Character Outfit">
@@ -74,8 +50,8 @@
 
     <ion-modal
       [isOpen]="loader"
-      [initialBreakpoint]="0.18"
-      [breakpoints]="[0.18, 0.35]"
+      [initialBreakpoint]="0.22"
+      [breakpoints]="[0.22, 0.50]"
       [backdropDismiss]="false"
       [canDismiss]="false"
       handle="true"
@@ -103,7 +79,8 @@
               <div class="hourly-column" *ngFor="let hour of [1,2,3,4,5,6]; let i = index">
                 <span class="hour-label">14:00</span>
                 <div class="hour-lottie-container">
-                  <ng-lottie [options]="{ path: 'assets/lottie/indicator-temp.json' }" class="mini-lottie"></ng-lottie>
+
+                  <ng-lottie [options]="sunnyLottieOptions" class="mini-lottie"></ng-lottie>
                 </div>
                 <span class="hour-temp">31°</span>
               </div>
@@ -113,7 +90,7 @@
 
               <div class="weather-info-card active-cyan-card">
                 <div class="tech-corner top-left"></div>
-                <ng-lottie [options]="{ path: 'assets/lottie/indicator-temp.json' }" class="card-lottie"></ng-lottie>
+                <ng-lottie [options]="tempIndicatorOptions" class="card-lottie"></ng-lottie>
                 <div class="card-data">
                   <span class="label">SENSACIÓN</span>
                   <span class="value">{{ weatherData[activeIndex]?.apparentTemp }}°C</span>
@@ -122,7 +99,7 @@
 
               <div class="weather-info-card">
                 <div class="tech-corner top-left"></div>
-                <ng-lottie [options]="{ path: 'assets/lottie/indicator-rain-chance.json' }" class="card-lottie"></ng-lottie>
+                 <ng-lottie [options]="rainChanceIndicatorOptions" class="card-lottie"></ng-lottie>
                 <div class="card-data">
                   <span class="label">PROB. LLUVIA</span>
                   <span class="value">{{ weatherData[activeIndex]?.precipitation }}%</span>
@@ -131,7 +108,7 @@
 
               <div class="weather-info-card active-cyan-card">
                 <div class="tech-corner top-left"></div>
-                <ng-lottie [options]="{ path: 'assets/lottie/indicator-humidity.json' }" class="card-lottie"></ng-lottie>
+                    <ng-lottie [options]="humidityIndicatorOptions" class="card-lottie"></ng-lottie>
                 <div class="card-data">
                   <span class="label">HUMEDAD</span>
                   <span class="value">45%</span>
@@ -140,7 +117,7 @@
 
               <div class="weather-info-card">
                 <div class="tech-corner top-left"></div>
-                <ng-lottie [options]="{ path: 'assets/lottie/indicator-wind.json' }" class="card-lottie"></ng-lottie>
+                <ng-lottie [options]="windIndicatorOptions" class="card-lottie"></ng-lottie>
                 <div class="card-data">
                   <span class="label">VIENTO</span>
                   <span class="value">{{ weatherData[activeIndex]?.windSpeed }} km/h</span>
@@ -149,7 +126,7 @@
 
               <div class="weather-info-card active-uv-card">
                 <div class="tech-corner top-left"></div>
-                <ng-lottie [options]="{ path: 'assets/lottie/indicator-uv.json' }" class="card-lottie"></ng-lottie>
+                <ng-lottie [options]="uvIndicatorOptions" class="card-lottie"></ng-lottie>
                 <div class="card-data">
                   <span class="label">ÍNDICE UV</span>
                   <span class="value">8</span>
@@ -158,7 +135,7 @@
 
               <div class="weather-info-card">
                 <div class="tech-corner top-left"></div>
-                <ng-lottie [options]="{ path: 'assets/lottie/indicator-humidity.json' }" class="card-lottie"></ng-lottie>
+               <ng-lottie [options]="earthIndicatorOptions" class="card-lottie"></ng-lottie>
                 <div class="card-data">
                   <span class="label">HUM. SUELO</span>
                   <span class="value">35%</span>

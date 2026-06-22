@@ -174,7 +174,7 @@ ion-content {
 // [CAPA 2] PERSOANJE RE-ALINEADO GEOMÉTRICAMENTE CON EL BREAKPOINT DE 18%
 .character-layer {
   position: absolute;
-  bottom: 22%; // Calibración exacta para apoyar los pies arriba de las pestañas
+  bottom: 30%; // Calibración exacta para apoyar los pies arriba de las pestañas
   width: 100%; display: flex; justify-content: center; z-index: 5; pointer-events: none;
 
   .anime-floating-img {

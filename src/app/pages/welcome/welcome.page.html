@@ -25,6 +25,25 @@
     </div>
 
     <div class="weather-header-frame" *ngIf="weatherData[activeIndex]">
+  <div class="header-text-column">
+    <div class="location-info">
+      <div class="town-name">{{ getDisplayLocation(weatherData[activeIndex].location) | uppercase }}</div>
+      <div class="header-date">{{ getCustomDate(weatherData[activeIndex].date) }}</div>
+    </div>
+    <div class="massive-temp-center">
+      {{ weatherData[activeIndex].temp }}<span class="degree">°C</span>
+    </div>
+  </div>
+
+  <div class="header-visual-column">
+    <div class="alert-pill"><span>🔥</span> CALOR EXTREMO</div>
+    <div class="interactive-map-block" (click)="openLocationDetailModal()">
+      <ng-lottie [options]="mapLottieOptions"></ng-lottie>
+    </div>
+  </div>
+</div>
+
+    <!-- <div class="weather-header-frame" *ngIf="weatherData[activeIndex]">
 
         <div class="header-text-column">
           <div class="location-info">
@@ -45,32 +64,9 @@
           </div>
         </div>
 
-</div>
+    </div>
 
-    <!-- <div class="weather-header-frame" *ngIf="weatherData[activeIndex]">
-      <div class="header-top-row">
-
-        <div class="location-group">
-          <div class="location-info">
-            <span class="town-name">{{ getDisplayLocation(weatherData[activeIndex].location) | uppercase }}</span>
-            <span class="header-date">{{ getCustomDate(weatherData[activeIndex].date) }}</span>
-          </div>
-
-          <div class="map-icon-trigger" (click)="openLocationDetailModal()">
-            <ng-lottie [options]="{ path: 'assets/lottie/map.json' }"></ng-lottie>
-          </div>
-
-
-        </div>
-
-        <div class="alert-pill">
-          <span>🔥</span> CALOR EXTREMO
-        </div>
-      </div>
-      <div class="massive-temp-center">
-        {{ weatherData[activeIndex].temp }}<span class="degree">°C</span>
-      </div>
-    </div> -->
+    -->
 
     <div class="character-layer" *ngIf="weatherData[activeIndex]">
       <img [src]="weatherData[activeIndex].outfit_image_url" class="anime-floating-img" alt="Character Outfit">

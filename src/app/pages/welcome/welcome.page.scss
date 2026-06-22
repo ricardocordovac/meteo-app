@@ -108,65 +108,62 @@ ion-content {
 }
 
 // [CAPA 1] HEADER FLOTANTE CON BOTÓN DE MAPA REDONDEADO EN CRISTAL
+
 .weather-header-frame {
   position: absolute;
   top: 20px; left: 4%; width: 92%; z-index: 10;
   background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: $blur-intensity;
-  -webkit-backdrop-filter: $blur-intensity;
-  border: 1px solid $glass-border;
+  backdrop-filter: blur(30px) saturate(140%);
+  -webkit-backdrop-filter: blur(30px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 24px;
   padding: 18px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 
-  // Nueva estructura de columnas
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  min-height: 160px; // Altura suficiente para el mapa grande
+  align-items: stretch; // Hace que ambas columnas tengan la misma altura
+  min-height: 140px;
 
-  // Izquierda: Texto
   .header-text-column {
     display: flex; flex-direction: column;
-    justify-content: flex-start;
-    gap: 8px;
-    width: 55%;
+    justify-content: space-between; // Espacia los elementos verticalmente
+    width: 60%;
 
-    .town-name { font-size: 1.07rem; font-weight: 800; color: #ffffff; letter-spacing: 0.5px; }
-    .header-date { font-size: 0.8rem; color: rgba(255, 255, 255, 0.6); }
+    .town-name { font-size: 1.1rem; font-weight: 800; color: #ffffff; letter-spacing: 0.5px; }
+    .header-date { font-size: 0.75rem; color: rgba(255, 255, 255, 0.6); }
 
     .massive-temp-center {
-      font-size:3.2rem; font-weight: 800; color: #ffffff;
-      text-align: left; line-height: 1; margin-top: 8px;
-      .degree { font-size: 1.2rem; vertical-align: super; }
+      font-size: 3.5rem; font-weight: 800; color: #ffffff;
+      line-height: 1; margin-top: 8px;
+      .degree { font-size: 1.2rem; vertical-align: super; font-weight: 300; }
     }
   }
 
-  // Derecha: Alerta + Mapa
   .header-visual-column {
     display: flex; flex-direction: column; align-items: flex-end;
-    width: 40%; height: 100%;
+    width: 35%;
 
     .alert-pill {
-      //background: $alert-red; color: #ffffff; font-size: 0.62rem; font-weight: 800;
-       font-size: 0.8rem; padding: 3px 6px; margin-bottom: 8px;
+      background: #ff3b30; color: #ffffff; font-size: 0.6rem; font-weight: 800;
+      padding: 4px 8px; border-radius: 20px; white-space: nowrap;
+      margin-bottom: 10px;
     }
 
     .interactive-map-block {
-      width: 100%; flex-grow: 1;
+      flex: 1; // Ocupa todo el alto disponible en la columna
+      width: 100%;
       cursor: pointer;
-      display: flex; align-items: flex-end; justify-content: flex-end;
+      display: flex; align-items: center; justify-content: center;
 
       ng-lottie {
-        width: 70px; height: 70px;
+        width: 100%;
+        max-width: 90px; // Ajusta este valor para el tamaño final del icono
+        height: auto;
       }
     }
   }
 }
-
-// IMPORTANTE: Limpiar el código viejo que ya no se usa
-// Elimina o comenta el bloque .location-group y .map-icon-trigger que están abajo en tu archivo actual
-
 // .weather-header-frame {
 //   position: absolute;
 //   top: 20px; left: 4%; width: 92%; z-index: 10;
@@ -175,51 +172,58 @@ ion-content {
 //   -webkit-backdrop-filter: $blur-intensity;
 //   border: 1px solid $glass-border;
 //   border-radius: 24px;
-//   padding: 14px 18px;
+//   padding: 18px;
 //   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 
-//   .header-top-row { display: flex; justify-content: space-between; align-items: center; }
+//   // Nueva estructura de columnas
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: flex-start;
+//   min-height: 160px; // Altura suficiente para el mapa grande
 
-//   .location-group {
-//     display: flex;
-//     align-items: center;
-//     gap: 10px;
-//   }
-
-//   .location-info {
+//   // Izquierda: Texto
+//   .header-text-column {
 //     display: flex; flex-direction: column;
-//     .town-name { font-size: 1.35rem; font-weight: 800; color: #ffffff; letter-spacing: 0.5px; }
-//     .header-date { font-size: 0.75rem; color: rgba(255, 255, 255, 0.6); margin-top: 1px; }
-//   }
+//     justify-content: flex-start;
+//     gap: 8px;
+//     width: 55%;
 
-//   .map-trigger-btn {
-//     --padding-start: 0; --padding-end: 0;
-//     margin: 0; height: 34px; width: 34px;
-//     --background: rgba(255, 255, 255, 0.08);
-//     border: 1px solid rgba(255, 255, 255, 0.18);
-//     border-radius: 50%; --box-shadow: none;
+//     .town-name { font-size: 1.07rem; font-weight: 800; color: #ffffff; letter-spacing: 0.5px; }
+//     .header-date { font-size: 0.8rem; color: rgba(255, 255, 255, 0.6); }
 
-//     ion-icon { font-size: 1.15rem; color: #ffffff; }
-
-//     &:focus, &:active {
-//       --background: rgba(0, 240, 255, 0.15);
-//       border-color: $cyan-neon;
-//       ion-icon { color: $cyan-neon; }
+//     .massive-temp-center {
+//       font-size:3.2rem; font-weight: 800; color: #ffffff;
+//       text-align: left; line-height: 1; margin-top: 8px;
+//       .degree { font-size: 1.2rem; vertical-align: super; }
 //     }
 //   }
 
-//   .alert-pill {
-//     background: $alert-red; color: #ffffff; font-size: 0.62rem; font-weight: 800;
-//     padding: 5px 10px; border-radius: 20px; box-shadow: 0 4px 10px rgba(255, 59, 48, 0.3);
-//     display: flex; align-items: center; gap: 4px;
-//   }
+//   // Derecha: Alerta + Mapa
+//   .header-visual-column {
+//     display: flex; flex-direction: column; align-items: flex-end;
+//     width: 40%; height: 100%;
 
-//   .massive-temp-center {
-//     font-size: 4.8rem; font-weight: 800; color: #ffffff; text-align: center;
-//     line-height: 1; margin-top: 4px; letter-spacing: -1px;
-//     .degree { font-size: 1.8rem; vertical-align: super; font-weight: 300; }
+//     .alert-pill {
+//       //background: $alert-red; color: #ffffff; font-size: 0.62rem; font-weight: 800;
+//        font-size: 0.8rem; padding: 3px 6px; margin-bottom: 8px;
+//     }
+
+//     .interactive-map-block {
+//       width: 100%; flex-grow: 1;
+//       cursor: pointer;
+//       display: flex; align-items: flex-end; justify-content: flex-end;
+
+//       ng-lottie {
+//         width: 70px; height: 70px;
+//       }
+//     }
 //   }
 // }
+
+// IMPORTANTE: Limpiar el código viejo que ya no se usa
+// Elimina o comenta el bloque .location-group y .map-icon-trigger que están abajo en tu archivo actual
+
+
 
 // [CAPA 2] PERSOANJE RE-ALINEADO GEOMÉTRICAMENTE CON EL BREAKPOINT DE 18%
 .character-layer {

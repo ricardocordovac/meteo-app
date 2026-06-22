@@ -30,6 +30,20 @@ export class MeteoService {
       );
 
       if (matchedCondition) {
+
+        // --- MÍNIMO CAMBIO: ESCUDO DE PROTECCIÓN POR RADIACIÓN SOLAR ---
+      // Si la fila del motor de reglas dice gris/nublado/viento, pero hay radiación física real del sol (> 250 W/m²),
+      // forzamos el renderizado al fondo soleado guardado por el backend o el predeterminado limpio.
+      let finalBackground = data.background_image_url || '/assets/backgrounds/soleado.jpg';
+
+      if (data.shortwave_radiation && data.shortwave_radiation > 250) {
+        const bgUrlLower = (matchedCondition.image_url || '').toLowerCase();
+        if (bgUrlLower.includes('nublado') || bgUrlLower.includes('gris') || bgUrlLower.includes('viento')) {
+          finalBackground = '/assets/backgrounds/soleado.jpg';
+        }
+      }
+      // ---------------------------------------------------------------
+
         return {
           ...matchedCondition,
           bbackground: matchedCondition.image_url || `${matchedCondition.tipo_clima}.jpg`,

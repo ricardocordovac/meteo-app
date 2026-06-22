@@ -51,7 +51,19 @@ export class WelcomePage implements OnInit, AfterViewInit {
   isIos: boolean = false;
   isAndroid: boolean = false;
   loader: boolean = false;
-  weatherData: any[] = [];
+// Modelo de datos unificado para inyección limpia en las directivas del DOM
+  weatherData: any[] = [
+    {
+      location: 'Valdeolmos',
+      date: new Date(),
+      temp: 32.1,
+      apparentTemp: 32.6,
+      precipitation: 0,
+      windSpeed: 8,
+      background_image_url: 'assets/backgrounds/soleado.jpg',
+      outfit_image_url: 'assets/characters/summer_anime.png'
+    }
+  ];
   activeIndex: number = 0;
 
 
@@ -73,7 +85,7 @@ export class WelcomePage implements OnInit, AfterViewInit {
     setTimeout(() => {
       this.loader = true;
       this.loadWeatherData();
-    }, 1000);
+    }, 1200);
   }
 
   ngAfterViewInit() {
@@ -322,27 +334,33 @@ mapWeatherToBackgroundAccesories(item: any): { background: string, accessories: 
 
  // En welcome.page.ts
 getCustomDate(date: Date | null): string {
-  if (!date || date.toString() === 'Invalid Date') {
-    return 'Lunes, Ene 1'; // Fallback seguro
+    if (!date || date.toString() === 'Invalid Date') {
+      return 'Lunes, Ene 1'; // Fallback seguro
+    }
+    return date.toLocaleDateString('es-ES', {
+      weekday: 'long', // Nombre completo del día (e.g., "Domingo")
+      month: 'short',  // Tres iniciales del mes (e.g., "Sep")
+      day: 'numeric'   // Día numérico (e.g., "28")
+    }).replace(/^\w+/, match => match.charAt(0).toUpperCase() + match.slice(1)); // Capitaliza el día
   }
-  return date.toLocaleDateString('es-ES', {
-    weekday: 'long', // Nombre completo del día (e.g., "Domingo")
-    month: 'short',  // Tres iniciales del mes (e.g., "Sep")
-    day: 'numeric'   // Día numérico (e.g., "28")
-  }).replace(/^\w+/, match => match.charAt(0).toUpperCase() + match.slice(1)); // Capitaliza el día
-}
 
 getDisplayLocation(internalLocation: string): string {
-  if (!internalLocation) return 'N/A';
+    if (!internalLocation) return 'N/A';
 
-  const map: { [key: string]: string } = {
-    'valdeolmos': 'Valdeolmos',
-    'algete': 'Algete',
-    'el_casar': 'El Casar',
-    'fuente_el_saz': 'Fuente el Saz'
-  };
+    const map: { [key: string]: string } = {
+      'valdeolmos': 'Valdeolmos',
+      'algete': 'Algete',
+      'el_casar': 'El Casar',
+      'fuente_el_saz': 'Fuente el Saz'
+    };
 
-  return map[internalLocation.toLowerCase()] || internalLocation;
+    return map[internalLocation.toLowerCase()] || internalLocation;
+  }
+
+// Agrega este método dentro de la clase de tu componente principal
+openLocationDetailModal() {
+  console.log('Abriendo panel de detalle con mapa y selección de pueblos...');
+  // Aquí dispararemos el ModalController o cambiaremos la bandera para pintar la Fase 2.
 }
 
   ngOnDestroy() {

@@ -1,19 +1,17 @@
 <ion-content [fullscreen]="true" [forceOverscroll]="false">
-  <!-- LOADER -->
+
   <div *ngIf="!loader" class="center_div-loader">
     <div class="ripple-container">
       <div class="thumb-lg ripple-trigger">
-        <img src="assets/icons/weather.svg" class="rounded_img">
+        <img src="assets/icons/weather.svg" class="rounded_img" alt="Weather Icon">
       </div>
       <div class="ripple-1"></div>
       <div class="ripple-2"></div>
     </div>
   </div>
 
-  <!-- CONTENEDOR POR CAPAS -->
   <div *ngIf="loader" class="main-layered-container" [ngClass]="{'is-ios': isIos, 'is-android': isAndroid}">
 
-    <!-- CAPA 0: FONDO DINÁMICO -->
     <div class="swiper-background-layer">
       <div class="swiper" #swiper>
         <div class="swiper-wrapper">
@@ -26,59 +24,152 @@
       </div>
     </div>
 
-    <!-- CAPA 1: HEADER (TEMPERATURA MASIVA) -->
-    <div class="weather-header" *ngIf="weatherData[activeIndex]">
-      <div class="location-chip">
-        <ion-icon name="location-sharp"></ion-icon>
-        <span>{{ weatherData[activeIndex].location | titlecase }}</span>
-      </div>
-      <div class="massive-temp">
-        {{ weatherData[activeIndex].temp }}<span class="degree-symbol">°C</span>
-      </div>
-      <div class="date-label">{{ getCustomDate(weatherData[activeIndex].date) }}</div>
-    </div>
+    <div class="weather-header-frame" *ngIf="weatherData[activeIndex]">
 
-    <!-- CAPA 2: PERSONAJE FLOTANTE -->
+  <div class="header-text-column">
+    <div class="location-info">
+      <span class="town-name">{{ getDisplayLocation(weatherData[activeIndex].location) | uppercase }}</span><span> 📍</span>
+      <span class="header-date">{{ getCustomDate(weatherData[activeIndex].date) }}</span>
+    </div>
+    <div class="massive-temp-center">
+      {{ weatherData[activeIndex].temp }}<span class="degree">°C</span>
+    </div>
+  </div>
+
+  <div class="header-visual-column">
+    <div class="alert-pill"><span>🔥</span> CALOR EXTREMO</div>
+
+    <div class="interactive-map-block" (click)="openLocationDetailModal()">
+      <ng-lottie [options]="{ path: 'assets/lottie/map.json' }"></ng-lottie>
+    </div>
+  </div>
+
+</div>
+
+    <!-- <div class="weather-header-frame" *ngIf="weatherData[activeIndex]">
+      <div class="header-top-row">
+
+        <div class="location-group">
+          <div class="location-info">
+            <span class="town-name">{{ getDisplayLocation(weatherData[activeIndex].location) | uppercase }}</span>
+            <span class="header-date">{{ getCustomDate(weatherData[activeIndex].date) }}</span>
+          </div>
+
+          <div class="map-icon-trigger" (click)="openLocationDetailModal()">
+            <ng-lottie [options]="{ path: 'assets/lottie/map.json' }"></ng-lottie>
+          </div>
+
+
+        </div>
+
+        <div class="alert-pill">
+          <span>🔥</span> CALOR EXTREMO
+        </div>
+      </div>
+      <div class="massive-temp-center">
+        {{ weatherData[activeIndex].temp }}<span class="degree">°C</span>
+      </div>
+    </div> -->
+
     <div class="character-layer" *ngIf="weatherData[activeIndex]">
-      <img [src]="weatherData[activeIndex].outfit_image_url" class="anime-floating-img">
+      <img [src]="weatherData[activeIndex].outfit_image_url" class="anime-floating-img" alt="Character Outfit">
     </div>
 
-    <!-- CAPA 3: BOTTOM SHEET (CRISTAL) -->
     <ion-modal
-      [isOpen]="true"
-      [initialBreakpoint]="0.35"
-      [breakpoints]="[0.35, 0.65, 0.95]"
+      [isOpen]="loader"
+      [initialBreakpoint]="0.18"
+      [breakpoints]="[0.18, 0.35]"
       [backdropDismiss]="false"
+      [canDismiss]="false"
       handle="true"
       class="glass-modal">
+
       <ng-template>
-        <ion-content class="glass-content">
+        <ion-content class="glass-content" [forceOverscroll]="false">
           <div class="glass-wrapper">
-            <!-- Grid de Smart Chips con Iconos Lottie -->
+
+            <div class="mode-tabs-container">
+              <div class="mode-tabs">
+                <div class="tab-item active">
+                  <ion-icon name="person-outline" class="tab-icon"></ion-icon> USER
+                </div>
+                <div class="tab-item">
+                  <ion-icon name="settings-outline" class="tab-icon"></ion-icon> PRO
+                </div>
+                <div class="tab-item">
+                  <ion-icon name="leaf-outline" class="tab-icon"></ion-icon> AGRO ✨
+                </div>
+              </div>
+            </div>
+
+            <div class="hourly-forecast-strip">
+              <div class="hourly-column" *ngFor="let hour of [1,2,3,4,5,6]; let i = index">
+                <span class="hour-label">14:00</span>
+                <div class="hour-lottie-container">
+                  <ng-lottie [options]="{ path: 'assets/lottie/indicator-temp.json' }" class="mini-lottie"></ng-lottie>
+                </div>
+                <span class="hour-temp">31°</span>
+              </div>
+            </div>
+
             <div class="chips-grid">
-              <div class="weather-pill">
-                <ng-lottie [options]="{ path: 'assets/lottie/indicator-temp.json' }" class="pill-lottie"></ng-lottie>
-                <div class="pill-info">
-                  <span class="label">Sensación</span>
+
+              <div class="weather-info-card active-cyan-card">
+                <div class="tech-corner top-left"></div>
+                <ng-lottie [options]="{ path: 'assets/lottie/indicator-temp.json' }" class="card-lottie"></ng-lottie>
+                <div class="card-data">
+                  <span class="label">SENSACIÓN</span>
                   <span class="value">{{ weatherData[activeIndex]?.apparentTemp }}°C</span>
                 </div>
               </div>
-              <div class="weather-pill">
-                <ng-lottie [options]="{ path: 'assets/lottie/indicator-wind.json' }" class="pill-lottie"></ng-lottie>
-                <div class="pill-info">
-                  <span class="label">Viento</span>
+
+              <div class="weather-info-card">
+                <div class="tech-corner top-left"></div>
+                <ng-lottie [options]="{ path: 'assets/lottie/indicator-rain-chance.json' }" class="card-lottie"></ng-lottie>
+                <div class="card-data">
+                  <span class="label">PROB. LLUVIA</span>
+                  <span class="value">{{ weatherData[activeIndex]?.precipitation }}%</span>
+                </div>
+              </div>
+
+              <div class="weather-info-card active-cyan-card">
+                <div class="tech-corner top-left"></div>
+                <ng-lottie [options]="{ path: 'assets/lottie/indicator-humidity.json' }" class="card-lottie"></ng-lottie>
+                <div class="card-data">
+                  <span class="label">HUMEDAD</span>
+                  <span class="value">45%</span>
+                </div>
+              </div>
+
+              <div class="weather-info-card">
+                <div class="tech-corner top-left"></div>
+                <ng-lottie [options]="{ path: 'assets/lottie/indicator-wind.json' }" class="card-lottie"></ng-lottie>
+                <div class="card-data">
+                  <span class="label">VIENTO</span>
                   <span class="value">{{ weatherData[activeIndex]?.windSpeed }} km/h</span>
                 </div>
               </div>
-              <!-- Añadir aquí los otros 4 chips (Humedad, UV, etc.) -->
+
+              <div class="weather-info-card active-uv-card">
+                <div class="tech-corner top-left"></div>
+                <ng-lottie [options]="{ path: 'assets/lottie/indicator-uv.json' }" class="card-lottie"></ng-lottie>
+                <div class="card-data">
+                  <span class="label">ÍNDICE UV</span>
+                  <span class="value">8</span>
+                </div>
+              </div>
+
+              <div class="weather-info-card">
+                <div class="tech-corner top-left"></div>
+                <ng-lottie [options]="{ path: 'assets/lottie/indicator-humidity.json' }" class="card-lottie"></ng-lottie>
+                <div class="card-data">
+                  <span class="label">HUM. SUELO</span>
+                  <span class="value">35%</span>
+                </div>
+              </div>
+
             </div>
 
-            <!-- Selector de Modo del Render 3 -->
-            <div class="mode-tabs">
-              <div class="tab-item active">USER</div>
-              <div class="tab-item">PRO</div>
-              <div class="tab-item">AGRO</div>
-            </div>
           </div>
         </ion-content>
       </ng-template>

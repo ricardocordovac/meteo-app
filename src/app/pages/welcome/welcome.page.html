@@ -28,7 +28,7 @@
 
   <div class="header-text-column">
     <div class="location-info">
-      <span class="town-name">{{ getDisplayLocation(weatherData[activeIndex].location) | uppercase }}</span><span> 📍</span>
+      <span class="town-name">{{ getDisplayLocation(weatherData[activeIndex].location) | uppercase }}</span>
       <span class="header-date">{{ getCustomDate(weatherData[activeIndex].date) }}</span>
     </div>
     <div class="massive-temp-center">
@@ -77,7 +77,7 @@
 
     <ion-modal
       [isOpen]="loader"
-      [initialBreakpoint]="0.15"
+      [initialBreakpoint]="0.18"
       [breakpoints]="[0.18, 0.35]"
       [backdropDismiss]="false"
       [canDismiss]="false"

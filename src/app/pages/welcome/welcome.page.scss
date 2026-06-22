@@ -78,9 +78,7 @@ ion-content {
 
   &.is-ios {
     .weather-header-frame {
-      top: calc(env(safe-area-inset-top) + 20px);
-      padding-bottom: env(safe-area-inset-bottom);
-
+      top: calc(env(safe-area-inset-top) + 10px);
     }
   }
 }
@@ -111,34 +109,57 @@ ion-content {
 
 // [CAPA 1] HEADER FLOTANTE CON BOTÓN DE MAPA REDONDEADO EN CRISTAL
 .weather-header-frame {
-  // ... (mantén tus propiedades actuales)
-  padding: 12px 14px; // Reducimos padding para ganar espacio
+  position: absolute;
+  top: 20px; left: 4%; width: 92%; z-index: 10;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: $blur-intensity;
+  -webkit-backdrop-filter: $blur-intensity;
+  border: 1px solid $glass-border;
+  border-radius: 24px;
+  padding: 18px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 
+  // Nueva estructura de columnas
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  min-height: 160px; // Altura suficiente para el mapa grande
+
+  // Izquierda: Texto
   .header-text-column {
-    .town-name {
-      font-size: 1.1rem; // Reducido para evitar el salto de línea (VALDEOLM-OS)
-      white-space: nowrap; // Obliga a que no se parta
-      overflow: hidden;
-      text-overflow: ellipsis; // Si es muy largo, pone "..."
-    }
+    display: flex; flex-direction: column;
+    justify-content: flex-start;
+    gap: 8px;
+    width: 55%;
+
+    .town-name { font-size: 1.35rem; font-weight: 800; color: #ffffff; letter-spacing: 0.5px; }
+    .header-date { font-size: 0.9rem; color: rgba(255, 255, 255, 0.6); }
 
     .massive-temp-center {
-      font-size: 3.2rem; // Reducido drásticamente para liberar espacio vertical
-      line-height: 0.9;
-      margin-top: 5px;
-      .degree { font-size: 1.2rem; }
+      font-size: 4.2rem; font-weight: 800; color: #ffffff;
+      text-align: left; line-height: 1; margin-top: 10px;
+      .degree { font-size: 1.5rem; vertical-align: super; }
     }
   }
 
+  // Derecha: Alerta + Mapa
   .header-visual-column {
+    display: flex; flex-direction: column; align-items: flex-end;
+    width: 40%; height: 100%;
+
     .alert-pill {
-      font-size: 0.55rem; // Más pequeño
-      padding: 3px 6px;
+      //background: $alert-red; color: #ffffff; font-size: 0.62rem; font-weight: 800;
+       font-size: 0.8rem; padding: 4px 8px; margin-bottom: 10px;
     }
 
     .interactive-map-block {
+      width: 100%; flex-grow: 1;
+      cursor: pointer;
+      display: flex; align-items: flex-end; justify-content: flex-end;
+
       ng-lottie {
-        max-width: 70px; // Reducimos el mapa para que no empuje hacia abajo
+        width: 100%; height: auto;
+        max-width: 100px; // Tamaño ajustado al hueco
       }
     }
   }

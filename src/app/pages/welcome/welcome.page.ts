@@ -70,11 +70,23 @@ interface WeatherDisplay {
 export class WelcomePage implements OnInit, AfterViewInit {
   @ViewChild('swiper', { static: false }) swiper?: ElementRef<HTMLElement>;
 
- // Variables para la interfaz
+
+
+
+// Estados de control de la interfaz
+  loader: boolean = false;
+  activeIndex: number = 0;
+  isInfoCardExpanded: boolean = false;
+  isLocationModalOpen: boolean = false;
+
+
+
+  // Detección de plataforma móvil nativa
   isIos: boolean = false;
   isAndroid: boolean = false;
-  loader: boolean = false;
-// Modelo de datos unificado para inyección limpia en las directivas del DOM
+
+  // Listado estricto de municipios bajo cobertura meteorológica
+  locations = ['valdeolmos', 'algete', 'el_casar', 'fuente_el_saz'];
   weatherData: any[] = [
     {
       location: 'Valdeolmos',
@@ -87,7 +99,6 @@ export class WelcomePage implements OnInit, AfterViewInit {
       outfit_image_url: 'assets/characters/summer_anime.png'
     }
   ];
-  activeIndex: number = 0;
 
 
   mapLottieOptions: AnimationOptions = {
@@ -179,14 +190,13 @@ earthIndicatorOptions: AnimationOptions = {
   loop: true, autoplay: true, renderer: 'svg'
 };
 
-  private swiperInstance?: SwiperCore;
-
+ private swiperInstance?: SwiperCore;
 
 
   constructor(
     public util: UtilService,
-    private supabase: SupabaseService,
-      private platform: Platform,
+    private supabaseService: SupabaseService,
+    private platform: Platform,
     private cdr: ChangeDetectorRef
   ) {
     // Detectar plataforma al inicio
@@ -240,79 +250,235 @@ earthIndicatorOptions: AnimationOptions = {
   }
 
   async loadWeatherData() {
-  const locations = ['valdeolmos', 'algete', 'el_casar', 'fuente_el_saz'];
-  try {
-    this.loader = false;
-    this.weatherData = await Promise.all(
-      locations.map(async location => {
-        const data = await this.supabase.getMeteoCondition(location); // Corrección de 'supabase' a 'supabaseService'
-        const createdAt = data?.created_at ? new Date(data.created_at) : null;
-        const lottiePath = this.getWeatherLottiePath(data?.background || 'sunny');
-        return {
-          location: data?.location || location || 'N/A',
-          temp: data?.temp || 'N/A',
-          apparentTemp: data?.apparentTemp || 'N/A',
-          precipitation: data?.precipitation || 'N/A',
-          windSpeed: data?.windSpeed || 'N/A',
-          isDay: data?.isDay || 0,
-          date: createdAt,
-          time: createdAt?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) || 'N/A',
-          background: data?.background || '/assets/backgrounds/soleado.jpg',
-          background_image_url: data?.background_image_url || '/assets/backgrounds/soleado.jpg',
-          outfit_image_url: data?.outfit_image_url ||  '/assets/backgrounds/prototipo.png',
-          description: data?.description || 'N/A',
-           lottieOptions: {
-              path: `assets/lottie/${lottiePath}`,
-            }
-        };
-      })
-    );
-    if (this.weatherData.length === 0) {
-      this.weatherData = locations.map(location => ({
-        location: String(location),
-        temp: 'N/A',
-        apparentTemp: 'N/A',
-        precipitation: 'N/A',
-        windSpeed: 'N/A',
-        date: null,
-        time: 'N/A',
-        background: '/assets/backgrounds/soleado.jpg',
-        background_image_url: '/assets/backgrounds/soleado.jpg',
-        outfit_image_url:'/assets/backgrounds/prototipo.png',
-        description: 'N/A'
-      }));
-    }
-    this.loader = true;
-    this.cdr.detectChanges();
-    setTimeout(() => {
-      this.initializeSwiper();
-    }, 1000);
-  } catch (error) {
-    console.error('Error loading weather data:', error);
-    this.loader = true;
-    this.weatherData = locations.map(location => ({
-      location: String(location),
-      temp: 'N/A',
-      apparentTemp: 'N/A',
-      precipitation: 'N/A',
-      windSpeed: 'N/A',
-      date: null,
-      time: 'N/A',
-      background: '/assets/backgrounds/soleado.jpg',
-      background_image_url: '/assets/backgrounds/soleado.jpg',
-      outfit_image_url:'/assets/backgrounds/prototipo.png',
-      description: 'N/A'
-    }));
-    this.cdr.detectChanges();
-    setTimeout(() => {
-      this.initializeSwiper();
-    }, 1000);
+      try {
+        this.loader = false;
+        this.weatherData = await Promise.all(
+          this.locations.map(async location => {
+            const data = await this.supabaseService.getMeteoCondition(location); // Corrección de 'supabase' a 'supabaseService'
+            const createdAt = data?.created_at ? new Date(data.created_at) : null;
+            const lottiePath = this.getWeatherLottiePath(data?.background || 'sunny');
+            return {
+              location: data?.location || location || 'N/A',
+              temp: data?.temp || 'N/A',
+              apparentTemp: data?.apparentTemp || 'N/A',
+              precipitation: data?.precipitation || 'N/A',
+              windSpeed: data?.windSpeed || 'N/A',
+              isDay: data?.isDay || 0,
+              date: createdAt,
+              time: createdAt?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) || 'N/A',
+              background: data?.background || '/assets/backgrounds/soleado.jpg',
+              background_image_url: data?.background_image_url || '/assets/backgrounds/soleado.jpg',
+              outfit_image_url: data?.outfit_image_url ||  '/assets/backgrounds/prototipo.png',
+              description: data?.description || 'N/A',
+              lottieOptions: {
+                  path: `assets/lottie/${lottiePath}`,
+                }
+            };
+          })
+        );
+        if (this.weatherData.length === 0) {
+          this.weatherData = this.locations.map(location => ({
+            location: String(location),
+            temp: 'N/A',
+            apparentTemp: 'N/A',
+            precipitation: 'N/A',
+            windSpeed: 'N/A',
+            date: null,
+            time: 'N/A',
+            background: '/assets/backgrounds/soleado.jpg',
+            background_image_url: '/assets/backgrounds/soleado.jpg',
+            outfit_image_url:'/assets/backgrounds/prototipo.png',
+            description: 'N/A'
+          }));
+        }
+        this.loader = true;
+        this.cdr.detectChanges();
+        setTimeout(() => {
+          this.initializeSwiper();
+        }, 1000);
+      } catch (error) {
+        console.error('Error loading weather data:', error);
+        this.loader = true;
+        this.weatherData = this.locations.map(location => ({
+          location: String(location),
+          temp: 'N/A',
+          apparentTemp: 'N/A',
+          precipitation: 'N/A',
+          windSpeed: 'N/A',
+          date: null,
+          time: 'N/A',
+          background: '/assets/backgrounds/soleado.jpg',
+          background_image_url: '/assets/backgrounds/soleado.jpg',
+          outfit_image_url:'/assets/backgrounds/prototipo.png',
+          description: 'N/A'
+        }));
+        this.cdr.detectChanges();
+        setTimeout(() => {
+          this.initializeSwiper();
+        }, 1000);
+      }
   }
-}
+
+  async getWeather() {
+    try {
+      // 1. Lanzamos las peticiones en paralelo para respetar el orden estricto del array 'locations'
+      const promises = this.locations.map(async (town) => {
+        const res = await this.supabaseService.getDataByLocation(town);
+
+        // Si Supabase devuelve datos para ese pueblo, estructuramos el objeto para el HTML
+        if (res && res.length > 0) {
+          const row = res[0]; // Extraemos la fila real de datos
+
+          return {
+            location: row.location,
+            date: row.timestamp ? new Date(row.timestamp) : new Date(),
+            temp: row.temperature_2m, // Mapeamos 'temperature_2m' a 'temp' tal como pide tu HTML
+            windSpeed: row.wind_speed_10m || 0,
+            //uvIndex: row.uv_index || 0,
+            uvIndex:  0,
+            background_image_url: row.background_image_url || 'assets/backgrounds/soleado.jpg',
+            outfit_image_url: row.outfit_image_url || 'assets/backgrounds/OUTFIT_HOT.png',
+            text_clothing: 'Ropa cómoda'
+          };
+        }
+        return null;
+      });
+
+      // 2. Esperamos de forma ordenada la resolución de todos los pueblos
+      const results = await Promise.all(promises);
+
+      // 3. Filtramos los valores nulos por si algún pueblo fallara en la base de datos
+      this.weatherData = results.filter(item => item !== null && item !== undefined);
+
+      console.log('📊 Datos meteorológicos acoplados a la UI en orden estricto:', this.weatherData);
+
+      // 4. Desactivamos el esqueleto/pantalla de carga y actualizamos la vista de Angular
+      this.loader = true;
+      this.cdr.detectChanges();
+
+      // 5. Inicializamos el Swiper una vez que los datos ya están renderizados en el DOM
+      setTimeout(() => {
+        this.initializeSwiper();
+      }, 200);
+
+    } catch (error) {
+      console.error('❌ Error crítico en el flujo de getWeather:', error);
+      this.loader = true;
+      this.cdr.detectChanges();
+    }
+  }
+
+  // async getWeather() {
+  //   this.locations.forEach(async (element) => {
+  //     // Nota: Aquí usabas this.supabaseService.getDataByLocation pero en tu flujo real dependías de las reglas
+  //     const res = await this.supabaseService.getDataByLocation(element);
+  //     console.log('Resultados de las condiciones:', res);
+  //     if (res) {
+  //       this.weatherData.push(res);
+  //     }
+  //   });
+  //   console.log('this.weatherData--->', this.weatherData);
+  // }
 
 
- // --- HELPER PARA MAPEAR EL ARCHIVO JSON CORRECTO ---
-  private getWeatherLottiePath(background: string): string {
+  getDisplayLocation(internalLocation: string): string {
+    if (!internalLocation) return 'N/A';
+
+    const map: { [key: string]: string } = {
+      'valdeolmos': 'Valdeolmos',
+      'algete': 'Algete',
+      'el_casar': 'El Casar',
+      'fuente_el_saz': 'Fuente el Saz'
+    };
+
+    return map[internalLocation.toLowerCase()] || internalLocation;
+  }
+
+  getCustomDate(dateInput: any): string {
+    if (!dateInput) return '';
+    const date = dateInput instanceof Date ? dateInput : new Date(dateInput);
+    const options: Intl.DateTimeFormatOptions = { weekday: 'long', day: 'numeric', month: 'short' };
+    let formatted = date.toLocaleDateString('es-ES', options);
+    return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+  }
+
+  getLottieOptions(iconName: string): AnimationOptions {
+    let animationData;
+    switch (iconName) {
+      case 'sunny': animationData = sunnyAnimation; break;
+      case 'night': animationData = nightAnimation; break;
+      case 'cloudy-day': animationData = cloudyDayAnimation; break;
+      case 'cloudy-night': animationData = cloudyNightAnimation; break;
+      case 'cloudy': animationData = cloudyAnimation; break;
+      case 'drizzle': animationData = drizzleAnimation; break;
+      case 'rain': animationData = rainAnimation; break;
+      case 'storm': animationData = stormAnimation; break;
+      case 'snow': animationData = snowAnimation; break;
+      case 'fog': animationData = fogAnimation; break;
+      default: animationData = sunnyAnimation;
+    }
+    return { loop: true, autoplay: true, animationData };
+  }
+
+  getIndicatorOptions(type: string): AnimationOptions {
+    let animationData;
+    switch (type) {
+      case 'temp': animationData = tempIndicator; break;
+      case 'humidity': animationData = humidityIndicator; break;
+      case 'wind': animationData = windIndicator; break;
+      case 'uv': animationData = uvIndicator; break;
+      //case 'pressure': animationData = pressureIndicator; break;
+      default: animationData = tempIndicator;
+    }
+    return { loop: true, autoplay: true, animationData };
+  }
+
+  getClothingIcon(outfitUrl: string): string {
+    return outfitUrl ? outfitUrl : 'assets/backgrounds/OUTFIT_HOT.png';
+  }
+
+  toggleInfoCard() {
+    this.isInfoCardExpanded = !this.isInfoCardExpanded;
+    this.cdr.detectChanges();
+  }
+
+  openLocationDetailModal() {
+    console.log('Abriendo panel de detalle con mapa y selección de pueblos...');
+    this.isLocationModalOpen = true;
+    this.cdr.detectChanges();
+  }
+
+  selectTownByIndex(index: number) {
+    if (index === this.activeIndex) {
+      console.log('ℹ️ El usuario seleccionó el pueblo que ya estaba activo. Cerrando modal.');
+      this.isLocationModalOpen = false;
+      this.cdr.detectChanges();
+      return;
+    }
+
+    // 1. Actualizamos el índice activo global
+    this.activeIndex = index;
+
+    // 2. Desplazamos el Swiper de fondo al slide correspondiente de manera fluida
+    if (this.swiperInstance) {
+      this.swiperInstance.slideTo(index, 400); // 400ms de transición de cristal suave
+    }
+
+    // 3. Cerramos el modal cambiando su propiedad de estado a falso
+    this.isLocationModalOpen = false;
+
+    // 4. Forzamos al detector de cambios de Angular a repintar la UI (Temperaturas, Outfit, Lotties)
+    this.cdr.detectChanges();
+
+    console.log('✅ Ubicación cambiada con éxito a:', this.weatherData[index].location, '| Índice:', index);
+  }
+
+  onLocationModalDismissed() {
+    this.isLocationModalOpen = false;
+    this.cdr.detectChanges();
+  }
+
+  getWeatherLottiePath(background: string): string {
     const bg = background.toLowerCase();
     if (bg.includes('sunny') || bg.includes('soleado')) return 'weather-sunny.json';
     if (bg.includes('cloudy') || bg.includes('nublado')) return 'weather-cloudy.json';
@@ -322,7 +488,14 @@ earthIndicatorOptions: AnimationOptions = {
     return 'weather-sunny.json'; // Fallback
   }
 
-mapWeatherToBackgroundAccesories(item: any): { background: string, accessories: string[], isDay: number } {
+  ngOnDestroy() {
+    if (this.swiperInstance) {
+      this.swiperInstance.destroy(true, true);
+      console.log('Swiper instance destroyed');
+    }
+  }
+
+  mapWeatherToBackgroundAccesories(item: any): { background: string, accessories: string[], isDay: number } {
     const weatherCode = Number(item.weathercode ?? -1);
     const isDay = Number(item.is_day ?? 1);
     const cloudcover = Number(item.cloudcover ?? 0);
@@ -444,47 +617,4 @@ mapWeatherToBackgroundAccesories(item: any): { background: string, accessories: 
   }
 
 
-
-
- // En welcome.page.ts
-getCustomDate(date: Date | null): string {
-    if (!date || date.toString() === 'Invalid Date') {
-      return 'Lunes, Ene 1'; // Fallback seguro
-    }
-    return date.toLocaleDateString('es-ES', {
-      weekday: 'long', // Nombre completo del día (e.g., "Domingo")
-      month: 'short',  // Tres iniciales del mes (e.g., "Sep")
-      day: 'numeric'   // Día numérico (e.g., "28")
-    }).replace(/^\w+/, match => match.charAt(0).toUpperCase() + match.slice(1)); // Capitaliza el día
-  }
-
-getDisplayLocation(internalLocation: string): string {
-    if (!internalLocation) return 'N/A';
-
-    const map: { [key: string]: string } = {
-      'valdeolmos': 'Valdeolmos',
-      'algete': 'Algete',
-      'el_casar': 'El Casar',
-      'fuente_el_saz': 'Fuente el Saz'
-    };
-
-    return map[internalLocation.toLowerCase()] || internalLocation;
-  }
-
-// Agrega este método dentro de la clase de tu componente principal
-openLocationDetailModal() {
-  console.log('Abriendo panel de detalle con mapa y selección de pueblos...');
-  // Aquí dispararemos el ModalController o cambiaremos la bandera para pintar la Fase 2.
-}
-
-
-// onAnimationCreated(animationItem: any) {
-//   console.log('Lottie cargado:', animationItem);
-// }
-  ngOnDestroy() {
-    if (this.swiperInstance) {
-      this.swiperInstance.destroy(true, true);
-      console.log('Swiper instance destroyed');
-    }
-  }
 }

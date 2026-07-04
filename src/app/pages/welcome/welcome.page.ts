@@ -9,7 +9,7 @@ import { Navigation, Pagination } from 'swiper/modules';
 import { AnimationOptions } from 'ngx-lottie';
 import mapAnimation from '../../../assets/lottie/map.json';
 
-// Grupo A
+// Importación Estática de Animaciones (Evita bloqueos de red/CORS en iOS y Android)
 import sunnyAnimation from '../../../assets/lottie/weather-sunny.json';
 import nightAnimation from '../../../assets/lottie/weather-night.json';
 import cloudyDayAnimation from '../../../assets/lottie/weather-partly-cloudy-day.json';
@@ -20,31 +20,38 @@ import rainAnimation from '../../../assets/lottie/weather-rain.json';
 import stormAnimation from '../../../assets/lottie/weather-storm.json';
 import snowAnimation from '../../../assets/lottie/weather-snow.json';
 import fogAnimation from '../../../assets/lottie/weather-fog.json';
-// Grupo B (Indicadores)
+
+// Indicadores (Smart Chips)
 import tempIndicator from '../../../assets/lottie/indicator-temp.json';
 import humidityIndicator from '../../../assets/lottie/indicator-humidity.json';
 import windIndicator from '../../../assets/lottie/indicator-wind.json';
 import uvIndicator from '../../../assets/lottie/indicator-uv.json';
 import rainChanceIndicator from '../../../assets/lottie/indicator-rain-chance.json';
 import earthIndicator from '../../../assets/lottie/indicator-earth.json';
+import { WeatherData } from 'src/app/interfaces/weather-data.interface';
 
 
 SwiperCore.use([Navigation, Pagination]);
 
-// Constants for weather thresholds (adjustable)
-const TEMPERATURE_COLD_THRESHOLD = 10; // °C
-const APPARENT_TEMPERATURE_COLD_THRESHOLD = 10; // °C
-const PRECIPITATION_PROBABILITY_THRESHOLD = 60; // %
-const WIND_SPEED_THRESHOLD = 30; // km/h
-const TEMPERATURE_VERY_COLD_THRESHOLD = 0; // °C
-const HUMIDITY_FOG_THRESHOLD = 80; // %
-const VISIBILITY_FOG_THRESHOLD = 1000; // metros
-const TEMPERATURE_HOT_THRESHOLD = 25; // °C
-const CLOUDCOVER_CLEAR_THRESHOLD = 50; // %
-const WIND_SPEED_CALM_THRESHOLD = 10; // km/h
+// Estructura Estricta para cada hora del Carrusel
+interface HourlyForecast {
+  fecha_hora: string;
+  hora: string;
+  temp: number;
+  sensacion: number;
+  weathercode: number;
+  pop: number;
+  lluvia_mm: number;
+  uv: number;
+  viento_kmh: number;
+  es_dia: number;
+  lottieOptions?: AnimationOptions; // Inyectado dinámicamente en el Front
+}
 
 
 
+
+// Estructura Estricta para cada hora del Carrusel
 interface WeatherDisplay {
   location: string;
   temp: string;
@@ -57,6 +64,28 @@ interface WeatherDisplay {
   background: string;
   description?: string;
   lottieOptions?: AnimationOptions;
+}
+
+// Estructura Maestra de la Ubicación acoplada a Supabase
+interface WeatherLocationData {
+  location: string;
+  date: Date | null;
+  time: string;
+  temp: number;
+  apparentTemp: number;
+  humidity: number;
+  precipitation: number;
+  windSpeed: number;
+  uvIndex: number;
+  pressure: number;
+  weathercode: number;
+  isDay: number;
+  background_image_url: string;
+  outfit_image_url: string;
+  text_clothing: string;
+  accessories: string[];
+  primaryLottieOptions: AnimationOptions;
+  pronostico_meteo: HourlyForecast[]; // 🌟 Las 72 horas estructuradas aquí
 }
 
 
@@ -72,14 +101,11 @@ export class WelcomePage implements OnInit, AfterViewInit {
 
 
 
-
-// Estados de control de la interfaz
+// Controladores globales de Interfaz
   loader: boolean = false;
   activeIndex: number = 0;
   isInfoCardExpanded: boolean = false;
   isLocationModalOpen: boolean = false;
-
-
 
   // Detección de plataforma móvil nativa
   isIos: boolean = false;
@@ -87,111 +113,47 @@ export class WelcomePage implements OnInit, AfterViewInit {
 
   // Listado estricto de municipios bajo cobertura meteorológica
   locations = ['valdeolmos', 'algete', 'el_casar', 'fuente_el_saz'];
-  weatherData: any[] = [
-    {
-      location: 'Valdeolmos',
-      date: new Date(),
-      temp: 32.1,
-      apparentTemp: 32.6,
-      precipitation: 0,
-      windSpeed: 8,
-      background_image_url: 'assets/backgrounds/soleado.jpg',
-      outfit_image_url: 'assets/characters/summer_anime.png'
-    }
-  ];
+  weatherData: WeatherLocationData[] = [];
 
 
-  mapLottieOptions: AnimationOptions = {
-    animationData: mapAnimation, // Esto evita el XMLHttpRequest
-    loop: true,
-    autoplay: true,
-    renderer: 'svg' // Más estable en Safari
-  };
+  // weatherData: any[] = [
+  //   {
+  //     location: 'Valdeolmos',
+  //     date: new Date(),
+  //     temp: 32.1,
+  //     apparentTemp: 32.6,
+  //     precipitation: 0,
+  //     windSpeed: 8,
+  //     background_image_url: 'assets/backgrounds/soleado.jpg',
+  //     outfit_image_url: 'assets/characters/summer_anime.png'
+  //   }
+  // ];
 
-// --- Grupo A: Condiciones Meteorológicas ---
-sunnyLottieOptions: AnimationOptions = {
-  animationData: sunnyAnimation,
-  loop: true, autoplay: true, renderer: 'svg'
-};
 
-nightLottieOptions: AnimationOptions = {
-  animationData: nightAnimation,
-  loop: true, autoplay: true, renderer: 'svg'
-};
+  mapLottieOptions: AnimationOptions = {animationData: mapAnimation,loop: true,autoplay: true,renderer: 'svg' };
+  earthIndicatorOptions: AnimationOptions = { animationData: earthIndicator, loop: true, autoplay: true, renderer: 'svg' };
 
-cloudyDayLottieOptions: AnimationOptions = {
-  animationData: cloudyDayAnimation,
-  loop: true, autoplay: true, renderer: 'svg'
-};
+  private swiperInstance?: SwiperCore;
 
-cloudyNightLottieOptions: AnimationOptions = {
-  animationData: cloudyNightAnimation,
-  loop: true, autoplay: true, renderer: 'svg'
-};
+ // --- Grupo A: Condiciones Meteorológicas (Instancias estáticas) ---
+  readonly sunnyLottie: AnimationOptions = { animationData: sunnyAnimation, loop: true, autoplay: true, renderer: 'svg' };
+  readonly nightLottie: AnimationOptions = { animationData: nightAnimation, loop: true, autoplay: true, renderer: 'svg' };
+  readonly cloudyDayLottie: AnimationOptions = { animationData: cloudyDayAnimation, loop: true, autoplay: true, renderer: 'svg' };
+  readonly cloudyNightLottie: AnimationOptions = { animationData: cloudyNightAnimation, loop: true, autoplay: true, renderer: 'svg' };
+  readonly cloudyLottie: AnimationOptions = { animationData: cloudyAnimation, loop: true, autoplay: true, renderer: 'svg' };
+  readonly drizzleLottie: AnimationOptions = { animationData: drizzleAnimation, loop: true, autoplay: true, renderer: 'svg' };
+  readonly rainLottie: AnimationOptions = { animationData: rainAnimation, loop: true, autoplay: true, renderer: 'svg' };
+  readonly stormLottie: AnimationOptions = { animationData: stormAnimation, loop: true, autoplay: true, renderer: 'svg' };
+  readonly snowLottie: AnimationOptions = { animationData: snowAnimation, loop: true, autoplay: true, renderer: 'svg' };
+  readonly fogLottie: AnimationOptions = { animationData: fogAnimation, loop: true, autoplay: true, renderer: 'svg' };
 
-cloudyLottieOptions: AnimationOptions = {
-  animationData: cloudyAnimation,
-  loop: true, autoplay: true, renderer: 'svg'
-};
-
-drizzleLottieOptions: AnimationOptions = {
-  animationData: drizzleAnimation,
-  loop: true, autoplay: true, renderer: 'svg'
-};
-
-rainLottieOptions: AnimationOptions = {
-  animationData: rainAnimation,
-  loop: true, autoplay: true, renderer: 'svg'
-};
-
-stormLottieOptions: AnimationOptions = {
-  animationData: stormAnimation,
-  loop: true, autoplay: true, renderer: 'svg'
-};
-
-snowLottieOptions: AnimationOptions = {
-  animationData: snowAnimation,
-  loop: true, autoplay: true, renderer: 'svg'
-};
-
-fogLottieOptions: AnimationOptions = {
-  animationData: fogAnimation,
-  loop: true, autoplay: true, renderer: 'svg'
-};
-
-// --- Grupo B: Indicadores (Smart Chips) ---
-tempIndicatorOptions: AnimationOptions = {
-  animationData: tempIndicator,
-  loop: true, autoplay: true, renderer: 'svg'
-};
-
-humidityIndicatorOptions: AnimationOptions = {
-  animationData: humidityIndicator,
-  loop: true, autoplay: true, renderer: 'svg'
-};
-
-windIndicatorOptions: AnimationOptions = {
-  animationData: windIndicator,
-  loop: true, autoplay: true, renderer: 'svg'
-};
-
-uvIndicatorOptions: AnimationOptions = {
-  animationData: uvIndicator,
-  loop: true, autoplay: true, renderer: 'svg'
-};
-
-rainChanceIndicatorOptions: AnimationOptions = {
-  animationData: rainChanceIndicator,
-  loop: true, autoplay: true, renderer: 'svg'
-};
-
-earthIndicatorOptions: AnimationOptions = {
-  animationData: earthIndicator,
-  loop: true, autoplay: true, renderer: 'svg'
-};
-
- private swiperInstance?: SwiperCore;
-
+ // --- Grupo B: Indicadores ---
+  readonly tempIndicator: AnimationOptions = { animationData: tempIndicator, loop: true, autoplay: true, renderer: 'svg' };
+  readonly humidityIndicator: AnimationOptions = { animationData: humidityIndicator, loop: true, autoplay: true, renderer: 'svg' };
+  readonly windIndicator: AnimationOptions = { animationData: windIndicator, loop: true, autoplay: true, renderer: 'svg' };
+  readonly uvIndicator: AnimationOptions = { animationData: uvIndicator, loop: true, autoplay: true, renderer: 'svg' };
+  readonly rainChanceIndicator: AnimationOptions = { animationData: rainChanceIndicator, loop: true, autoplay: true, renderer: 'svg' };
+  readonly earthIndicator: AnimationOptions = { animationData: earthIndicator, loop: true, autoplay: true, renderer: 'svg' };
 
   constructor(
     public util: UtilService,
@@ -213,160 +175,334 @@ earthIndicatorOptions: AnimationOptions = {
   }
 
   ngAfterViewInit() {
-    console.log('ngAfterViewInit called, waiting for loader');
+    console.log('WelcomePage cargado en el DOM, esperando resolución de flujos.');
   }
 
+  /**
+   * Inicializador seguro de Swiper Core
+   */
   initializeSwiper() {
     if (this.swiper?.nativeElement && this.loader) {
       this.swiperInstance = new SwiperCore(this.swiper.nativeElement, {
         slidesPerView: 1,
         spaceBetween: 0,
-        navigation: {
-          nextEl: '.swiper-button-next',
-          prevEl: '.swiper-button-prev',
-        },
-        pagination: {
-          el: '.swiper-pagination',
-          clickable: true,
-          type: 'bullets',
-        },
+        navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+        pagination: { el: '.swiper-pagination', clickable: true, type: 'bullets' },
         observeParents: true,
         observer: true,
         speed: 400,
-        touchRatio: 1,
-        simulateTouch: true,
         allowTouchMove: true,
       });
-      console.log('Swiper initialized:', this.swiperInstance);
+
       this.swiperInstance.on('slideChange', () => {
         this.activeIndex = this.swiperInstance!.activeIndex;
-        console.log('Swiper slide changed, activeIndex:', this.activeIndex);
+        this.cdr.detectChanges();
       });
       this.swiperInstance.update();
-      console.log('Swiper updated in initializeSwiper');
-    } else {
-      console.error('Swiper element or loader not ready:', { swiper: !!this.swiper, loader: this.loader });
     }
   }
 
+  // initializeSwiper() {
+  //   if (this.swiper?.nativeElement && this.loader) {
+  //     this.swiperInstance = new SwiperCore(this.swiper.nativeElement, {
+  //       slidesPerView: 1,
+  //       spaceBetween: 0,
+  //       navigation: {
+  //         nextEl: '.swiper-button-next',
+  //         prevEl: '.swiper-button-prev',
+  //       },
+  //       pagination: {
+  //         el: '.swiper-pagination',
+  //         clickable: true,
+  //         type: 'bullets',
+  //       },
+  //       observeParents: true,
+  //       observer: true,
+  //       speed: 400,
+  //       touchRatio: 1,
+  //       simulateTouch: true,
+  //       allowTouchMove: true,
+  //     });
+  //     console.log('Swiper initialized:', this.swiperInstance);
+  //     this.swiperInstance.on('slideChange', () => {
+  //       this.activeIndex = this.swiperInstance!.activeIndex;
+  //       console.log('Swiper slide changed, activeIndex:', this.activeIndex);
+  //     });
+  //     this.swiperInstance.update();
+  //     console.log('Swiper updated in initializeSwiper');
+  //   } else {
+  //     console.error('Swiper element or loader not ready:', { swiper: !!this.swiper, loader: this.loader });
+  //   }
+  // }
+
+/**
+   * FLUJO ÚNICO: Descarga, mapea y unifica los datos de Supabase en paralelo
+   */
   async loadWeatherData() {
-      try {
-        this.loader = false;
-        this.weatherData = await Promise.all(
-          this.locations.map(async location => {
-            const data = await this.supabaseService.getMeteoCondition(location); // Corrección de 'supabase' a 'supabaseService'
-            const createdAt = data?.created_at ? new Date(data.created_at) : null;
-            const lottiePath = this.getWeatherLottiePath(data?.background || 'sunny');
-            return {
-              location: data?.location || location || 'N/A',
-              temp: data?.temp || 'N/A',
-              apparentTemp: data?.apparentTemp || 'N/A',
-              precipitation: data?.precipitation || 'N/A',
-              windSpeed: data?.windSpeed || 'N/A',
-              isDay: data?.isDay || 0,
-              date: createdAt,
-              time: createdAt?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) || 'N/A',
-              background: data?.background || '/assets/backgrounds/soleado.jpg',
-              background_image_url: data?.background_image_url || '/assets/backgrounds/soleado.jpg',
-              outfit_image_url: data?.outfit_image_url ||  '/assets/backgrounds/prototipo.png',
-              description: data?.description || 'N/A',
-              lottieOptions: {
-                  path: `assets/lottie/${lottiePath}`,
-                }
-            };
-          })
-        );
-        if (this.weatherData.length === 0) {
-          this.weatherData = this.locations.map(location => ({
-            location: String(location),
-            temp: 'N/A',
-            apparentTemp: 'N/A',
-            precipitation: 'N/A',
-            windSpeed: 'N/A',
-            date: null,
-            time: 'N/A',
-            background: '/assets/backgrounds/soleado.jpg',
-            background_image_url: '/assets/backgrounds/soleado.jpg',
-            outfit_image_url:'/assets/backgrounds/prototipo.png',
-            description: 'N/A'
-          }));
-        }
-        this.loader = true;
-        this.cdr.detectChanges();
-        setTimeout(() => {
-          this.initializeSwiper();
-        }, 1000);
-      } catch (error) {
-        console.error('Error loading weather data:', error);
-        this.loader = true;
-        this.weatherData = this.locations.map(location => ({
-          location: String(location),
-          temp: 'N/A',
-          apparentTemp: 'N/A',
-          precipitation: 'N/A',
-          windSpeed: 'N/A',
-          date: null,
-          time: 'N/A',
-          background: '/assets/backgrounds/soleado.jpg',
-          background_image_url: '/assets/backgrounds/soleado.jpg',
-          outfit_image_url:'/assets/backgrounds/prototipo.png',
-          description: 'N/A'
-        }));
-        this.cdr.detectChanges();
-        setTimeout(() => {
-          this.initializeSwiper();
-        }, 1000);
-      }
-  }
-
-  async getWeather() {
     try {
-      // 1. Lanzamos las peticiones en paralelo para respetar el orden estricto del array 'locations'
+      this.loader = false;
+      this.cdr.detectChanges();
+
+      // 1. Ejecución paralela de consultas por municipio
       const promises = this.locations.map(async (town) => {
-        const res = await this.supabaseService.getDataByLocation(town);
+        const res: WeatherData[] | null = await this.supabaseService.getDataByLocation(town);
 
-        // Si Supabase devuelve datos para ese pueblo, estructuramos el objeto para el HTML
         if (res && res.length > 0) {
-          const row = res[0]; // Extraemos la fila real de datos
+          const row: WeatherData = res[0];
 
+          // 2. Deserialización segura del JSONB de pronóstico (si existe)
+          let horasArray: HourlyForecast[] = [];
+          if (row.pronostico_meteo) {
+            try {
+              const parsed = typeof row.pronostico_meteo === 'string'
+                ? JSON.parse(row.pronostico_meteo)
+                : row.pronostico_meteo;
+
+              // Mapeo de horas inyectando las propiedades Lottie estáticas ya declaradas
+              horasArray = parsed.map((hora: any) => ({
+                ...hora,
+                lottieOptions: this.getLottiePropByCode(hora.weathercode, hora.es_dia)
+              }));
+            } catch (e) {
+              console.error(`Error parseando pronostico_meteo para ${town}:`, e);
+            }
+          }
+
+          // 3. Cálculo de accesorios y fondo basados en reglas
+          const UIStyles = this.mapWeatherToBackgroundAccessories(row);
+
+          // 4. Retorno del objeto tipado para la UI
           return {
-            location: row.location,
-            date: row.timestamp ? new Date(row.timestamp) : new Date(),
-            temp: row.temperature_2m, // Mapeamos 'temperature_2m' a 'temp' tal como pide tu HTML
-            windSpeed: row.wind_speed_10m || 0,
-            //uvIndex: row.uv_index || 0,
-            uvIndex:  0,
-            background_image_url: row.background_image_url || 'assets/backgrounds/soleado.jpg',
-            outfit_image_url: row.outfit_image_url || 'assets/backgrounds/OUTFIT_HOT.png',
-            text_clothing: 'Ropa cómoda'
-          };
+            location: row.location || town,
+            date: row.created_at ? new Date(row.created_at) : new Date(),
+            time: row.created_at ? new Date(row.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
+            temp: row.temperature_2m ?? 0,
+            apparentTemp: row.apparent_temperature ?? row.temperature_2m ?? 0,
+            humidity: row.relative_humidity_2m ?? 0,
+            precipitation: row.precipitation ?? 0,
+            windSpeed: row.wind_speed_10m ?? 0,
+            uvIndex: row.uv_index ?? 0,
+            pressure: row.pressure_msl ?? 1013,
+            weathercode: row.weathercode ?? 0,
+            isDay: row.is_day ?? 1,
+            background_image_url: (row.background_image_url && !row.background_image_url.includes('OUTFIT'))
+              ? (row.background_image_url.includes('soleado_sunny') ? 'assets/backgrounds/soleado.jpg' : row.background_image_url)
+              : `assets/backgrounds/${UIStyles.background}`,
+            outfit_image_url: row.outfit_image_url || 'assets/characters/summer_anime.png',
+            text_clothing: row.text_clothing || 'Ropa recomendada',
+            accessories: UIStyles.accessories,
+            // AQUÍ USAMOS LAS PROPIEDADES ESTÁTICAS PARA EVITAR ERRORES DE RENDER
+            primaryLottieOptions: this.getLottiePropByCode(row.weathercode ?? 0, row.is_day ?? 1),
+            pronostico_meteo: horasArray
+          } as WeatherLocationData;
         }
         return null;
       });
 
-      // 2. Esperamos de forma ordenada la resolución de todos los pueblos
       const results = await Promise.all(promises);
 
-      // 3. Filtramos los valores nulos por si algún pueblo fallara en la base de datos
-      this.weatherData = results.filter(item => item !== null && item !== undefined);
+      // 5. Filtramos nulos y actualizamos estado
+      this.weatherData = results.filter((item): item is WeatherLocationData => item !== null);
 
-      console.log('📊 Datos meteorológicos acoplados a la UI en orden estricto:', this.weatherData);
+      if (this.weatherData.length === 0) {
+        this.generateFallbackData();
+      }
 
-      // 4. Desactivamos el esqueleto/pantalla de carga y actualizamos la vista de Angular
       this.loader = true;
       this.cdr.detectChanges();
 
-      // 5. Inicializamos el Swiper una vez que los datos ya están renderizados en el DOM
+      // 6. Inicialización del carrusel una vez el DOM está listo
       setTimeout(() => {
         this.initializeSwiper();
-      }, 200);
+      }, 300);
 
     } catch (error) {
-      console.error('❌ Error crítico en el flujo de getWeather:', error);
+      console.error('❌ Error crítico en la carga de datos:', error);
+      this.generateFallbackData();
       this.loader = true;
       this.cdr.detectChanges();
     }
   }
+  /**
+   * Mapeador Maestro de códigos meteorológicos de la WMO a Objetos Lottie estáticos
+   */
+  // getLottieOptionsByCode(code: number, isDay: number): AnimationOptions {
+  //   let animationData;
+
+  //   // Clasificación oficial de códigos Open-Meteo / WMO
+  //   if ([0].includes(code)) {
+  //     animationData = isDay === 1 ? sunnyAnimation : nightAnimation;
+  //   } else if ([1, 2].includes(code)) {
+  //     animationData = isDay === 1 ? cloudyDayAnimation : cloudyNightAnimation;
+  //   } else if ([3].includes(code)) {
+  //     animationData = cloudyAnimation;
+  //   } else if ([45, 48].includes(code)) {
+  //     animationData = fogAnimation;
+  //   } else if ([51, 53, 55].includes(code)) {
+  //     animationData = drizzleAnimation;
+  //   } else if ([61, 63, 65, 80, 81, 82].includes(code)) {
+  //     animationData = rainAnimation;
+  //   } else if ([71, 73, 75, 77, 85, 86].includes(code)) {
+  //     animationData = snowAnimation;
+  //   } else if ([95, 96, 99].includes(code)) {
+  //     animationData = stormAnimation;
+  //   } else {
+  //     animationData = isDay === 1 ? sunnyAnimation : nightAnimation;
+  //   }
+
+  //   return { loop: true, autoplay: true, animationData, renderer: 'svg' };
+  // }
+
+
+  // async loadWeatherData() {
+  //     try {
+  //       this.loader = false;
+  //       this.weatherData = await Promise.all(
+  //         this.locations.map(async location => {
+  //           const data = await this.supabaseService.getMeteoCondition(location); // Corrección de 'supabase' a 'supabaseService'
+  //           const createdAt = data?.created_at ? new Date(data.created_at) : null;
+  //           const lottiePath = this.getWeatherLottiePath(data?.background || 'sunny');
+  //           return {
+  //             location: data?.location || location || 'N/A',
+  //             temp: data?.temp || 'N/A',
+  //             apparentTemp: data?.apparentTemp || 'N/A',
+  //             precipitation: data?.precipitation || 'N/A',
+  //             windSpeed: data?.windSpeed || 'N/A',
+  //             isDay: data?.isDay || 0,
+  //             date: createdAt,
+  //             time: createdAt?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) || 'N/A',
+  //             background: data?.background || '/assets/backgrounds/soleado.jpg',
+  //             background_image_url: data?.background_image_url || '/assets/backgrounds/soleado.jpg',
+  //             outfit_image_url: data?.outfit_image_url ||  '/assets/backgrounds/prototipo.png',
+  //             description: data?.description || 'N/A',
+  //             lottieOptions: {
+  //                 path: `assets/lottie/${lottiePath}`,
+  //               }
+  //           };
+  //         })
+  //       );
+  //       if (this.weatherData.length === 0) {
+  //         this.weatherData = this.locations.map(location => ({
+  //           location: String(location),
+  //           temp: 'N/A',
+  //           apparentTemp: 'N/A',
+  //           precipitation: 'N/A',
+  //           windSpeed: 'N/A',
+  //           date: null,
+  //           time: 'N/A',
+  //           background: '/assets/backgrounds/soleado.jpg',
+  //           background_image_url: '/assets/backgrounds/soleado.jpg',
+  //           outfit_image_url:'/assets/backgrounds/prototipo.png',
+  //           description: 'N/A'
+  //         }));
+  //       }
+  //       this.loader = true;
+  //       this.cdr.detectChanges();
+  //       setTimeout(() => {
+  //         this.initializeSwiper();
+  //       }, 1000);
+  //     } catch (error) {
+  //       console.error('Error loading weather data:', error);
+  //       this.loader = true;
+  //       this.weatherData = this.locations.map(location => ({
+  //         location: String(location),
+  //         temp: 'N/A',
+  //         apparentTemp: 'N/A',
+  //         precipitation: 'N/A',
+  //         windSpeed: 'N/A',
+  //         date: null,
+  //         time: 'N/A',
+  //         background: '/assets/backgrounds/soleado.jpg',
+  //         background_image_url: '/assets/backgrounds/soleado.jpg',
+  //         outfit_image_url:'/assets/backgrounds/prototipo.png',
+  //         description: 'N/A'
+  //       }));
+  //       this.cdr.detectChanges();
+  //       setTimeout(() => {
+  //         this.initializeSwiper();
+  //       }, 1000);
+  //     }
+  // }
+
+  /**
+   * Proveedor Dinámico para los Smart Chips de indicadores
+   */
+  getIndicatorOptions(type: string): AnimationOptions {
+    let animationData;
+    switch (type) {
+      case 'temp': animationData = tempIndicator; break;
+      case 'humidity': animationData = humidityIndicator; break;
+      case 'wind': animationData = windIndicator; break;
+      case 'uv': animationData = uvIndicator; break;
+      case 'rain_chance': animationData = rainChanceIndicator; break;
+      default: animationData = tempIndicator;
+    }
+    return { loop: true, autoplay: true, animationData, renderer: 'svg' };
+  }
+
+  //  getIndicatorOptions(type: string): AnimationOptions {
+  //   let animationData;
+  //   switch (type) {
+  //     case 'temp': animationData = tempIndicator; break;
+  //     case 'humidity': animationData = humidityIndicator; break;
+  //     case 'wind': animationData = windIndicator; break;
+  //     case 'uv': animationData = uvIndicator; break;
+  //     //case 'pressure': animationData = pressureIndicator; break;
+  //     default: animationData = tempIndicator;
+  //   }
+  //   return { loop: true, autoplay: true, animationData };
+  // }
+
+
+
+  // async getWeather() {
+  //   try {
+  //     // 1. Lanzamos las peticiones en paralelo para respetar el orden estricto del array 'locations'
+  //     const promises = this.locations.map(async (town) => {
+  //       const res = await this.supabaseService.getDataByLocation(town);
+
+  //       // Si Supabase devuelve datos para ese pueblo, estructuramos el objeto para el HTML
+  //       if (res && res.length > 0) {
+  //         const row = res[0]; // Extraemos la fila real de datos
+
+  //         return {
+  //           location: row.location,
+  //           date: row.timestamp ? new Date(row.timestamp) : new Date(),
+  //           temp: row.temperature_2m, // Mapeamos 'temperature_2m' a 'temp' tal como pide tu HTML
+  //           windSpeed: row.wind_speed_10m || 0,
+  //           //uvIndex: row.uv_index || 0,
+  //           uvIndex:  0,
+  //           background_image_url: row.background_image_url || 'assets/backgrounds/soleado.jpg',
+  //           outfit_image_url: row.outfit_image_url || 'assets/backgrounds/OUTFIT_HOT.png',
+  //           text_clothing: 'Ropa cómoda'
+  //         };
+  //       }
+  //       return null;
+  //     });
+
+  //     // 2. Esperamos de forma ordenada la resolución de todos los pueblos
+  //     const results = await Promise.all(promises);
+
+  //     // 3. Filtramos los valores nulos por si algún pueblo fallara en la base de datos
+  //     this.weatherData = results.filter(item => item !== null && item !== undefined);
+
+  //     console.log('📊 Datos meteorológicos acoplados a la UI en orden estricto:', this.weatherData);
+
+  //     // 4. Desactivamos el esqueleto/pantalla de carga y actualizamos la vista de Angular
+  //     this.loader = true;
+  //     this.cdr.detectChanges();
+
+  //     // 5. Inicializamos el Swiper una vez que los datos ya están renderizados en el DOM
+  //     setTimeout(() => {
+  //       this.initializeSwiper();
+  //     }, 200);
+
+  //   } catch (error) {
+  //     console.error('❌ Error crítico en el flujo de getWeather:', error);
+  //     this.loader = true;
+  //     this.cdr.detectChanges();
+  //   }
+  // }
 
   // async getWeather() {
   //   this.locations.forEach(async (element) => {
@@ -420,18 +556,7 @@ earthIndicatorOptions: AnimationOptions = {
     return { loop: true, autoplay: true, animationData };
   }
 
-  getIndicatorOptions(type: string): AnimationOptions {
-    let animationData;
-    switch (type) {
-      case 'temp': animationData = tempIndicator; break;
-      case 'humidity': animationData = humidityIndicator; break;
-      case 'wind': animationData = windIndicator; break;
-      case 'uv': animationData = uvIndicator; break;
-      //case 'pressure': animationData = pressureIndicator; break;
-      default: animationData = tempIndicator;
-    }
-    return { loop: true, autoplay: true, animationData };
-  }
+
 
   getClothingIcon(outfitUrl: string): string {
     return outfitUrl ? outfitUrl : 'assets/backgrounds/OUTFIT_HOT.png';
@@ -443,35 +568,47 @@ earthIndicatorOptions: AnimationOptions = {
   }
 
   openLocationDetailModal() {
-    console.log('Abriendo panel de detalle con mapa y selección de pueblos...');
     this.isLocationModalOpen = true;
     this.cdr.detectChanges();
   }
 
   selectTownByIndex(index: number) {
     if (index === this.activeIndex) {
-      console.log('ℹ️ El usuario seleccionó el pueblo que ya estaba activo. Cerrando modal.');
       this.isLocationModalOpen = false;
-      this.cdr.detectChanges();
       return;
     }
-
-    // 1. Actualizamos el índice activo global
     this.activeIndex = index;
-
-    // 2. Desplazamos el Swiper de fondo al slide correspondiente de manera fluida
     if (this.swiperInstance) {
-      this.swiperInstance.slideTo(index, 400); // 400ms de transición de cristal suave
+      this.swiperInstance.slideTo(index, 400);
     }
-
-    // 3. Cerramos el modal cambiando su propiedad de estado a falso
     this.isLocationModalOpen = false;
-
-    // 4. Forzamos al detector de cambios de Angular a repintar la UI (Temperaturas, Outfit, Lotties)
     this.cdr.detectChanges();
-
-    console.log('✅ Ubicación cambiada con éxito a:', this.weatherData[index].location, '| Índice:', index);
   }
+
+  // selectTownByIndex(index: number) {
+  //   if (index === this.activeIndex) {
+  //     console.log('ℹ️ El usuario seleccionó el pueblo que ya estaba activo. Cerrando modal.');
+  //     this.isLocationModalOpen = false;
+  //     this.cdr.detectChanges();
+  //     return;
+  //   }
+
+  //   // 1. Actualizamos el índice activo global
+  //   this.activeIndex = index;
+
+  //   // 2. Desplazamos el Swiper de fondo al slide correspondiente de manera fluida
+  //   if (this.swiperInstance) {
+  //     this.swiperInstance.slideTo(index, 400); // 400ms de transición de cristal suave
+  //   }
+
+  //   // 3. Cerramos el modal cambiando su propiedad de estado a falso
+  //   this.isLocationModalOpen = false;
+
+  //   // 4. Forzamos al detector de cambios de Angular a repintar la UI (Temperaturas, Outfit, Lotties)
+  //   this.cdr.detectChanges();
+
+  //   console.log('✅ Ubicación cambiada con éxito a:', this.weatherData[index].location, '| Índice:', index);
+  // }
 
   onLocationModalDismissed() {
     this.isLocationModalOpen = false;
@@ -495,126 +632,142 @@ earthIndicatorOptions: AnimationOptions = {
     }
   }
 
-  mapWeatherToBackgroundAccesories(item: any): { background: string, accessories: string[], isDay: number } {
+
+
+  private generateFallbackData() {
+    this.weatherData = this.locations.map(location => ({
+      location: location,
+      date: new Date(),
+      time: '00:00',
+      temp: 20,
+      apparentTemp: 20,
+      humidity: 50,
+      precipitation: 0,
+      windSpeed: 10,
+      uvIndex: 4,
+      pressure: 1013,
+      weathercode: 0,
+      isDay: 1,
+      background_image_url: 'assets/backgrounds/soleado.jpg',
+      outfit_image_url: 'assets/characters/summer_anime.png',
+      text_clothing: 'Ropa cómoda',
+      accessories: [],
+      primaryLottieOptions: { animationData: sunnyAnimation, loop: true, autoplay: true },
+      pronostico_meteo: []
+    }));
+  }
+
+
+  /**
+   * MOTOR DE REGLAS: Mapea WeatherData a estilos visuales y accesorios usando constantes.
+   */
+  mapWeatherToBackgroundAccessories(item: WeatherData): { background: string, accessories: string[] } {
+    // 1. Extracción con valores por defecto seguros
     const weatherCode = Number(item.weathercode ?? -1);
     const isDay = Number(item.is_day ?? 1);
     const cloudcover = Number(item.cloudcover ?? 0);
     const temperature = Number(item.temperature_2m ?? 0);
     const precipitation = Number(item.precipitation ?? 0);
     const windSpeed = Number(item.wind_speed_10m ?? 0);
-    const visibility = Number(item.visibility ?? 100000); // en metros
-    const precipitationProbability = Number(item.precipitation_probability ?? 0);
+    const visibility = Number(item.visibility ?? 100000);
     const relativeHumidity = Number(item.relative_humidity_2m ?? 0);
     const apparentTemperature = Number(item.apparent_temperature ?? 0);
 
-    // Definir constantes dentro de la función (ajustar según tu proyecto)
-    const WIND_SPEED_THRESHOLD = 15; // Umbral para viento fuerte (m/s)
-    const TEMPERATURE_COLD_THRESHOLD = 10; // Ejemplo, ajusta si tienes un valor
-    const APPARENT_TEMPERATURE_COLD_THRESHOLD = 5; // Ejemplo, ajusta si tienes un valor
-    const TEMPERATURE_VERY_COLD_THRESHOLD = 0; // Ejemplo, ajusta si tienes un valor
-    const VISIBILITY_FOG_THRESHOLD = 1000; // Ejemplo, ajusta si tienes un valor
-    const HUMIDITY_FOG_THRESHOLD = 90; // Ejemplo, ajusta si tienes un valor
-    const TEMPERATURE_HOT_THRESHOLD = 25; // Ejemplo, ajusta si tienes un valor
-    const CLOUDCOVER_CLEAR_THRESHOLD = 20; // Ejemplo, ajusta si tienes un valor
-    const WIND_SPEED_CALM_THRESHOLD = 5; // Ejemplo, ajusta si tienes un valor
+    // 2. Definición de Constantes de Umbral
+    const WIND_SPEED_THRESHOLD = 15;
+    const TEMPERATURE_COLD_THRESHOLD = 10;
+    const APPARENT_TEMPERATURE_COLD_THRESHOLD = 5;
+    const TEMPERATURE_VERY_COLD_THRESHOLD = 0;
+    const VISIBILITY_FOG_THRESHOLD = 1000;
+    const HUMIDITY_FOG_THRESHOLD = 90;
+    const TEMPERATURE_HOT_THRESHOLD = 25;
+    const CLOUDCOVER_CLEAR_THRESHOLD = 20;
+    const WIND_SPEED_CALM_THRESHOLD = 5;
 
-    let background = 'eliminar.jpg'; // Fallback
+    let background = 'soleado.jpg'; // Fallback base
     const accessories: string[] = [];
 
-    // Noche con viento fuerte y sin lluvia (prioridad alta)
+    // --- LÓGICA DE REGLAS ---
+
     if (windSpeed > WIND_SPEED_THRESHOLD && isDay === 0 && precipitation === 0) {
       background = 'vientofuerte_noche.jpg';
       accessories.push('cortaviento');
-      if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) {
-        accessories.push('bufanda');
-      }
-      if (temperature < TEMPERATURE_VERY_COLD_THRESHOLD || apparentTemperature < TEMPERATURE_VERY_COLD_THRESHOLD) {
-        accessories.push('abrigo-polar');
-      }
+      if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) accessories.push('bufanda');
+      if (temperature < TEMPERATURE_VERY_COLD_THRESHOLD || apparentTemperature < TEMPERATURE_VERY_COLD_THRESHOLD) accessories.push('abrigo-polar');
     }
-    // Viento fuerte (día o con lluvia)
     else if (windSpeed > WIND_SPEED_THRESHOLD) {
       background = 'vientofuerte.jpg';
       accessories.push('cortaviento');
-      if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) {
-        accessories.push('bufanda');
-      }
-      if (temperature < TEMPERATURE_VERY_COLD_THRESHOLD || apparentTemperature < TEMPERATURE_VERY_COLD_THRESHOLD) {
-        accessories.push('abrigo-polar');
-      }
+      if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) accessories.push('bufanda');
+      if (temperature < TEMPERATURE_VERY_COLD_THRESHOLD || apparentTemperature < TEMPERATURE_VERY_COLD_THRESHOLD) accessories.push('abrigo-polar');
     }
-    // Noche despejada
     else if (weatherCode === 0 && isDay === 0) {
       background = 'nochedespejada.jpg';
     }
-    // Noche nublada
     else if ((weatherCode === 3 || weatherCode >= 61) && isDay === 0) {
       background = 'noche_nublada_luna.jpg';
       accessories.push('bufanda');
     }
-    // Despejado (día)
     else if (weatherCode === 0 && isDay === 1) {
       background = 'despejado_clear.jpg';
     }
-    // Soleado
     else if ((weatherCode === 1 || weatherCode === 2) && cloudcover < CLOUDCOVER_CLEAR_THRESHOLD && isDay === 1) {
       background = 'soleado_sunny.jpg';
       accessories.push('gafas', 'gorra');
     }
-    // Parcialmente nublado
     else if (weatherCode === 2 && cloudcover >= CLOUDCOVER_CLEAR_THRESHOLD && isDay === 1) {
       background = 'parcialmentenublado.jpg';
     }
-    // Nublado (día)
     else if (weatherCode === 3 && isDay === 1) {
       background = 'nublado_cloudy.jpg';
       accessories.push('bufanda');
     }
-    // Tormenta
     else if ([95, 96, 99].includes(weatherCode)) {
       background = 'tormenta_thunder.jpg';
       accessories.push('paraguas', 'impermeable');
     }
-    // Lluvia
     else if ([61, 63, 65, 80, 81, 82].includes(weatherCode)) {
       background = 'lluvia_rain.jpg';
       accessories.push('paraguas', 'impermeable');
-      if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) {
-        accessories.push('abrigo-polar');
-      }
+      if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) accessories.push('abrigo-polar');
     }
-    // Llovizna
     else if ([51, 53, 55].includes(weatherCode)) {
       background = 'llovisnaDrizzle.jpg';
       accessories.push('paraguas');
     }
-    // Nieve
     else if ([71, 73, 75, 77, 85, 86].includes(weatherCode)) {
       background = 'helada_escarcha.jpg';
       accessories.push('abrigo-polar', 'botas');
     }
-    // Escarcha sin precipitación
     else if (temperature <= TEMPERATURE_VERY_COLD_THRESHOLD && precipitation === 0 && [0, 1, 2, 3].includes(weatherCode)) {
       background = 'helada_escarcha2.jpg';
       accessories.push('bufanda', 'guantes');
     }
-    // Niebla
     else if ([45, 48].includes(weatherCode) || visibility < VISIBILITY_FOG_THRESHOLD || relativeHumidity > HUMIDITY_FOG_THRESHOLD) {
       background = 'nieblafog.jpg';
       accessories.push('bufanda');
     }
-    // Bruma / Calima
     else if ([0, 1, 2].includes(weatherCode) && temperature > TEMPERATURE_HOT_THRESHOLD && cloudcover < CLOUDCOVER_CLEAR_THRESHOLD && windSpeed < WIND_SPEED_CALM_THRESHOLD) {
       background = 'bruma_calima.jpg';
     }
 
-    // Remove duplicates
     return {
       background: background,
-      accessories: [...new Set(accessories)].filter(acc => acc),
-      isDay: isDay // Añadido para controlar el color de los iconos
+      accessories: [...new Set(accessories)].filter(acc => acc)
     };
   }
 
+  getLottiePropByCode(code: number, isDay: number): AnimationOptions {
+    if ([0].includes(code)) return isDay === 1 ? this.sunnyLottie : this.nightLottie;
+    if ([1, 2].includes(code)) return isDay === 1 ? this.cloudyDayLottie : this.cloudyNightLottie;
+    if ([3].includes(code)) return this.cloudyLottie;
+    if ([45, 48].includes(code)) return this.fogLottie;
+    if ([51, 53, 55].includes(code)) return this.drizzleLottie;
+    if ([61, 63, 65, 80, 81, 82].includes(code)) return this.rainLottie;
+    if ([71, 73, 75, 77, 85, 86].includes(code)) return this.snowLottie;
+    if ([95, 96, 99].includes(code)) return this.stormLottie;
+
+    return this.sunnyLottie; // Fallback
+  }
 
 }

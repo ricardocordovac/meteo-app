@@ -1,4 +1,3 @@
-// weather-data.interface.ts
 export interface WeatherData {
   location?: string;
   temperature_2m?: number;
@@ -23,4 +22,9 @@ export interface WeatherData {
   dewpoint_2m?: number;
   background_image_url?: string;
   outfit_image_url?: string;
+  pronostico_meteo?: string;
+  // Campos adicionales que recibes de Supabase
+  uv_index?: number;
+  pressure_msl?: number;
+  text_clothing?: string;
 }

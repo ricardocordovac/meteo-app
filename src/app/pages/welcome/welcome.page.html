@@ -25,14 +25,14 @@
       </div>
     </div>
 
-    <div class="weather-header-frame" *ngIf="weatherData[activeIndex]" >
+   <div class="weather-header-frame" *ngIf="weatherData && weatherData.length > 0 && weatherData[activeIndex]">
             <div class="header-text-column">
               <div class="location-info">
-                <div class="town-name">{{ getDisplayLocation(weatherData[activeIndex].location) | uppercase }}</div>
-                <div class="header-date">{{ getCustomDate(weatherData[activeIndex].date) }}</div>
+               <div class="town-name">{{ getDisplayLocation(weatherData[activeIndex]?.location || '') | uppercase }}</div>
+                <div class="header-date">{{ getCustomDate(weatherData[activeIndex]?.date || null) }}</div>
               </div>
               <div class="massive-temp-center">
-                {{ weatherData[activeIndex].temp }}<span class="degree">°C</span>
+               {{ (weatherData[activeIndex]?.temp ?? 0) | number:'1.0-0' }}<span class="degree">°C</span>
               </div>
             </div>
 
@@ -91,7 +91,7 @@
                 <span class="hour-label">14:00</span>
                 <div class="hour-lottie-container">
 
-                  <ng-lottie [options]="sunnyLottieOptions" class="mini-lottie"></ng-lottie>
+                  <ng-lottie [options]="sunnyLottie" class="mini-lottie"></ng-lottie>
                 </div>
                 <span class="hour-temp">31°</span>
               </div>
@@ -101,7 +101,7 @@
 
               <div class="weather-info-card active-cyan-card">
                 <div class="tech-corner top-left"></div>
-                <ng-lottie [options]="tempIndicatorOptions" class="card-lottie"></ng-lottie>
+                <ng-lottie [options]="tempIndicator" class="card-lottie"></ng-lottie>
                 <div class="card-data">
                   <span class="label">SENSACIÓN</span>
                   <span class="value">{{ weatherData[activeIndex]?.apparentTemp }}°C</span>
@@ -110,7 +110,7 @@
 
               <div class="weather-info-card">
                 <div class="tech-corner top-left"></div>
-                 <ng-lottie [options]="rainChanceIndicatorOptions" class="card-lottie"></ng-lottie>
+                 <ng-lottie [options]="rainChanceIndicator" class="card-lottie"></ng-lottie>
                 <div class="card-data">
                   <span class="label">PROB. LLUVIA</span>
                   <span class="value">{{ weatherData[activeIndex]?.precipitation }}%</span>
@@ -119,7 +119,7 @@
 
               <div class="weather-info-card active-cyan-card">
                 <div class="tech-corner top-left"></div>
-                    <ng-lottie [options]="humidityIndicatorOptions" class="card-lottie"></ng-lottie>
+                    <ng-lottie [options]="humidityIndicator" class="card-lottie"></ng-lottie>
                 <div class="card-data">
                   <span class="label">HUMEDAD</span>
                   <span class="value">45%</span>
@@ -128,7 +128,7 @@
 
               <div class="weather-info-card">
                 <div class="tech-corner top-left"></div>
-                <ng-lottie [options]="windIndicatorOptions" class="card-lottie"></ng-lottie>
+                <ng-lottie [options]="windIndicator" class="card-lottie"></ng-lottie>
                 <div class="card-data">
                   <span class="label">VIENTO</span>
                   <span class="value">{{ weatherData[activeIndex]?.windSpeed }} km/h</span>
@@ -137,7 +137,7 @@
 
               <div class="weather-info-card active-uv-card">
                 <div class="tech-corner top-left"></div>
-                <ng-lottie [options]="uvIndicatorOptions" class="card-lottie"></ng-lottie>
+                <ng-lottie [options]="uvIndicator" class="card-lottie"></ng-lottie>
                 <div class="card-data">
                   <span class="label">ÍNDICE UV</span>
                   <span class="value">8</span>

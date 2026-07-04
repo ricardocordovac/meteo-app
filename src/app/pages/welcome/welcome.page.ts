@@ -320,6 +320,7 @@ async loadWeatherData() {
   }
 }
 
+
 mapWeatherToBackgroundAccessories(item: WeatherData): { background: string, accessories: string[] } {
   const weatherCode = Number(item.weathercode ?? -1);
   const isDay = Number(item.is_day ?? 1);
@@ -329,90 +330,202 @@ mapWeatherToBackgroundAccessories(item: WeatherData): { background: string, acce
   const windSpeed = Number(item.wind_speed_10m ?? 0);
   const visibility = Number(item.visibility ?? 100000);
   const relativeHumidity = Number(item.relative_humidity_2m ?? 0);
-  const apparentTemperature = Number(item.apparent_temperature ?? 0);
+  const uvIndex = Number(item.uv_index ?? 0);
 
-  // Constantes de Umbral
-  const WIND_SPEED_THRESHOLD = 15;
-  const TEMPERATURE_COLD_THRESHOLD = 10;
-  const APPARENT_TEMPERATURE_COLD_THRESHOLD = 5;
-  const TEMPERATURE_VERY_COLD_THRESHOLD = 0;
-  const VISIBILITY_FOG_THRESHOLD = 1000;
-  const HUMIDITY_FOG_THRESHOLD = 90;
-  const TEMPERATURE_HOT_THRESHOLD = 25;
-  const CLOUDCOVER_CLEAR_THRESHOLD = 20;
-  const WIND_SPEED_CALM_THRESHOLD = 5;
+  // =========================================================================
+  // CONFIGURACIÓN DE UMBRALES DE NEGOCIO EXPERTOS (MADRID NORTE / CAMPINAS)
+  // =========================================================================
+  const NORTH_MADRID_WIND_LIMIT = 22;      // Viento molesto y racheado en los páramos (km/h)
+  const NORTH_MADRID_HOT_LIMIT = 31;       // Calor sofocante continental de la meseta (°C)
+  const NORTH_MADRID_COLD_LIMIT = 8;       // Umbral de abrigo obligado en la zona norte (°C)
+  const NORTH_MADRID_FREEZING_LIMIT = 2;   // Riesgo de escarcha/helada real en la vega del Jarama (°C)
+  const NORTH_MADRID_RAIN_STRONG = 1.8;    // Saturación: el suelo arcilloso se vuelve barrizal (mm)
+  const NORTH_MADRID_CALM_WIND = 5;        // Viento nulo que estanca partículas y calima (km/h)
+  const VISIBILITY_FOG_LIMIT = 1000;       // Niebla física real en metros
 
-  let background = 'soleado.jpg'; // Cambiado de 'soelado.jpg' a archivo real físico verificado
+  // Imagen salvavidas absoluta por defecto si falla el motor
+  let background = 'soleado.jpg';
   const accessories: string[] = [];
 
-  // --- REGLAS DE NEGOCIO METEOROLÓGICO ---
-  if (windSpeed > WIND_SPEED_THRESHOLD && isDay === 0 && precipitation === 0) {
-    background = 'vientofuerte_noche.jpg';
-    accessories.push('cortaviento');
-    if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) accessories.push('bufanda');
-    if (temperature < TEMPERATURE_VERY_COLD_THRESHOLD || apparentTemperature < TEMPERATURE_VERY_COLD_THRESHOLD) accessories.push('abrigo-polar');
-  }
-  else if (windSpeed > WIND_SPEED_THRESHOLD) {
-    background = 'vientofuerte.jpg';
-    accessories.push('cortaviento');
-    if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) accessories.push('bufanda');
-    if (temperature < TEMPERATURE_VERY_COLD_THRESHOLD || apparentTemperature < TEMPERATURE_VERY_COLD_THRESHOLD) accessories.push('abrigo-polar');
-  }
-  else if (weatherCode === 0 && isDay === 0) {
-    background = 'nochedespejada.jpg';
-  }
-  else if ((weatherCode === 3 || weatherCode >= 61) && isDay === 0) {
-    background = 'noche_nublada_luna.jpg';
-    accessories.push('bufanda');
-  }
-  else if (weatherCode === 0 && isDay === 1) {
-    background = 'despejado_clear.jpg';
-  }
-  else if ((weatherCode === 1 || weatherCode === 2) && cloudcover < CLOUDCOVER_CLEAR_THRESHOLD && isDay === 1) {
-    background = 'soleado.jpg'; // Rescates locales seguros
-    accessories.push('gafas', 'gorra');
-  }
-  else if (weatherCode === 2 && cloudcover >= CLOUDCOVER_CLEAR_THRESHOLD && isDay === 1) {
-    background = 'parcialmentenublado.jpg';
-  }
-  else if (weatherCode === 3 && isDay === 1) {
-    background = 'nublado_cloudy.jpg';
-    accessories.push('bufanda');
-  }
-  else if ([95, 96, 99].includes(weatherCode)) {
-    background = 'tormenta_thunder.jpg';
+  // =========================================================================
+  // REGLAS DE PRIORIDAD VISUAL REALISTA
+  // =========================================================================
+
+  // 1. CONTROL DE PRECIPITACIONES CRÍTICAS (Tormentas e Intensidades)
+  if ([95, 96, 99].includes(weatherCode)) {
+    background = 'tormenta.jpg';
     accessories.push('paraguas', 'impermeable');
   }
-  else if ([61, 63, 65, 80, 81, 82].includes(weatherCode)) {
-    background = 'lluvia_rain.jpg';
+  else if (precipitation > NORTH_MADRID_RAIN_STRONG || [65, 82].includes(weatherCode)) {
+    background = 'lluvia_fuerte.jpg';
     accessories.push('paraguas', 'impermeable');
-    if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) accessories.push('abrigo-polar');
   }
-  else if ([51, 53, 55].includes(weatherCode)) {
-    background = 'llovisnaDrizzle.jpg';
+  else if (precipitation > 0 || [51, 53, 55, 61, 80].includes(weatherCode)) {
+    background = 'lluvia_ligera.jpg';
     accessories.push('paraguas');
   }
-  else if ([71, 73, 75, 77, 85, 86].includes(weatherCode)) {
-    background = 'helada_escarcha.jpg';
-    accessories.push('abrigo-polar', 'botas');
+
+  // 2. EXTREMOS TÉRMICOS Y RADIACIÓN ULTRAVIOLETA
+  else if (isDay === 1 && uvIndex >= 7) {
+    background = 'uv_extremo.jpg';
+    accessories.push('gafas', 'gorra');
   }
-  else if (temperature <= TEMPERATURE_VERY_COLD_THRESHOLD && precipitation === 0 && [0, 1, 2, 3].includes(weatherCode)) {
-    background = 'helada_escarcha2.jpg';
-    accessories.push('bufanda', 'guantes');
+  else if (isDay === 1 && uvIndex >= 5) {
+    background = 'uv_alto.jpg';
+    accessories.push('gafas', 'gorra');
   }
-  else if ([45, 48].includes(weatherCode) || visibility < VISIBILITY_FOG_THRESHOLD || relativeHumidity > HUMIDITY_FOG_THRESHOLD) {
-    background = 'nieblafog.jpg';
-    accessories.push('bufanda');
-  }
-  else if ([0, 1, 2].includes(weatherCode) && temperature > TEMPERATURE_HOT_THRESHOLD && cloudcover < CLOUDCOVER_CLEAR_THRESHOLD && windSpeed < WIND_SPEED_CALM_THRESHOLD) {
-    background = 'bruma_calima.jpg';
+  else if (temperature >= NORTH_MADRID_HOT_LIMIT && isDay === 1) {
+    background = 'caluroso.jpg';
+    accessories.push('gafas', 'gorra');
   }
 
+  // 3. FENÓMENOS ATMOSFÉRICOS DINÁMICOS (Viento, Niebla del Río y Calima)
+  else if (windSpeed >= NORTH_MADRID_WIND_LIMIT) {
+    background = 'viento_fuerte.jpg';
+    accessories.push('cortaviento');
+    if (temperature < NORTH_MADRID_COLD_LIMIT) accessories.push('bufanda');
+  }
+  else if ([45, 48].includes(weatherCode) || visibility < VISIBILITY_FOG_LIMIT) {
+    background = 'niebla.jpg';
+    accessories.push('bufanda');
+  }
+  else if (temperature >= 28 && windSpeed <= NORTH_MADRID_CALM_WIND && relativeHumidity < 30) {
+    // Atmósfera pesada de polvo sahariano en suspensión en Fuente el Saz / Algete
+    background = 'calima.jpg';
+  }
+
+  // 4. INVIERNO, CONDICIONES TÉRMICAS BAJAS Y ESCARCHAS DE VEGA
+  else if ([71, 73, 75, 85, 86].includes(weatherCode)) {
+    background = 'nieve_intensa.jpg';
+    accessories.push('abrigo-polar', 'botas', 'guantes');
+  }
+  else if (temperature <= NORTH_MADRID_FREEZING_LIMIT) {
+    background = 'frio.jpg'; // Activa visual de frío / escarcha matinal de páramo
+    accessories.push('bufanda', 'guantes', 'abrigo-polar');
+  }
+
+  // 5. ESTADOS BASE / CIELOS ESTABLES RECONSTRUIDOS
+  else if (isDay === 0) {
+    // Escenario Nocturno Estándar
+    if (weatherCode >= 3 || cloudcover >= 50) {
+      background = 'nublado.jpg'; // Tránsito a noche cerrada nublada
+    } else {
+      background = 'calma.jpg'; // Noche despejada y tranquila en los pueblos
+    }
+  }
+  else {
+    // Escenario Diurno Estándar
+    if (weatherCode === 0 || cloudcover < 20) {
+      background = 'clara.jpg'; // Cielo completamente limpio y azul
+    } else if (weatherCode === 3 || cloudcover >= 60) {
+      background = 'nublado.jpg'; // Día gris tapado sin lluvia
+    } else {
+      background = 'soleado.jpg'; // Intervalos nubosos estables con sol
+      accessories.push('gafas');
+    }
+  }
+
+  // Retorno limpio purgando duplicados de accesorios
   return {
     background: background,
     accessories: [...new Set(accessories)].filter(acc => acc)
   };
 }
+
+
+// mapWeatherToBackgroundAccessories(item: WeatherData): { background: string, accessories: string[] } {
+//   const weatherCode = Number(item.weathercode ?? -1);
+//   const isDay = Number(item.is_day ?? 1);
+//   const cloudcover = Number(item.cloudcover ?? 0);
+//   const temperature = Number(item.temperature_2m ?? 0);
+//   const precipitation = Number(item.precipitation ?? 0);
+//   const windSpeed = Number(item.wind_speed_10m ?? 0);
+//   const visibility = Number(item.visibility ?? 100000);
+//   const relativeHumidity = Number(item.relative_humidity_2m ?? 0);
+//   const apparentTemperature = Number(item.apparent_temperature ?? 0);
+
+//   // Constantes de Umbral
+//   const WIND_SPEED_THRESHOLD = 15;
+//   const TEMPERATURE_COLD_THRESHOLD = 10;
+//   const APPARENT_TEMPERATURE_COLD_THRESHOLD = 5;
+//   const TEMPERATURE_VERY_COLD_THRESHOLD = 0;
+//   const VISIBILITY_FOG_THRESHOLD = 1000;
+//   const HUMIDITY_FOG_THRESHOLD = 90;
+//   const TEMPERATURE_HOT_THRESHOLD = 25;
+//   const CLOUDCOVER_CLEAR_THRESHOLD = 20;
+//   const WIND_SPEED_CALM_THRESHOLD = 5;
+
+//   let background = 'soleado.jpg'; // Cambiado de 'soelado.jpg' a archivo real físico verificado
+//   const accessories: string[] = [];
+
+//   // --- REGLAS DE NEGOCIO METEOROLÓGICO ---
+//   if (windSpeed > WIND_SPEED_THRESHOLD && isDay === 0 && precipitation === 0) {
+//     background = 'vientofuerte_noche.jpg';
+//     accessories.push('cortaviento');
+//     if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) accessories.push('bufanda');
+//     if (temperature < TEMPERATURE_VERY_COLD_THRESHOLD || apparentTemperature < TEMPERATURE_VERY_COLD_THRESHOLD) accessories.push('abrigo-polar');
+//   }
+//   else if (windSpeed > WIND_SPEED_THRESHOLD) {
+//     background = 'vientofuerte.jpg';
+//     accessories.push('cortaviento');
+//     if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) accessories.push('bufanda');
+//     if (temperature < TEMPERATURE_VERY_COLD_THRESHOLD || apparentTemperature < TEMPERATURE_VERY_COLD_THRESHOLD) accessories.push('abrigo-polar');
+//   }
+//   else if (weatherCode === 0 && isDay === 0) {
+//     background = 'nochedespejada.jpg';
+//   }
+//   else if ((weatherCode === 3 || weatherCode >= 61) && isDay === 0) {
+//     background = 'noche_nublada_luna.jpg';
+//     accessories.push('bufanda');
+//   }
+//   else if (weatherCode === 0 && isDay === 1) {
+//     background = 'despejado_clear.jpg';
+//   }
+//   else if ((weatherCode === 1 || weatherCode === 2) && cloudcover < CLOUDCOVER_CLEAR_THRESHOLD && isDay === 1) {
+//     background = 'soleado.jpg'; // Rescates locales seguros
+//     accessories.push('gafas', 'gorra');
+//   }
+//   else if (weatherCode === 2 && cloudcover >= CLOUDCOVER_CLEAR_THRESHOLD && isDay === 1) {
+//     background = 'parcialmentenublado.jpg';
+//   }
+//   else if (weatherCode === 3 && isDay === 1) {
+//     background = 'nublado_cloudy.jpg';
+//     accessories.push('bufanda');
+//   }
+//   else if ([95, 96, 99].includes(weatherCode)) {
+//     background = 'tormenta_thunder.jpg';
+//     accessories.push('paraguas', 'impermeable');
+//   }
+//   else if ([61, 63, 65, 80, 81, 82].includes(weatherCode)) {
+//     background = 'lluvia_rain.jpg';
+//     accessories.push('paraguas', 'impermeable');
+//     if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) accessories.push('abrigo-polar');
+//   }
+//   else if ([51, 53, 55].includes(weatherCode)) {
+//     background = 'llovisnaDrizzle.jpg';
+//     accessories.push('paraguas');
+//   }
+//   else if ([71, 73, 75, 77, 85, 86].includes(weatherCode)) {
+//     background = 'helada_escarcha.jpg';
+//     accessories.push('abrigo-polar', 'botas');
+//   }
+//   else if (temperature <= TEMPERATURE_VERY_COLD_THRESHOLD && precipitation === 0 && [0, 1, 2, 3].includes(weatherCode)) {
+//     background = 'helada_escarcha2.jpg';
+//     accessories.push('bufanda', 'guantes');
+//   }
+//   else if ([45, 48].includes(weatherCode) || visibility < VISIBILITY_FOG_THRESHOLD || relativeHumidity > HUMIDITY_FOG_THRESHOLD) {
+//     background = 'nieblafog.jpg';
+//     accessories.push('bufanda');
+//   }
+//   else if ([0, 1, 2].includes(weatherCode) && temperature > TEMPERATURE_HOT_THRESHOLD && cloudcover < CLOUDCOVER_CLEAR_THRESHOLD && windSpeed < WIND_SPEED_CALM_THRESHOLD) {
+//     background = 'bruma_calima.jpg';
+//   }
+
+//   return {
+//     background: background,
+//     accessories: [...new Set(accessories)].filter(acc => acc)
+//   };
+// }
 
 // async loadWeatherData() {
 //   try {

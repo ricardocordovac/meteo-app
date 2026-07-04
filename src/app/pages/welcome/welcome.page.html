@@ -186,7 +186,8 @@
                 (click)="selectTownByIndex(i)">
 
                 <div class="town-avatar">
-                  <img [src]="'/assets/backgrounds/' + (data.background_image_url.split('/').pop() || 'soleado.jpg')" alt="Town thumb">
+                  <!-- <img [src]="'/assets/backgrounds/' + (data.background_image_url.split('/').pop() || 'soleado.jpg')" alt="Town thumb"> -->
+                   <img [src]="data.background_image_url" alt="Town thumb">
                 </div>
 
                 <div class="town-info">

@@ -202,82 +202,106 @@ export class WelcomePage implements OnInit, AfterViewInit {
     }
   }
 
-
-
 async loadWeatherData() {
   try {
     this.loader = false;
     this.cdr.detectChanges();
 
     const promises = this.locations.map(async (town) => {
-      // Consulta directa a la tabla current_data
+      // Consulta directa a la tabla current_data en Supabase
       const res: WeatherData[] | null = await this.supabaseService.getDataByLocation(town);
 
-      if (res && res.length > 0) {
-        const row: WeatherData = res[0];
-
-        // 1. Deserialización segura del pronóstico por horas (JSONB)
-        let horasArray: HourlyForecast[] = [];
-        if (row.pronostico_meteo) {
-          try {
-            const parsed = typeof row.pronostico_meteo === 'string'
-              ? JSON.parse(row.pronostico_meteo)
-              : row.pronostico_meteo;
-
-            horasArray = parsed.map((hora: any) => ({
-              ...hora,
-              lottieOptions: this.getLottiePropByCode(hora.weathercode, hora.es_dia)
-            }));
-          } catch (e) {
-            console.error(`Error parseando pronostico_meteo para ${town}:`, e);
-          }
-        }
-
-        // 2. Fallback de estilos visuales si la base de datos no tiene la imagen calculada
-        const UIStyles = this.mapWeatherToBackgroundAccessories(row);
-
-        // 3. Resolución limpia de URLs de Fondos y Personajes
-        let finalBg = 'assets/backgrounds/soleado.jpg';
-        if (row.background_image_url) {
-          // Si es una ruta relativa/absoluta limpia, la usamos directamente
-          finalBg = row.background_image_url;
-        } else {
-          finalBg = `assets/backgrounds/${UIStyles.background}`;
-        }
-
-        let finalOutfit = 'assets/characters/summer_anime.png';
-        if (row.outfit_image_url) {
-          finalOutfit = row.outfit_image_url;
-        }
-
-        return {
-          location: row.location || town,
-          date: row.created_at ? new Date(row.created_at) : new Date(),
-          time: row.created_at ? new Date(row.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
-          temp: row.temperature_2m ?? 0,
-          apparentTemp: row.apparent_temperature ?? row.temperature_2m ?? 0,
-          humidity: row.relative_humidity_2m ?? 0,
-          precipitation: row.precipitation ?? 0,
-          windSpeed: row.wind_speed_10m ?? 0,
-          uvIndex: row.uv_index ?? 0,
-          pressure: row.pressure_msl ?? 1013,
-          weathercode: row.weathercode ?? 0,
-          isDay: row.is_day ?? 1,
-          background_image_url: finalBg,
-          outfit_image_url: finalOutfit,
-          text_clothing: row.text_clothing || 'Ropa recomendada',
-          accessories: UIStyles.accessories,
-          primaryLottieOptions: this.getLottiePropByCode(row.weathercode ?? 0, row.is_day ?? 1),
-          pronostico_meteo: horasArray
-        } as WeatherLocationData;
+      // --- TRACE LOG: Municipio ausente en Supabase ---
+      if (!res || res.length === 0) {
+        console.warn(
+          `⚠️ [MeteoApp Datacheck] El municipio '${town}' no devolvió ningún registro desde Supabase. Se utilizarán datos ficticios (Fallback global).`
+        );
+        return null;
       }
-      return null;
+
+      const row: WeatherData = res[0];
+
+      // 1. Deserialización segura del pronóstico por horas (JSONB)
+      let horasArray: HourlyForecast[] = [];
+      if (row.pronostico_meteo) {
+        try {
+          const parsed = typeof row.pronostico_meteo === 'string'
+            ? JSON.parse(row.pronostico_meteo)
+            : row.pronostico_meteo;
+
+          horasArray = parsed.map((hora: any) => ({
+            ...hora,
+            lottieOptions: this.getLottiePropByCode(hora.weathercode, hora.es_dia)
+          }));
+        } catch (e) {
+          console.error(`❌ Error parseando 'pronostico_meteo' (JSONB) para ${town}:`, e);
+        }
+      }
+
+      // 2. Ejecutar motor de reglas local para obtener accesorios y fondos salvavidas
+      const UIStyles = this.mapWeatherToBackgroundAccessories(row);
+
+      // 3. RESOLUCIÓN Y LOGS DE FONDOS (INTERACCIÓN CON SUPABASE)
+      let finalBg = '';
+
+      if (row.background_image_url && row.background_image_url.trim() !== '') {
+        // Si Supabase devuelve una ruta, la usamos.
+        finalBg = row.background_image_url;
+
+        // Alerta en consola si detectamos el String obsoleto/erroneo 'soelado' en el registro
+        if (finalBg.includes('soleado')) {
+          console.warn(
+            `🚨 [MeteoApp Supabase Mismatch] Se detectó el archivo obsoleto 'soelado' en la base de datos para '${town}'. Corrigiendo a 'soleado.jpg' en caliente.`
+          );
+          finalBg = 'assets/backgrounds/soleado.jpg';
+        }
+      } else {
+        // --- LOG SOLICITADO: Imagen no encontrada en Supabase ---
+        console.warn(
+          `ℹ️ [MeteoApp Fallback] Supabase NO devolvió 'background_image_url' (campo vacío/nulo) para '${town}'. Activando imagen de contingencia local: '${UIStyles.background}'`
+        );
+        finalBg = `assets/backgrounds/${UIStyles.background}`;
+      }
+
+      // 4. RESOLUCIÓN Y LOGS DE OUTFITS (PERSONAJES)
+      let finalOutfit = '';
+      if (row.outfit_image_url && row.outfit_image_url.trim() !== '') {
+        finalOutfit = row.outfit_image_url;
+      } else {
+        console.warn(
+          `ℹ️ [MeteoApp Fallback] Supabase NO devolvió 'outfit_image_url' para '${town}'. Colocando personaje por defecto.`
+        );
+        finalOutfit = 'assets/characters/summer_anime.png';
+      }
+
+      return {
+        location: row.location || town,
+        date: row.created_at ? new Date(row.created_at) : new Date(),
+        time: row.created_at ? new Date(row.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
+        temp: row.temperature_2m ?? 0,
+        apparentTemp: row.apparent_temperature ?? row.temperature_2m ?? 0,
+        humidity: row.relative_humidity_2m ?? 0,
+        precipitation: row.precipitation ?? 0,
+        windSpeed: row.wind_speed_10m ?? 0,
+        uvIndex: row.uv_index ?? 0,
+        pressure: row.pressure_msl ?? 1013,
+        weathercode: row.weathercode ?? 0,
+        isDay: row.is_day ?? 1,
+        background_image_url: finalBg, // Ruta limpia y validada lista para el HTML
+        outfit_image_url: finalOutfit,
+        text_clothing: row.text_clothing || 'Ropa recomendada',
+        accessories: UIStyles.accessories,
+        primaryLottieOptions: this.getLottiePropByCode(row.weathercode ?? 0, row.is_day ?? 1),
+        pronostico_meteo: horasArray
+      } as WeatherLocationData;
     });
 
     const results = await Promise.all(promises);
+    // Filtrar municipios que no arrojaron datos ni fallbacks
     this.weatherData = results.filter((item): item is WeatherLocationData => item !== null);
 
     if (this.weatherData.length === 0) {
+      console.error('🛑 [MeteoApp Crítico] Ningún municipio tiene datos en Supabase. Levantando datos simulados de emergencia.');
       this.generateFallbackData();
     }
 
@@ -289,12 +313,198 @@ async loadWeatherData() {
     }, 300);
 
   } catch (error) {
-    console.error('❌ Error crítico en la carga de datos:', error);
+    console.error('❌ Error crítico no controlado en la carga general de loadWeatherData:', error);
     this.generateFallbackData();
     this.loader = true;
     this.cdr.detectChanges();
   }
 }
+
+mapWeatherToBackgroundAccessories(item: WeatherData): { background: string, accessories: string[] } {
+  const weatherCode = Number(item.weathercode ?? -1);
+  const isDay = Number(item.is_day ?? 1);
+  const cloudcover = Number(item.cloudcover ?? 0);
+  const temperature = Number(item.temperature_2m ?? 0);
+  const precipitation = Number(item.precipitation ?? 0);
+  const windSpeed = Number(item.wind_speed_10m ?? 0);
+  const visibility = Number(item.visibility ?? 100000);
+  const relativeHumidity = Number(item.relative_humidity_2m ?? 0);
+  const apparentTemperature = Number(item.apparent_temperature ?? 0);
+
+  // Constantes de Umbral
+  const WIND_SPEED_THRESHOLD = 15;
+  const TEMPERATURE_COLD_THRESHOLD = 10;
+  const APPARENT_TEMPERATURE_COLD_THRESHOLD = 5;
+  const TEMPERATURE_VERY_COLD_THRESHOLD = 0;
+  const VISIBILITY_FOG_THRESHOLD = 1000;
+  const HUMIDITY_FOG_THRESHOLD = 90;
+  const TEMPERATURE_HOT_THRESHOLD = 25;
+  const CLOUDCOVER_CLEAR_THRESHOLD = 20;
+  const WIND_SPEED_CALM_THRESHOLD = 5;
+
+  let background = 'soleado.jpg'; // Cambiado de 'soelado.jpg' a archivo real físico verificado
+  const accessories: string[] = [];
+
+  // --- REGLAS DE NEGOCIO METEOROLÓGICO ---
+  if (windSpeed > WIND_SPEED_THRESHOLD && isDay === 0 && precipitation === 0) {
+    background = 'vientofuerte_noche.jpg';
+    accessories.push('cortaviento');
+    if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) accessories.push('bufanda');
+    if (temperature < TEMPERATURE_VERY_COLD_THRESHOLD || apparentTemperature < TEMPERATURE_VERY_COLD_THRESHOLD) accessories.push('abrigo-polar');
+  }
+  else if (windSpeed > WIND_SPEED_THRESHOLD) {
+    background = 'vientofuerte.jpg';
+    accessories.push('cortaviento');
+    if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) accessories.push('bufanda');
+    if (temperature < TEMPERATURE_VERY_COLD_THRESHOLD || apparentTemperature < TEMPERATURE_VERY_COLD_THRESHOLD) accessories.push('abrigo-polar');
+  }
+  else if (weatherCode === 0 && isDay === 0) {
+    background = 'nochedespejada.jpg';
+  }
+  else if ((weatherCode === 3 || weatherCode >= 61) && isDay === 0) {
+    background = 'noche_nublada_luna.jpg';
+    accessories.push('bufanda');
+  }
+  else if (weatherCode === 0 && isDay === 1) {
+    background = 'despejado_clear.jpg';
+  }
+  else if ((weatherCode === 1 || weatherCode === 2) && cloudcover < CLOUDCOVER_CLEAR_THRESHOLD && isDay === 1) {
+    background = 'soleado.jpg'; // Rescates locales seguros
+    accessories.push('gafas', 'gorra');
+  }
+  else if (weatherCode === 2 && cloudcover >= CLOUDCOVER_CLEAR_THRESHOLD && isDay === 1) {
+    background = 'parcialmentenublado.jpg';
+  }
+  else if (weatherCode === 3 && isDay === 1) {
+    background = 'nublado_cloudy.jpg';
+    accessories.push('bufanda');
+  }
+  else if ([95, 96, 99].includes(weatherCode)) {
+    background = 'tormenta_thunder.jpg';
+    accessories.push('paraguas', 'impermeable');
+  }
+  else if ([61, 63, 65, 80, 81, 82].includes(weatherCode)) {
+    background = 'lluvia_rain.jpg';
+    accessories.push('paraguas', 'impermeable');
+    if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) accessories.push('abrigo-polar');
+  }
+  else if ([51, 53, 55].includes(weatherCode)) {
+    background = 'llovisnaDrizzle.jpg';
+    accessories.push('paraguas');
+  }
+  else if ([71, 73, 75, 77, 85, 86].includes(weatherCode)) {
+    background = 'helada_escarcha.jpg';
+    accessories.push('abrigo-polar', 'botas');
+  }
+  else if (temperature <= TEMPERATURE_VERY_COLD_THRESHOLD && precipitation === 0 && [0, 1, 2, 3].includes(weatherCode)) {
+    background = 'helada_escarcha2.jpg';
+    accessories.push('bufanda', 'guantes');
+  }
+  else if ([45, 48].includes(weatherCode) || visibility < VISIBILITY_FOG_THRESHOLD || relativeHumidity > HUMIDITY_FOG_THRESHOLD) {
+    background = 'nieblafog.jpg';
+    accessories.push('bufanda');
+  }
+  else if ([0, 1, 2].includes(weatherCode) && temperature > TEMPERATURE_HOT_THRESHOLD && cloudcover < CLOUDCOVER_CLEAR_THRESHOLD && windSpeed < WIND_SPEED_CALM_THRESHOLD) {
+    background = 'bruma_calima.jpg';
+  }
+
+  return {
+    background: background,
+    accessories: [...new Set(accessories)].filter(acc => acc)
+  };
+}
+
+// async loadWeatherData() {
+//   try {
+//     this.loader = false;
+//     this.cdr.detectChanges();
+
+//     const promises = this.locations.map(async (town) => {
+//       // Consulta directa a la tabla current_data
+//       const res: WeatherData[] | null = await this.supabaseService.getDataByLocation(town);
+
+//       if (res && res.length > 0) {
+//         const row: WeatherData = res[0];
+
+//         // 1. Deserialización segura del pronóstico por horas (JSONB)
+//         let horasArray: HourlyForecast[] = [];
+//         if (row.pronostico_meteo) {
+//           try {
+//             const parsed = typeof row.pronostico_meteo === 'string'
+//               ? JSON.parse(row.pronostico_meteo)
+//               : row.pronostico_meteo;
+
+//             horasArray = parsed.map((hora: any) => ({
+//               ...hora,
+//               lottieOptions: this.getLottiePropByCode(hora.weathercode, hora.es_dia)
+//             }));
+//           } catch (e) {
+//             console.error(`Error parseando pronostico_meteo para ${town}:`, e);
+//           }
+//         }
+
+//         // 2. Fallback de estilos visuales si la base de datos no tiene la imagen calculada
+//         const UIStyles = this.mapWeatherToBackgroundAccessories(row);
+
+//         // 3. Resolución limpia de URLs de Fondos y Personajes
+//         let finalBg = 'assets/backgrounds/soleado.jpg';
+//         if (row.background_image_url) {
+//           // Si es una ruta relativa/absoluta limpia, la usamos directamente
+//           finalBg = row.background_image_url;
+//         } else {
+//           finalBg = `assets/backgrounds/${UIStyles.background}`;
+//         }
+
+//         let finalOutfit = 'assets/characters/summer_anime.png';
+//         if (row.outfit_image_url) {
+//           finalOutfit = row.outfit_image_url;
+//         }
+
+//         return {
+//           location: row.location || town,
+//           date: row.created_at ? new Date(row.created_at) : new Date(),
+//           time: row.created_at ? new Date(row.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
+//           temp: row.temperature_2m ?? 0,
+//           apparentTemp: row.apparent_temperature ?? row.temperature_2m ?? 0,
+//           humidity: row.relative_humidity_2m ?? 0,
+//           precipitation: row.precipitation ?? 0,
+//           windSpeed: row.wind_speed_10m ?? 0,
+//           uvIndex: row.uv_index ?? 0,
+//           pressure: row.pressure_msl ?? 1013,
+//           weathercode: row.weathercode ?? 0,
+//           isDay: row.is_day ?? 1,
+//           background_image_url: finalBg,
+//           outfit_image_url: finalOutfit,
+//           text_clothing: row.text_clothing || 'Ropa recomendada',
+//           accessories: UIStyles.accessories,
+//           primaryLottieOptions: this.getLottiePropByCode(row.weathercode ?? 0, row.is_day ?? 1),
+//           pronostico_meteo: horasArray
+//         } as WeatherLocationData;
+//       }
+//       return null;
+//     });
+
+//     const results = await Promise.all(promises);
+//     this.weatherData = results.filter((item): item is WeatherLocationData => item !== null);
+
+//     if (this.weatherData.length === 0) {
+//       this.generateFallbackData();
+//     }
+
+//     this.loader = true;
+//     this.cdr.detectChanges();
+
+//     setTimeout(() => {
+//       this.initializeSwiper();
+//     }, 300);
+
+//   } catch (error) {
+//     console.error('❌ Error crítico en la carga de datos:', error);
+//     this.generateFallbackData();
+//     this.loader = true;
+//     this.cdr.detectChanges();
+//   }
+// }
 
 
   // initializeSwiper() {
@@ -381,7 +591,7 @@ async loadWeatherData() {
   //           weathercode: row.weathercode ?? 0,
   //           isDay: row.is_day ?? 1,
   //           background_image_url: (row.background_image_url && !row.background_image_url.includes('OUTFIT'))
-  //             ? (row.background_image_url.includes('soleado_sunny') ? 'assets/backgrounds/soleado.jpg' : row.background_image_url)
+  //             ? (row.background_image_url.includes('soelado') ? 'assets/backgrounds/soleado.jpg' : row.background_image_url)
   //             : `assets/backgrounds/${UIStyles.background}`,
   //           outfit_image_url: (row.background_image_url && row.background_image_url.includes('OUTFIT'))
   //             ? `assets/characters/${row.background_image_url.split('/').pop()}`
@@ -758,101 +968,101 @@ async loadWeatherData() {
   /**
    * MOTOR DE REGLAS: Mapea WeatherData a estilos visuales y accesorios usando constantes.
    */
-  mapWeatherToBackgroundAccessories(item: WeatherData): { background: string, accessories: string[] } {
-    // 1. Extracción con valores por defecto seguros
-    const weatherCode = Number(item.weathercode ?? -1);
-    const isDay = Number(item.is_day ?? 1);
-    const cloudcover = Number(item.cloudcover ?? 0);
-    const temperature = Number(item.temperature_2m ?? 0);
-    const precipitation = Number(item.precipitation ?? 0);
-    const windSpeed = Number(item.wind_speed_10m ?? 0);
-    const visibility = Number(item.visibility ?? 100000);
-    const relativeHumidity = Number(item.relative_humidity_2m ?? 0);
-    const apparentTemperature = Number(item.apparent_temperature ?? 0);
+  // mapWeatherToBackgroundAccessories(item: WeatherData): { background: string, accessories: string[] } {
+  //   // 1. Extracción con valores por defecto seguros
+  //   const weatherCode = Number(item.weathercode ?? -1);
+  //   const isDay = Number(item.is_day ?? 1);
+  //   const cloudcover = Number(item.cloudcover ?? 0);
+  //   const temperature = Number(item.temperature_2m ?? 0);
+  //   const precipitation = Number(item.precipitation ?? 0);
+  //   const windSpeed = Number(item.wind_speed_10m ?? 0);
+  //   const visibility = Number(item.visibility ?? 100000);
+  //   const relativeHumidity = Number(item.relative_humidity_2m ?? 0);
+  //   const apparentTemperature = Number(item.apparent_temperature ?? 0);
 
-    // 2. Definición de Constantes de Umbral
-    const WIND_SPEED_THRESHOLD = 15;
-    const TEMPERATURE_COLD_THRESHOLD = 10;
-    const APPARENT_TEMPERATURE_COLD_THRESHOLD = 5;
-    const TEMPERATURE_VERY_COLD_THRESHOLD = 0;
-    const VISIBILITY_FOG_THRESHOLD = 1000;
-    const HUMIDITY_FOG_THRESHOLD = 90;
-    const TEMPERATURE_HOT_THRESHOLD = 25;
-    const CLOUDCOVER_CLEAR_THRESHOLD = 20;
-    const WIND_SPEED_CALM_THRESHOLD = 5;
+  //   // 2. Definición de Constantes de Umbral
+  //   const WIND_SPEED_THRESHOLD = 15;
+  //   const TEMPERATURE_COLD_THRESHOLD = 10;
+  //   const APPARENT_TEMPERATURE_COLD_THRESHOLD = 5;
+  //   const TEMPERATURE_VERY_COLD_THRESHOLD = 0;
+  //   const VISIBILITY_FOG_THRESHOLD = 1000;
+  //   const HUMIDITY_FOG_THRESHOLD = 90;
+  //   const TEMPERATURE_HOT_THRESHOLD = 25;
+  //   const CLOUDCOVER_CLEAR_THRESHOLD = 20;
+  //   const WIND_SPEED_CALM_THRESHOLD = 5;
 
-    let background = 'soleado.jpg'; // Fallback base
-    const accessories: string[] = [];
+  //   let background = 'soleado.jpg'; // Fallback base
+  //   const accessories: string[] = [];
 
-    // --- LÓGICA DE REGLAS ---
+  //   // --- LÓGICA DE REGLAS ---
 
-    if (windSpeed > WIND_SPEED_THRESHOLD && isDay === 0 && precipitation === 0) {
-      background = 'vientofuerte_noche.jpg';
-      accessories.push('cortaviento');
-      if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) accessories.push('bufanda');
-      if (temperature < TEMPERATURE_VERY_COLD_THRESHOLD || apparentTemperature < TEMPERATURE_VERY_COLD_THRESHOLD) accessories.push('abrigo-polar');
-    }
-    else if (windSpeed > WIND_SPEED_THRESHOLD) {
-      background = 'vientofuerte.jpg';
-      accessories.push('cortaviento');
-      if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) accessories.push('bufanda');
-      if (temperature < TEMPERATURE_VERY_COLD_THRESHOLD || apparentTemperature < TEMPERATURE_VERY_COLD_THRESHOLD) accessories.push('abrigo-polar');
-    }
-    else if (weatherCode === 0 && isDay === 0) {
-      background = 'nochedespejada.jpg';
-    }
-    else if ((weatherCode === 3 || weatherCode >= 61) && isDay === 0) {
-      background = 'noche_nublada_luna.jpg';
-      accessories.push('bufanda');
-    }
-    else if (weatherCode === 0 && isDay === 1) {
-      background = 'despejado_clear.jpg';
-    }
-    else if ((weatherCode === 1 || weatherCode === 2) && cloudcover < CLOUDCOVER_CLEAR_THRESHOLD && isDay === 1) {
-      background = 'soleado_sunny.jpg';
-      accessories.push('gafas', 'gorra');
-    }
-    else if (weatherCode === 2 && cloudcover >= CLOUDCOVER_CLEAR_THRESHOLD && isDay === 1) {
-      background = 'parcialmentenublado.jpg';
-    }
-    else if (weatherCode === 3 && isDay === 1) {
-      background = 'nublado_cloudy.jpg';
-      accessories.push('bufanda');
-    }
-    else if ([95, 96, 99].includes(weatherCode)) {
-      background = 'tormenta_thunder.jpg';
-      accessories.push('paraguas', 'impermeable');
-    }
-    else if ([61, 63, 65, 80, 81, 82].includes(weatherCode)) {
-      background = 'lluvia_rain.jpg';
-      accessories.push('paraguas', 'impermeable');
-      if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) accessories.push('abrigo-polar');
-    }
-    else if ([51, 53, 55].includes(weatherCode)) {
-      background = 'llovisnaDrizzle.jpg';
-      accessories.push('paraguas');
-    }
-    else if ([71, 73, 75, 77, 85, 86].includes(weatherCode)) {
-      background = 'helada_escarcha.jpg';
-      accessories.push('abrigo-polar', 'botas');
-    }
-    else if (temperature <= TEMPERATURE_VERY_COLD_THRESHOLD && precipitation === 0 && [0, 1, 2, 3].includes(weatherCode)) {
-      background = 'helada_escarcha2.jpg';
-      accessories.push('bufanda', 'guantes');
-    }
-    else if ([45, 48].includes(weatherCode) || visibility < VISIBILITY_FOG_THRESHOLD || relativeHumidity > HUMIDITY_FOG_THRESHOLD) {
-      background = 'nieblafog.jpg';
-      accessories.push('bufanda');
-    }
-    else if ([0, 1, 2].includes(weatherCode) && temperature > TEMPERATURE_HOT_THRESHOLD && cloudcover < CLOUDCOVER_CLEAR_THRESHOLD && windSpeed < WIND_SPEED_CALM_THRESHOLD) {
-      background = 'bruma_calima.jpg';
-    }
+  //   if (windSpeed > WIND_SPEED_THRESHOLD && isDay === 0 && precipitation === 0) {
+  //     background = 'vientofuerte_noche.jpg';
+  //     accessories.push('cortaviento');
+  //     if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) accessories.push('bufanda');
+  //     if (temperature < TEMPERATURE_VERY_COLD_THRESHOLD || apparentTemperature < TEMPERATURE_VERY_COLD_THRESHOLD) accessories.push('abrigo-polar');
+  //   }
+  //   else if (windSpeed > WIND_SPEED_THRESHOLD) {
+  //     background = 'vientofuerte.jpg';
+  //     accessories.push('cortaviento');
+  //     if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) accessories.push('bufanda');
+  //     if (temperature < TEMPERATURE_VERY_COLD_THRESHOLD || apparentTemperature < TEMPERATURE_VERY_COLD_THRESHOLD) accessories.push('abrigo-polar');
+  //   }
+  //   else if (weatherCode === 0 && isDay === 0) {
+  //     background = 'nochedespejada.jpg';
+  //   }
+  //   else if ((weatherCode === 3 || weatherCode >= 61) && isDay === 0) {
+  //     background = 'noche_nublada_luna.jpg';
+  //     accessories.push('bufanda');
+  //   }
+  //   else if (weatherCode === 0 && isDay === 1) {
+  //     background = 'despejado_clear.jpg';
+  //   }
+  //   else if ((weatherCode === 1 || weatherCode === 2) && cloudcover < CLOUDCOVER_CLEAR_THRESHOLD && isDay === 1) {
+  //     background = 'soleado.jpg';
+  //     accessories.push('gafas', 'gorra');
+  //   }
+  //   else if (weatherCode === 2 && cloudcover >= CLOUDCOVER_CLEAR_THRESHOLD && isDay === 1) {
+  //     background = 'parcialmentenublado.jpg';
+  //   }
+  //   else if (weatherCode === 3 && isDay === 1) {
+  //     background = 'nublado_cloudy.jpg';
+  //     accessories.push('bufanda');
+  //   }
+  //   else if ([95, 96, 99].includes(weatherCode)) {
+  //     background = 'tormenta_thunder.jpg';
+  //     accessories.push('paraguas', 'impermeable');
+  //   }
+  //   else if ([61, 63, 65, 80, 81, 82].includes(weatherCode)) {
+  //     background = 'lluvia_rain.jpg';
+  //     accessories.push('paraguas', 'impermeable');
+  //     if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) accessories.push('abrigo-polar');
+  //   }
+  //   else if ([51, 53, 55].includes(weatherCode)) {
+  //     background = 'llovisnaDrizzle.jpg';
+  //     accessories.push('paraguas');
+  //   }
+  //   else if ([71, 73, 75, 77, 85, 86].includes(weatherCode)) {
+  //     background = 'helada_escarcha.jpg';
+  //     accessories.push('abrigo-polar', 'botas');
+  //   }
+  //   else if (temperature <= TEMPERATURE_VERY_COLD_THRESHOLD && precipitation === 0 && [0, 1, 2, 3].includes(weatherCode)) {
+  //     background = 'helada_escarcha2.jpg';
+  //     accessories.push('bufanda', 'guantes');
+  //   }
+  //   else if ([45, 48].includes(weatherCode) || visibility < VISIBILITY_FOG_THRESHOLD || relativeHumidity > HUMIDITY_FOG_THRESHOLD) {
+  //     background = 'nieblafog.jpg';
+  //     accessories.push('bufanda');
+  //   }
+  //   else if ([0, 1, 2].includes(weatherCode) && temperature > TEMPERATURE_HOT_THRESHOLD && cloudcover < CLOUDCOVER_CLEAR_THRESHOLD && windSpeed < WIND_SPEED_CALM_THRESHOLD) {
+  //     background = 'bruma_calima.jpg';
+  //   }
 
-    return {
-      background: background,
-      accessories: [...new Set(accessories)].filter(acc => acc)
-    };
-  }
+  //   return {
+  //     background: background,
+  //     accessories: [...new Set(accessories)].filter(acc => acc)
+  //   };
+  // }
 
   getLottiePropByCode(code: number, isDay: number): AnimationOptions {
     if ([0].includes(code)) return isDay === 1 ? this.sunnyLottie : this.nightLottie;

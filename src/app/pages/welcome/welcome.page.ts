@@ -202,6 +202,101 @@ export class WelcomePage implements OnInit, AfterViewInit {
     }
   }
 
+
+
+async loadWeatherData() {
+  try {
+    this.loader = false;
+    this.cdr.detectChanges();
+
+    const promises = this.locations.map(async (town) => {
+      // Consulta directa a la tabla current_data
+      const res: WeatherData[] | null = await this.supabaseService.getDataByLocation(town);
+
+      if (res && res.length > 0) {
+        const row: WeatherData = res[0];
+
+        // 1. Deserialización segura del pronóstico por horas (JSONB)
+        let horasArray: HourlyForecast[] = [];
+        if (row.pronostico_meteo) {
+          try {
+            const parsed = typeof row.pronostico_meteo === 'string'
+              ? JSON.parse(row.pronostico_meteo)
+              : row.pronostico_meteo;
+
+            horasArray = parsed.map((hora: any) => ({
+              ...hora,
+              lottieOptions: this.getLottiePropByCode(hora.weathercode, hora.es_dia)
+            }));
+          } catch (e) {
+            console.error(`Error parseando pronostico_meteo para ${town}:`, e);
+          }
+        }
+
+        // 2. Fallback de estilos visuales si la base de datos no tiene la imagen calculada
+        const UIStyles = this.mapWeatherToBackgroundAccessories(row);
+
+        // 3. Resolución limpia de URLs de Fondos y Personajes
+        let finalBg = 'assets/backgrounds/soleado.jpg';
+        if (row.background_image_url) {
+          // Si es una ruta relativa/absoluta limpia, la usamos directamente
+          finalBg = row.background_image_url;
+        } else {
+          finalBg = `assets/backgrounds/${UIStyles.background}`;
+        }
+
+        let finalOutfit = 'assets/characters/summer_anime.png';
+        if (row.outfit_image_url) {
+          finalOutfit = row.outfit_image_url;
+        }
+
+        return {
+          location: row.location || town,
+          date: row.created_at ? new Date(row.created_at) : new Date(),
+          time: row.created_at ? new Date(row.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
+          temp: row.temperature_2m ?? 0,
+          apparentTemp: row.apparent_temperature ?? row.temperature_2m ?? 0,
+          humidity: row.relative_humidity_2m ?? 0,
+          precipitation: row.precipitation ?? 0,
+          windSpeed: row.wind_speed_10m ?? 0,
+          uvIndex: row.uv_index ?? 0,
+          pressure: row.pressure_msl ?? 1013,
+          weathercode: row.weathercode ?? 0,
+          isDay: row.is_day ?? 1,
+          background_image_url: finalBg,
+          outfit_image_url: finalOutfit,
+          text_clothing: row.text_clothing || 'Ropa recomendada',
+          accessories: UIStyles.accessories,
+          primaryLottieOptions: this.getLottiePropByCode(row.weathercode ?? 0, row.is_day ?? 1),
+          pronostico_meteo: horasArray
+        } as WeatherLocationData;
+      }
+      return null;
+    });
+
+    const results = await Promise.all(promises);
+    this.weatherData = results.filter((item): item is WeatherLocationData => item !== null);
+
+    if (this.weatherData.length === 0) {
+      this.generateFallbackData();
+    }
+
+    this.loader = true;
+    this.cdr.detectChanges();
+
+    setTimeout(() => {
+      this.initializeSwiper();
+    }, 300);
+
+  } catch (error) {
+    console.error('❌ Error crítico en la carga de datos:', error);
+    this.generateFallbackData();
+    this.loader = true;
+    this.cdr.detectChanges();
+  }
+}
+
+
   // initializeSwiper() {
   //   if (this.swiper?.nativeElement && this.loader) {
   //     this.swiperInstance = new SwiperCore(this.swiper.nativeElement, {
@@ -238,93 +333,93 @@ export class WelcomePage implements OnInit, AfterViewInit {
 /**
    * FLUJO ÚNICO: Descarga, mapea y unifica los datos de Supabase en paralelo
    */
-  async loadWeatherData() {
-    try {
-      this.loader = false;
-      this.cdr.detectChanges();
+  // async loadWeatherData() {
+  //   try {
+  //     this.loader = false;
+  //     this.cdr.detectChanges();
 
-      // 1. Ejecución paralela de consultas por municipio
-      const promises = this.locations.map(async (town) => {
-        const res: WeatherData[] | null = await this.supabaseService.getDataByLocation(town);
+  //     // 1. Ejecución paralela de consultas por municipio
+  //     const promises = this.locations.map(async (town) => {
+  //       const res: WeatherData[] | null = await this.supabaseService.getDataByLocation(town);
 
-        if (res && res.length > 0) {
-          const row: WeatherData = res[0];
+  //       if (res && res.length > 0) {
+  //         const row: WeatherData = res[0];
 
-          // 2. Deserialización segura del JSONB de pronóstico (si existe)
-          let horasArray: HourlyForecast[] = [];
-          if (row.pronostico_meteo) {
-            try {
-              const parsed = typeof row.pronostico_meteo === 'string'
-                ? JSON.parse(row.pronostico_meteo)
-                : row.pronostico_meteo;
+  //         // 2. Deserialización segura del JSONB de pronóstico (si existe)
+  //         let horasArray: HourlyForecast[] = [];
+  //         if (row.pronostico_meteo) {
+  //           try {
+  //             const parsed = typeof row.pronostico_meteo === 'string'
+  //               ? JSON.parse(row.pronostico_meteo)
+  //               : row.pronostico_meteo;
 
-              // Mapeo de horas inyectando las propiedades Lottie estáticas ya declaradas
-              horasArray = parsed.map((hora: any) => ({
-                ...hora,
-                lottieOptions: this.getLottiePropByCode(hora.weathercode, hora.es_dia)
-              }));
-            } catch (e) {
-              console.error(`Error parseando pronostico_meteo para ${town}:`, e);
-            }
-          }
+  //             // Mapeo de horas inyectando las propiedades Lottie estáticas ya declaradas
+  //             horasArray = parsed.map((hora: any) => ({
+  //               ...hora,
+  //               lottieOptions: this.getLottiePropByCode(hora.weathercode, hora.es_dia)
+  //             }));
+  //           } catch (e) {
+  //             console.error(`Error parseando pronostico_meteo para ${town}:`, e);
+  //           }
+  //         }
 
-          // 3. Cálculo de accesorios y fondo basados en reglas
-          const UIStyles = this.mapWeatherToBackgroundAccessories(row);
+  //         // 3. Cálculo de accesorios y fondo basados en reglas
+  //         const UIStyles = this.mapWeatherToBackgroundAccessories(row);
 
-          // 4. Retorno del objeto tipado para la UI
-          return {
-            location: row.location || town,
-            date: row.created_at ? new Date(row.created_at) : new Date(),
-            time: row.created_at ? new Date(row.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
-            temp: row.temperature_2m ?? 0,
-            apparentTemp: row.apparent_temperature ?? row.temperature_2m ?? 0,
-            humidity: row.relative_humidity_2m ?? 0,
-            precipitation: row.precipitation ?? 0,
-            windSpeed: row.wind_speed_10m ?? 0,
-            uvIndex: row.uv_index ?? 0,
-            pressure: row.pressure_msl ?? 1013,
-            weathercode: row.weathercode ?? 0,
-            isDay: row.is_day ?? 1,
-            background_image_url: (row.background_image_url && !row.background_image_url.includes('OUTFIT'))
-              ? (row.background_image_url.includes('soleado_sunny') ? 'assets/backgrounds/soleado.jpg' : row.background_image_url)
-              : `assets/backgrounds/${UIStyles.background}`,
-            outfit_image_url: (row.background_image_url && row.background_image_url.includes('OUTFIT'))
-              ? `assets/characters/${row.background_image_url.split('/').pop()}`
-              : (row.outfit_image_url || 'assets/characters/summer_anime.png'),
-            text_clothing: row.text_clothing || 'Ropa recomendada',
-            accessories: UIStyles.accessories,
-            // AQUÍ USAMOS LAS PROPIEDADES ESTÁTICAS PARA EVITAR ERRORES DE RENDER
-            primaryLottieOptions: this.getLottiePropByCode(row.weathercode ?? 0, row.is_day ?? 1),
-            pronostico_meteo: horasArray
-          } as WeatherLocationData;
-        }
-        return null;
-      });
+  //         // 4. Retorno del objeto tipado para la UI
+  //         return {
+  //           location: row.location || town,
+  //           date: row.created_at ? new Date(row.created_at) : new Date(),
+  //           time: row.created_at ? new Date(row.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
+  //           temp: row.temperature_2m ?? 0,
+  //           apparentTemp: row.apparent_temperature ?? row.temperature_2m ?? 0,
+  //           humidity: row.relative_humidity_2m ?? 0,
+  //           precipitation: row.precipitation ?? 0,
+  //           windSpeed: row.wind_speed_10m ?? 0,
+  //           uvIndex: row.uv_index ?? 0,
+  //           pressure: row.pressure_msl ?? 1013,
+  //           weathercode: row.weathercode ?? 0,
+  //           isDay: row.is_day ?? 1,
+  //           background_image_url: (row.background_image_url && !row.background_image_url.includes('OUTFIT'))
+  //             ? (row.background_image_url.includes('soleado_sunny') ? 'assets/backgrounds/soleado.jpg' : row.background_image_url)
+  //             : `assets/backgrounds/${UIStyles.background}`,
+  //           outfit_image_url: (row.background_image_url && row.background_image_url.includes('OUTFIT'))
+  //             ? `assets/characters/${row.background_image_url.split('/').pop()}`
+  //             : (row.outfit_image_url || 'assets/characters/summer_anime.png'),
+  //           text_clothing: row.text_clothing || 'Ropa recomendada',
+  //           accessories: UIStyles.accessories,
+  //           // AQUÍ USAMOS LAS PROPIEDADES ESTÁTICAS PARA EVITAR ERRORES DE RENDER
+  //           primaryLottieOptions: this.getLottiePropByCode(row.weathercode ?? 0, row.is_day ?? 1),
+  //           pronostico_meteo: horasArray
+  //         } as WeatherLocationData;
+  //       }
+  //       return null;
+  //     });
 
-      const results = await Promise.all(promises);
+  //     const results = await Promise.all(promises);
 
-      // 5. Filtramos nulos y actualizamos estado
-      this.weatherData = results.filter((item): item is WeatherLocationData => item !== null);
+  //     // 5. Filtramos nulos y actualizamos estado
+  //     this.weatherData = results.filter((item): item is WeatherLocationData => item !== null);
 
-      if (this.weatherData.length === 0) {
-        this.generateFallbackData();
-      }
+  //     if (this.weatherData.length === 0) {
+  //       this.generateFallbackData();
+  //     }
 
-      this.loader = true;
-      this.cdr.detectChanges();
+  //     this.loader = true;
+  //     this.cdr.detectChanges();
 
-      // 6. Inicialización del carrusel una vez el DOM está listo
-      setTimeout(() => {
-        this.initializeSwiper();
-      }, 300);
+  //     // 6. Inicialización del carrusel una vez el DOM está listo
+  //     setTimeout(() => {
+  //       this.initializeSwiper();
+  //     }, 300);
 
-    } catch (error) {
-      console.error('❌ Error crítico en la carga de datos:', error);
-      this.generateFallbackData();
-      this.loader = true;
-      this.cdr.detectChanges();
-    }
-  }
+  //   } catch (error) {
+  //     console.error('❌ Error crítico en la carga de datos:', error);
+  //     this.generateFallbackData();
+  //     this.loader = true;
+  //     this.cdr.detectChanges();
+  //   }
+  // }
   /**
    * Mapeador Maestro de códigos meteorológicos de la WMO a Objetos Lottie estáticos
    */

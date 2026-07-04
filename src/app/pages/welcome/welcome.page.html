@@ -13,17 +13,19 @@
 
   <div *ngIf="loader" class="main-layered-container" [ngClass]="{'is-ios': isIos, 'is-android': isAndroid}">
 
-    <div class="swiper-background-layer">
-      <div class="swiper" #swiper>
-        <div class="swiper-wrapper">
-          <div class="swiper-slide" *ngFor="let data of weatherData">
-            <div class="dynamic-bg" [style.background-image]="'url(/assets/backgrounds/' + (data.background_image_url.split('/').pop() || 'soleado.jpg') + ')'">
-              <div class="bg-overlay"></div>
-            </div>
+  <!-- CAPA DE FONDOS DINÁMICOS EN SWIPER -->
+  <div class="swiper-background-layer">
+    <div class="swiper" #swiper>
+      <div class="swiper-wrapper">
+        <div class="swiper-slide" *ngFor="let data of weatherData">
+          <!-- Asignación directa de la URL limpia generada por el controlador -->
+          <div class="dynamic-bg" [style.background-image]="'url(' + data.background_image_url + ')'">
+            <div class="bg-overlay"></div>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
    <div class="weather-header-frame" *ngIf="weatherData && weatherData.length > 0 && weatherData[activeIndex]">
             <div class="header-text-column">

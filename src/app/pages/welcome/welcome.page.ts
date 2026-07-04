@@ -288,7 +288,9 @@ export class WelcomePage implements OnInit, AfterViewInit {
             background_image_url: (row.background_image_url && !row.background_image_url.includes('OUTFIT'))
               ? (row.background_image_url.includes('soleado_sunny') ? 'assets/backgrounds/soleado.jpg' : row.background_image_url)
               : `assets/backgrounds/${UIStyles.background}`,
-            outfit_image_url: row.outfit_image_url || 'assets/characters/summer_anime.png',
+            outfit_image_url: (row.background_image_url && row.background_image_url.includes('OUTFIT'))
+              ? `assets/characters/${row.background_image_url.split('/').pop()}`
+              : (row.outfit_image_url || 'assets/characters/summer_anime.png'),
             text_clothing: row.text_clothing || 'Ropa recomendada',
             accessories: UIStyles.accessories,
             // AQUÍ USAMOS LAS PROPIEDADES ESTÁTICAS PARA EVITAR ERRORES DE RENDER

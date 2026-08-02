@@ -124,6 +124,63 @@
                     <ng-lottie [options]="humidityIndicator" class="card-lottie"></ng-lottie>
                 <div class="card-data">
                   <span class="label">HUMEDAD</span>
+                  <span class="value">{{ weatherData[activeIndex]?.humidity }}%</span>
+                </div>
+              </div>
+
+              <div class="weather-info-card">
+                <div class="tech-corner top-left"></div>
+                <ng-lottie [options]="windIndicator" class="card-lottie"></ng-lottie>
+                <div class="card-data">
+                  <span class="label">VIENTO</span>
+                  <span class="value">{{ weatherData[activeIndex]?.windSpeed }} km/h</span>
+                </div>
+              </div>
+
+              <div class="weather-info-card active-uv-card">
+                <div class="tech-corner top-left"></div>
+                <ng-lottie [options]="uvIndicator" class="card-lottie"></ng-lottie>
+                <div class="card-data">
+                  <span class="label">ÍNDICE UV</span>
+                  <span class="value">{{ weatherData[activeIndex]?.uvIndex }}</span>
+                </div>
+              </div>
+
+              <div class="weather-info-card">
+                <div class="tech-corner top-left"></div>
+               <ng-lottie [options]="earthIndicator" class="card-lottie"></ng-lottie>
+                <div class="card-data">
+                  <span class="label">HUM. SUELO</span>
+                  <span class="value">{{ weatherData[activeIndex]?.soilMoisture }}%</span>
+                </div>
+              </div>
+
+            </div>
+            <!-- <div class="chips-grid">
+
+              <div class="weather-info-card active-cyan-card">
+                <div class="tech-corner top-left"></div>
+                <ng-lottie [options]="tempIndicator" class="card-lottie"></ng-lottie>
+                <div class="card-data">
+                  <span class="label">SENSACIÓN</span>
+                  <span class="value">{{ weatherData[activeIndex]?.apparentTemp }}°C</span>
+                </div>
+              </div>
+
+              <div class="weather-info-card">
+                <div class="tech-corner top-left"></div>
+                 <ng-lottie [options]="rainChanceIndicator" class="card-lottie"></ng-lottie>
+                <div class="card-data">
+                  <span class="label">PROB. LLUVIA</span>
+                  <span class="value">{{ weatherData[activeIndex]?.precipitation }}%</span>
+                </div>
+              </div>
+
+              <div class="weather-info-card active-cyan-card">
+                <div class="tech-corner top-left"></div>
+                    <ng-lottie [options]="humidityIndicator" class="card-lottie"></ng-lottie>
+                <div class="card-data">
+                  <span class="label">HUMEDAD</span>
                   <span class="value">45%</span>
                 </div>
               </div>
@@ -155,7 +212,7 @@
                 </div>
               </div>
 
-            </div>
+            </div> -->
 
           </div>
         </ion-content>

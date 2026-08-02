@@ -31,6 +31,8 @@ import earthIndicator from '../../../assets/lottie/indicator-earth.json';
 import { WeatherData } from 'src/app/interfaces/weather-data.interface';
 
 
+
+
 SwiperCore.use([Navigation, Pagination]);
 
 // Estructura Estricta para cada hora del Carrusel
@@ -77,6 +79,7 @@ interface WeatherLocationData {
   precipitation: number;
   windSpeed: number;
   uvIndex: number;
+  soilMoisture: number; // <--- AÑADIDO
   pressure: number;
   weathercode: number;
   isDay: number;
@@ -116,22 +119,9 @@ export class WelcomePage implements OnInit, AfterViewInit {
   weatherData: WeatherLocationData[] = [];
 
 
-  // weatherData: any[] = [
-  //   {
-  //     location: 'Valdeolmos',
-  //     date: new Date(),
-  //     temp: 32.1,
-  //     apparentTemp: 32.6,
-  //     precipitation: 0,
-  //     windSpeed: 8,
-  //     background_image_url: 'assets/backgrounds/soleado.jpg',
-  //     outfit_image_url: 'assets/characters/summer_anime.png'
-  //   }
-  // ];
-
 
   mapLottieOptions: AnimationOptions = {animationData: mapAnimation,loop: true,autoplay: true,renderer: 'svg' };
-  earthIndicatorOptions: AnimationOptions = { animationData: earthIndicator, loop: true, autoplay: true, renderer: 'svg' };
+  //earthIndicatorOptions: AnimationOptions = { animationData: earthIndicator, loop: true, autoplay: true, renderer: 'svg' };
 
   private swiperInstance?: SwiperCore;
 
@@ -238,40 +228,16 @@ async loadWeatherData() {
         }
       }
 
-      // 2. Ejecutar motor de reglas local para obtener accesorios y fondos salvavidas
-      const UIStyles = this.mapWeatherToBackgroundAccessories(row);
-
-      // 3. RESOLUCIÓN Y LOGS DE FONDOS (INTERACCIÓN CON SUPABASE)
-      let finalBg = '';
-
+      // 2. RESOLUCIÓN DE FONDOS (CAPA A - Estrictamente desde Backend)
+      let finalBg = 'assets/backgrounds/soleado.jpg';
       if (row.background_image_url && row.background_image_url.trim() !== '') {
-        // Si Supabase devuelve una ruta, la usamos.
         finalBg = row.background_image_url;
-
-        // Alerta en consola si detectamos el String obsoleto/erroneo 'soelado' en el registro
-        if (finalBg.includes('soleado')) {
-          console.warn(
-            `🚨 [MeteoApp Supabase Mismatch] Se detectó el archivo obsoleto 'soelado' en la base de datos para '${town}'. Corrigiendo a 'soleado.jpg' en caliente.`
-          );
-          finalBg = 'assets/backgrounds/soleado.jpg';
-        }
-      } else {
-        // --- LOG SOLICITADO: Imagen no encontrada en Supabase ---
-        console.warn(
-          `ℹ️ [MeteoApp Fallback] Supabase NO devolvió 'background_image_url' (campo vacío/nulo) para '${town}'. Activando imagen de contingencia local: '${UIStyles.background}'`
-        );
-        finalBg = `assets/backgrounds/${UIStyles.background}`;
       }
 
-      // 4. RESOLUCIÓN Y LOGS DE OUTFITS (PERSONAJES)
-      let finalOutfit = '';
+      // 3. RESOLUCIÓN DE OUTFITS
+      let finalOutfit = 'assets/characters/summer_anime.png';
       if (row.outfit_image_url && row.outfit_image_url.trim() !== '') {
         finalOutfit = row.outfit_image_url;
-      } else {
-        console.warn(
-          `ℹ️ [MeteoApp Fallback] Supabase NO devolvió 'outfit_image_url' para '${town}'. Colocando personaje por defecto.`
-        );
-        finalOutfit = 'assets/characters/summer_anime.png';
       }
 
       return {
@@ -281,19 +247,79 @@ async loadWeatherData() {
         temp: row.temperature_2m ?? 0,
         apparentTemp: row.apparent_temperature ?? row.temperature_2m ?? 0,
         humidity: row.relative_humidity_2m ?? 0,
-        precipitation: row.precipitation ?? 0,
+        precipitation: row.precipitation_probability ?? 0,
         windSpeed: row.wind_speed_10m ?? 0,
         uvIndex: row.uv_index ?? 0,
+        soilMoisture: row.soil_moisture_0_to_10cm ? Math.round(row.soil_moisture_0_to_10cm * 100) : 0,
         pressure: row.pressure_msl ?? 1013,
         weathercode: row.weathercode ?? 0,
         isDay: row.is_day ?? 1,
-        background_image_url: finalBg, // Ruta limpia y validada lista para el HTML
+        background_image_url: finalBg,
         outfit_image_url: finalOutfit,
         text_clothing: row.text_clothing || 'Ropa recomendada',
-        accessories: UIStyles.accessories,
+        accessories: [], // Se deja vacío ya que el motor pasó al C#
         primaryLottieOptions: this.getLottiePropByCode(row.weathercode ?? 0, row.is_day ?? 1),
         pronostico_meteo: horasArray
       } as WeatherLocationData;
+
+      // 2. Ejecutar motor de reglas local para obtener accesorios y fondos salvavidas
+      // const UIStyles = this.mapWeatherToBackgroundAccessories(row);
+
+      // // 3. RESOLUCIÓN Y LOGS DE FONDOS (INTERACCIÓN CON SUPABASE)
+      // let finalBg = '';
+
+      // if (row.background_image_url && row.background_image_url.trim() !== '') {
+      //   // Si Supabase devuelve una ruta, la usamos.
+      //   finalBg = row.background_image_url;
+
+      //   // Alerta en consola si detectamos el String obsoleto/erroneo 'soelado' en el registro
+      //   if (finalBg.includes('soleado')) {
+      //     console.warn(
+      //       `🚨 [MeteoApp Supabase Mismatch] Se detectó el archivo obsoleto 'soelado' en la base de datos para '${town}'. Corrigiendo a 'soleado.jpg' en caliente.`
+      //     );
+      //     finalBg = 'assets/backgrounds/soleado.jpg';
+      //   }
+      // } else {
+      //   // --- LOG SOLICITADO: Imagen no encontrada en Supabase ---
+      //   console.warn(
+      //     `ℹ️ [MeteoApp Fallback] Supabase NO devolvió 'background_image_url' (campo vacío/nulo) para '${town}'. Activando imagen de contingencia local: '${UIStyles.background}'`
+      //   );
+      //   finalBg = `assets/backgrounds/${UIStyles.background}`;
+      // }
+
+      // // 4. RESOLUCIÓN Y LOGS DE OUTFITS (PERSONAJES)
+      // let finalOutfit = '';
+      // if (row.outfit_image_url && row.outfit_image_url.trim() !== '') {
+      //   finalOutfit = row.outfit_image_url;
+      // } else {
+      //   console.warn(
+      //     `ℹ️ [MeteoApp Fallback] Supabase NO devolvió 'outfit_image_url' para '${town}'. Colocando personaje por defecto.`
+      //   );
+      //   finalOutfit = 'assets/characters/summer_anime.png';
+      // }
+
+      // return {
+      //   location: row.location || town,
+      //   date: row.created_at ? new Date(row.created_at) : new Date(),
+      //   time: row.created_at ? new Date(row.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
+      //   temp: row.temperature_2m ?? 0,
+      //   apparentTemp: row.apparent_temperature ?? row.temperature_2m ?? 0,
+      //   humidity: row.relative_humidity_2m ?? 0,
+      //   precipitation: row.precipitation ?? 0,
+      //   windSpeed: row.wind_speed_10m ?? 0,
+      //   uvIndex: row.uv_index ?? 0,
+      //   pressure: row.pressure_msl ?? 1013,
+      //   weathercode: row.weathercode ?? 0,
+      //   isDay: row.is_day ?? 1,
+      //   background_image_url: finalBg, // Ruta limpia y validada lista para el HTML
+      //   outfit_image_url: finalOutfit,
+      //   text_clothing: row.text_clothing || 'Ropa recomendada',
+      //   accessories: UIStyles.accessories,
+      //   primaryLottieOptions: this.getLottiePropByCode(row.weathercode ?? 0, row.is_day ?? 1),
+      //   pronostico_meteo: horasArray
+      // } as WeatherLocationData;
+
+
     });
 
     const results = await Promise.all(promises);
@@ -321,118 +347,6 @@ async loadWeatherData() {
 }
 
 
-mapWeatherToBackgroundAccessories(item: WeatherData): { background: string, accessories: string[] } {
-  const weatherCode = Number(item.weathercode ?? -1);
-  const isDay = Number(item.is_day ?? 1);
-  const cloudcover = Number(item.cloudcover ?? 0);
-  const temperature = Number(item.temperature_2m ?? 0);
-  const precipitation = Number(item.precipitation ?? 0);
-  const windSpeed = Number(item.wind_speed_10m ?? 0);
-  const visibility = Number(item.visibility ?? 100000);
-  const relativeHumidity = Number(item.relative_humidity_2m ?? 0);
-  const uvIndex = Number(item.uv_index ?? 0);
-
-  // =========================================================================
-  // CONFIGURACIÓN DE UMBRALES DE NEGOCIO EXPERTOS (MADRID NORTE / CAMPINAS)
-  // =========================================================================
-  const NORTH_MADRID_WIND_LIMIT = 22;      // Viento molesto y racheado en los páramos (km/h)
-  const NORTH_MADRID_HOT_LIMIT = 31;       // Calor sofocante continental de la meseta (°C)
-  const NORTH_MADRID_COLD_LIMIT = 8;       // Umbral de abrigo obligado en la zona norte (°C)
-  const NORTH_MADRID_FREEZING_LIMIT = 2;   // Riesgo de escarcha/helada real en la vega del Jarama (°C)
-  const NORTH_MADRID_RAIN_STRONG = 1.8;    // Saturación: el suelo arcilloso se vuelve barrizal (mm)
-  const NORTH_MADRID_CALM_WIND = 5;        // Viento nulo que estanca partículas y calima (km/h)
-  const VISIBILITY_FOG_LIMIT = 1000;       // Niebla física real en metros
-
-  // Imagen salvavidas absoluta por defecto si falla el motor
-  let background = 'soleado.jpg';
-  const accessories: string[] = [];
-
-  // =========================================================================
-  // REGLAS DE PRIORIDAD VISUAL REALISTA
-  // =========================================================================
-
-  // 1. CONTROL DE PRECIPITACIONES CRÍTICAS (Tormentas e Intensidades)
-  if ([95, 96, 99].includes(weatherCode)) {
-    background = 'tormenta.jpg';
-    accessories.push('paraguas', 'impermeable');
-  }
-  else if (precipitation > NORTH_MADRID_RAIN_STRONG || [65, 82].includes(weatherCode)) {
-    background = 'lluvia_fuerte.jpg';
-    accessories.push('paraguas', 'impermeable');
-  }
-  else if (precipitation > 0 || [51, 53, 55, 61, 80].includes(weatherCode)) {
-    background = 'lluvia_ligera.jpg';
-    accessories.push('paraguas');
-  }
-
-  // 2. EXTREMOS TÉRMICOS Y RADIACIÓN ULTRAVIOLETA
-  else if (isDay === 1 && uvIndex >= 7) {
-    background = 'uv_extremo.jpg';
-    accessories.push('gafas', 'gorra');
-  }
-  else if (isDay === 1 && uvIndex >= 5) {
-    background = 'uv_alto.jpg';
-    accessories.push('gafas', 'gorra');
-  }
-  else if (temperature >= NORTH_MADRID_HOT_LIMIT && isDay === 1) {
-    background = 'caluroso.jpg';
-    accessories.push('gafas', 'gorra');
-  }
-
-  // 3. FENÓMENOS ATMOSFÉRICOS DINÁMICOS (Viento, Niebla del Río y Calima)
-  else if (windSpeed >= NORTH_MADRID_WIND_LIMIT) {
-    background = 'viento_fuerte.jpg';
-    accessories.push('cortaviento');
-    if (temperature < NORTH_MADRID_COLD_LIMIT) accessories.push('bufanda');
-  }
-  else if ([45, 48].includes(weatherCode) || visibility < VISIBILITY_FOG_LIMIT) {
-    background = 'niebla.jpg';
-    accessories.push('bufanda');
-  }
-  else if (temperature >= 28 && windSpeed <= NORTH_MADRID_CALM_WIND && relativeHumidity < 30) {
-    // Atmósfera pesada de polvo sahariano en suspensión en Fuente el Saz / Algete
-    background = 'calima.jpg';
-  }
-
-  // 4. INVIERNO, CONDICIONES TÉRMICAS BAJAS Y ESCARCHAS DE VEGA
-  else if ([71, 73, 75, 85, 86].includes(weatherCode)) {
-    background = 'nieve_intensa.jpg';
-    accessories.push('abrigo-polar', 'botas', 'guantes');
-  }
-  else if (temperature <= NORTH_MADRID_FREEZING_LIMIT) {
-    background = 'frio.jpg'; // Activa visual de frío / escarcha matinal de páramo
-    accessories.push('bufanda', 'guantes', 'abrigo-polar');
-  }
-
-  // 5. ESTADOS BASE / CIELOS ESTABLES RECONSTRUIDOS
-  else if (isDay === 0) {
-    // Escenario Nocturno Estándar
-    if (weatherCode >= 3 || cloudcover >= 50) {
-      background = 'nublado.jpg'; // Tránsito a noche cerrada nublada
-    } else {
-      background = 'calma.jpg'; // Noche despejada y tranquila en los pueblos
-    }
-  }
-  else {
-    // Escenario Diurno Estándar
-    if (weatherCode === 0 || cloudcover < 20) {
-      background = 'clara.jpg'; // Cielo completamente limpio y azul
-    } else if (weatherCode === 3 || cloudcover >= 60) {
-      background = 'nublado.jpg'; // Día gris tapado sin lluvia
-    } else {
-      background = 'soleado.jpg'; // Intervalos nubosos estables con sol
-      accessories.push('gafas');
-    }
-  }
-
-  // Retorno limpio purgando duplicados de accesorios
-  return {
-    background: background,
-    accessories: [...new Set(accessories)].filter(acc => acc)
-  };
-}
-
-
 // mapWeatherToBackgroundAccessories(item: WeatherData): { background: string, accessories: string[] } {
 //   const weatherCode = Number(item.weathercode ?? -1);
 //   const isDay = Number(item.is_day ?? 1);
@@ -442,499 +356,125 @@ mapWeatherToBackgroundAccessories(item: WeatherData): { background: string, acce
 //   const windSpeed = Number(item.wind_speed_10m ?? 0);
 //   const visibility = Number(item.visibility ?? 100000);
 //   const relativeHumidity = Number(item.relative_humidity_2m ?? 0);
-//   const apparentTemperature = Number(item.apparent_temperature ?? 0);
+//   const uvIndex = Number(item.uv_index ?? 0);
 
-//   // Constantes de Umbral
-//   const WIND_SPEED_THRESHOLD = 15;
-//   const TEMPERATURE_COLD_THRESHOLD = 10;
-//   const APPARENT_TEMPERATURE_COLD_THRESHOLD = 5;
-//   const TEMPERATURE_VERY_COLD_THRESHOLD = 0;
-//   const VISIBILITY_FOG_THRESHOLD = 1000;
-//   const HUMIDITY_FOG_THRESHOLD = 90;
-//   const TEMPERATURE_HOT_THRESHOLD = 25;
-//   const CLOUDCOVER_CLEAR_THRESHOLD = 20;
-//   const WIND_SPEED_CALM_THRESHOLD = 5;
+//   // =========================================================================
+//   // CONFIGURACIÓN DE UMBRALES DE NEGOCIO EXPERTOS (MADRID NORTE / CAMPINAS)
+//   // =========================================================================
+//   const NORTH_MADRID_WIND_LIMIT = 22;      // Viento molesto y racheado en los páramos (km/h)
+//   const NORTH_MADRID_HOT_LIMIT = 31;       // Calor sofocante continental de la meseta (°C)
+//   const NORTH_MADRID_COLD_LIMIT = 8;       // Umbral de abrigo obligado en la zona norte (°C)
+//   const NORTH_MADRID_FREEZING_LIMIT = 2;   // Riesgo de escarcha/helada real en la vega del Jarama (°C)
+//   const NORTH_MADRID_RAIN_STRONG = 1.8;    // Saturación: el suelo arcilloso se vuelve barrizal (mm)
+//   const NORTH_MADRID_CALM_WIND = 5;        // Viento nulo que estanca partículas y calima (km/h)
+//   const VISIBILITY_FOG_LIMIT = 1000;       // Niebla física real en metros
 
-//   let background = 'soleado.jpg'; // Cambiado de 'soelado.jpg' a archivo real físico verificado
+//   // Imagen salvavidas absoluta por defecto si falla el motor
+//   let background = 'soleado.jpg';
 //   const accessories: string[] = [];
 
-//   // --- REGLAS DE NEGOCIO METEOROLÓGICO ---
-//   if (windSpeed > WIND_SPEED_THRESHOLD && isDay === 0 && precipitation === 0) {
-//     background = 'vientofuerte_noche.jpg';
-//     accessories.push('cortaviento');
-//     if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) accessories.push('bufanda');
-//     if (temperature < TEMPERATURE_VERY_COLD_THRESHOLD || apparentTemperature < TEMPERATURE_VERY_COLD_THRESHOLD) accessories.push('abrigo-polar');
-//   }
-//   else if (windSpeed > WIND_SPEED_THRESHOLD) {
-//     background = 'vientofuerte.jpg';
-//     accessories.push('cortaviento');
-//     if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) accessories.push('bufanda');
-//     if (temperature < TEMPERATURE_VERY_COLD_THRESHOLD || apparentTemperature < TEMPERATURE_VERY_COLD_THRESHOLD) accessories.push('abrigo-polar');
-//   }
-//   else if (weatherCode === 0 && isDay === 0) {
-//     background = 'nochedespejada.jpg';
-//   }
-//   else if ((weatherCode === 3 || weatherCode >= 61) && isDay === 0) {
-//     background = 'noche_nublada_luna.jpg';
-//     accessories.push('bufanda');
-//   }
-//   else if (weatherCode === 0 && isDay === 1) {
-//     background = 'despejado_clear.jpg';
-//   }
-//   else if ((weatherCode === 1 || weatherCode === 2) && cloudcover < CLOUDCOVER_CLEAR_THRESHOLD && isDay === 1) {
-//     background = 'soleado.jpg'; // Rescates locales seguros
-//     accessories.push('gafas', 'gorra');
-//   }
-//   else if (weatherCode === 2 && cloudcover >= CLOUDCOVER_CLEAR_THRESHOLD && isDay === 1) {
-//     background = 'parcialmentenublado.jpg';
-//   }
-//   else if (weatherCode === 3 && isDay === 1) {
-//     background = 'nublado_cloudy.jpg';
-//     accessories.push('bufanda');
-//   }
-//   else if ([95, 96, 99].includes(weatherCode)) {
-//     background = 'tormenta_thunder.jpg';
+//   // =========================================================================
+//   // REGLAS DE PRIORIDAD VISUAL REALISTA
+//   // =========================================================================
+
+//   // 1. CONTROL DE PRECIPITACIONES CRÍTICAS (Tormentas e Intensidades)
+//   if ([95, 96, 99].includes(weatherCode)) {
+//     background = 'tormenta.jpg';
 //     accessories.push('paraguas', 'impermeable');
 //   }
-//   else if ([61, 63, 65, 80, 81, 82].includes(weatherCode)) {
-//     background = 'lluvia_rain.jpg';
+//   else if (precipitation > NORTH_MADRID_RAIN_STRONG || [65, 82].includes(weatherCode)) {
+//     background = 'lluvia_fuerte.jpg';
 //     accessories.push('paraguas', 'impermeable');
-//     if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) accessories.push('abrigo-polar');
 //   }
-//   else if ([51, 53, 55].includes(weatherCode)) {
-//     background = 'llovisnaDrizzle.jpg';
+//   else if (precipitation > 0 || [51, 53, 55, 61, 80].includes(weatherCode)) {
+//     background = 'lluvia_ligera.jpg';
 //     accessories.push('paraguas');
 //   }
-//   else if ([71, 73, 75, 77, 85, 86].includes(weatherCode)) {
-//     background = 'helada_escarcha.jpg';
-//     accessories.push('abrigo-polar', 'botas');
+
+//   // 2. EXTREMOS TÉRMICOS Y RADIACIÓN ULTRAVIOLETA
+//   else if (isDay === 1 && uvIndex >= 7) {
+//     background = 'uv_extremo.jpg';
+//     accessories.push('gafas', 'gorra');
 //   }
-//   else if (temperature <= TEMPERATURE_VERY_COLD_THRESHOLD && precipitation === 0 && [0, 1, 2, 3].includes(weatherCode)) {
-//     background = 'helada_escarcha2.jpg';
-//     accessories.push('bufanda', 'guantes');
+//   else if (isDay === 1 && uvIndex >= 5) {
+//     background = 'uv_alto.jpg';
+//     accessories.push('gafas', 'gorra');
 //   }
-//   else if ([45, 48].includes(weatherCode) || visibility < VISIBILITY_FOG_THRESHOLD || relativeHumidity > HUMIDITY_FOG_THRESHOLD) {
-//     background = 'nieblafog.jpg';
-//     accessories.push('bufanda');
-//   }
-//   else if ([0, 1, 2].includes(weatherCode) && temperature > TEMPERATURE_HOT_THRESHOLD && cloudcover < CLOUDCOVER_CLEAR_THRESHOLD && windSpeed < WIND_SPEED_CALM_THRESHOLD) {
-//     background = 'bruma_calima.jpg';
+//   else if (temperature >= NORTH_MADRID_HOT_LIMIT && isDay === 1) {
+//     background = 'caluroso.jpg';
+//     accessories.push('gafas', 'gorra');
 //   }
 
+//   // 3. FENÓMENOS ATMOSFÉRICOS DINÁMICOS (Viento, Niebla del Río y Calima)
+//   else if (windSpeed >= NORTH_MADRID_WIND_LIMIT) {
+//     background = 'viento_fuerte.jpg';
+//     accessories.push('cortaviento');
+//     if (temperature < NORTH_MADRID_COLD_LIMIT) accessories.push('bufanda');
+//   }
+//   else if ([45, 48].includes(weatherCode) || visibility < VISIBILITY_FOG_LIMIT) {
+//     background = 'niebla.jpg';
+//     accessories.push('bufanda');
+//   }
+//   else if (temperature >= 28 && windSpeed <= NORTH_MADRID_CALM_WIND && relativeHumidity < 30) {
+//     // Atmósfera pesada de polvo sahariano en suspensión en Fuente el Saz / Algete
+//     background = 'calima.jpg';
+//   }
+
+//   // 4. INVIERNO, CONDICIONES TÉRMICA1S BAJAS Y ESCARCHAS DE VEGA
+//   else if ([71, 73, 75, 85, 86].includes(weatherCode)) {
+//     background = 'nieve_intensa.jpg';
+//     accessories.push('abrigo-polar', 'botas', 'guantes');
+//   }
+//   else if (temperature <= NORTH_MADRID_FREEZING_LIMIT) {
+//     background = 'frio.jpg'; // Activa visual de frío / escarcha matinal de páramo
+//     accessories.push('bufanda', 'guantes', 'abrigo-polar');
+//   }
+
+//   // 5. ESTADOS BASE / CIELOS ESTABLES RECONSTRUIDOS
+//   else if (isDay === 0) {
+//     // Escenario Nocturno Estándar
+//     if (weatherCode >= 3 || cloudcover >= 50) {
+//       background = 'nublado.jpg'; // Tránsito a noche cerrada nublada
+//     } else {
+//       background = 'calma.jpg'; // Noche despejada y tranquila en los pueblos
+//     }
+//   }
+//   else {
+//     // Escenario Diurno Estándar
+//     if (weatherCode === 0 || cloudcover < 20) {
+//       background = 'clara.jpg'; // Cielo completamente limpio y azul
+//     } else if (weatherCode === 3 || cloudcover >= 60) {
+//       background = 'nublado.jpg'; // Día gris tapado sin lluvia
+//     } else {
+//       background = 'soleado.jpg'; // Intervalos nubosos estables con sol
+//       accessories.push('gafas');
+//     }
+//   }
+
+//   // Retorno limpio purgando duplicados de accesorios
 //   return {
 //     background: background,
 //     accessories: [...new Set(accessories)].filter(acc => acc)
 //   };
 // }
 
-// async loadWeatherData() {
-//   try {
-//     this.loader = false;
-//     this.cdr.detectChanges();
-
-//     const promises = this.locations.map(async (town) => {
-//       // Consulta directa a la tabla current_data
-//       const res: WeatherData[] | null = await this.supabaseService.getDataByLocation(town);
-
-//       if (res && res.length > 0) {
-//         const row: WeatherData = res[0];
-
-//         // 1. Deserialización segura del pronóstico por horas (JSONB)
-//         let horasArray: HourlyForecast[] = [];
-//         if (row.pronostico_meteo) {
-//           try {
-//             const parsed = typeof row.pronostico_meteo === 'string'
-//               ? JSON.parse(row.pronostico_meteo)
-//               : row.pronostico_meteo;
-
-//             horasArray = parsed.map((hora: any) => ({
-//               ...hora,
-//               lottieOptions: this.getLottiePropByCode(hora.weathercode, hora.es_dia)
-//             }));
-//           } catch (e) {
-//             console.error(`Error parseando pronostico_meteo para ${town}:`, e);
-//           }
-//         }
-
-//         // 2. Fallback de estilos visuales si la base de datos no tiene la imagen calculada
-//         const UIStyles = this.mapWeatherToBackgroundAccessories(row);
-
-//         // 3. Resolución limpia de URLs de Fondos y Personajes
-//         let finalBg = 'assets/backgrounds/soleado.jpg';
-//         if (row.background_image_url) {
-//           // Si es una ruta relativa/absoluta limpia, la usamos directamente
-//           finalBg = row.background_image_url;
-//         } else {
-//           finalBg = `assets/backgrounds/${UIStyles.background}`;
-//         }
-
-//         let finalOutfit = 'assets/characters/summer_anime.png';
-//         if (row.outfit_image_url) {
-//           finalOutfit = row.outfit_image_url;
-//         }
-
-//         return {
-//           location: row.location || town,
-//           date: row.created_at ? new Date(row.created_at) : new Date(),
-//           time: row.created_at ? new Date(row.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
-//           temp: row.temperature_2m ?? 0,
-//           apparentTemp: row.apparent_temperature ?? row.temperature_2m ?? 0,
-//           humidity: row.relative_humidity_2m ?? 0,
-//           precipitation: row.precipitation ?? 0,
-//           windSpeed: row.wind_speed_10m ?? 0,
-//           uvIndex: row.uv_index ?? 0,
-//           pressure: row.pressure_msl ?? 1013,
-//           weathercode: row.weathercode ?? 0,
-//           isDay: row.is_day ?? 1,
-//           background_image_url: finalBg,
-//           outfit_image_url: finalOutfit,
-//           text_clothing: row.text_clothing || 'Ropa recomendada',
-//           accessories: UIStyles.accessories,
-//           primaryLottieOptions: this.getLottiePropByCode(row.weathercode ?? 0, row.is_day ?? 1),
-//           pronostico_meteo: horasArray
-//         } as WeatherLocationData;
-//       }
-//       return null;
-//     });
-
-//     const results = await Promise.all(promises);
-//     this.weatherData = results.filter((item): item is WeatherLocationData => item !== null);
-
-//     if (this.weatherData.length === 0) {
-//       this.generateFallbackData();
-//     }
-
-//     this.loader = true;
-//     this.cdr.detectChanges();
-
-//     setTimeout(() => {
-//       this.initializeSwiper();
-//     }, 300);
-
-//   } catch (error) {
-//     console.error('❌ Error crítico en la carga de datos:', error);
-//     this.generateFallbackData();
-//     this.loader = true;
-//     this.cdr.detectChanges();
-//   }
-// }
-
-
-  // initializeSwiper() {
-  //   if (this.swiper?.nativeElement && this.loader) {
-  //     this.swiperInstance = new SwiperCore(this.swiper.nativeElement, {
-  //       slidesPerView: 1,
-  //       spaceBetween: 0,
-  //       navigation: {
-  //         nextEl: '.swiper-button-next',
-  //         prevEl: '.swiper-button-prev',
-  //       },
-  //       pagination: {
-  //         el: '.swiper-pagination',
-  //         clickable: true,
-  //         type: 'bullets',
-  //       },
-  //       observeParents: true,
-  //       observer: true,
-  //       speed: 400,
-  //       touchRatio: 1,
-  //       simulateTouch: true,
-  //       allowTouchMove: true,
-  //     });
-  //     console.log('Swiper initialized:', this.swiperInstance);
-  //     this.swiperInstance.on('slideChange', () => {
-  //       this.activeIndex = this.swiperInstance!.activeIndex;
-  //       console.log('Swiper slide changed, activeIndex:', this.activeIndex);
-  //     });
-  //     this.swiperInstance.update();
-  //     console.log('Swiper updated in initializeSwiper');
-  //   } else {
-  //     console.error('Swiper element or loader not ready:', { swiper: !!this.swiper, loader: this.loader });
-  //   }
-  // }
-
-/**
-   * FLUJO ÚNICO: Descarga, mapea y unifica los datos de Supabase en paralelo
-   */
-  // async loadWeatherData() {
-  //   try {
-  //     this.loader = false;
-  //     this.cdr.detectChanges();
-
-  //     // 1. Ejecución paralela de consultas por municipio
-  //     const promises = this.locations.map(async (town) => {
-  //       const res: WeatherData[] | null = await this.supabaseService.getDataByLocation(town);
-
-  //       if (res && res.length > 0) {
-  //         const row: WeatherData = res[0];
-
-  //         // 2. Deserialización segura del JSONB de pronóstico (si existe)
-  //         let horasArray: HourlyForecast[] = [];
-  //         if (row.pronostico_meteo) {
-  //           try {
-  //             const parsed = typeof row.pronostico_meteo === 'string'
-  //               ? JSON.parse(row.pronostico_meteo)
-  //               : row.pronostico_meteo;
-
-  //             // Mapeo de horas inyectando las propiedades Lottie estáticas ya declaradas
-  //             horasArray = parsed.map((hora: any) => ({
-  //               ...hora,
-  //               lottieOptions: this.getLottiePropByCode(hora.weathercode, hora.es_dia)
-  //             }));
-  //           } catch (e) {
-  //             console.error(`Error parseando pronostico_meteo para ${town}:`, e);
-  //           }
-  //         }
-
-  //         // 3. Cálculo de accesorios y fondo basados en reglas
-  //         const UIStyles = this.mapWeatherToBackgroundAccessories(row);
-
-  //         // 4. Retorno del objeto tipado para la UI
-  //         return {
-  //           location: row.location || town,
-  //           date: row.created_at ? new Date(row.created_at) : new Date(),
-  //           time: row.created_at ? new Date(row.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
-  //           temp: row.temperature_2m ?? 0,
-  //           apparentTemp: row.apparent_temperature ?? row.temperature_2m ?? 0,
-  //           humidity: row.relative_humidity_2m ?? 0,
-  //           precipitation: row.precipitation ?? 0,
-  //           windSpeed: row.wind_speed_10m ?? 0,
-  //           uvIndex: row.uv_index ?? 0,
-  //           pressure: row.pressure_msl ?? 1013,
-  //           weathercode: row.weathercode ?? 0,
-  //           isDay: row.is_day ?? 1,
-  //           background_image_url: (row.background_image_url && !row.background_image_url.includes('OUTFIT'))
-  //             ? (row.background_image_url.includes('soelado') ? 'assets/backgrounds/soleado.jpg' : row.background_image_url)
-  //             : `assets/backgrounds/${UIStyles.background}`,
-  //           outfit_image_url: (row.background_image_url && row.background_image_url.includes('OUTFIT'))
-  //             ? `assets/characters/${row.background_image_url.split('/').pop()}`
-  //             : (row.outfit_image_url || 'assets/characters/summer_anime.png'),
-  //           text_clothing: row.text_clothing || 'Ropa recomendada',
-  //           accessories: UIStyles.accessories,
-  //           // AQUÍ USAMOS LAS PROPIEDADES ESTÁTICAS PARA EVITAR ERRORES DE RENDER
-  //           primaryLottieOptions: this.getLottiePropByCode(row.weathercode ?? 0, row.is_day ?? 1),
-  //           pronostico_meteo: horasArray
-  //         } as WeatherLocationData;
-  //       }
-  //       return null;
-  //     });
-
-  //     const results = await Promise.all(promises);
-
-  //     // 5. Filtramos nulos y actualizamos estado
-  //     this.weatherData = results.filter((item): item is WeatherLocationData => item !== null);
-
-  //     if (this.weatherData.length === 0) {
-  //       this.generateFallbackData();
-  //     }
-
-  //     this.loader = true;
-  //     this.cdr.detectChanges();
-
-  //     // 6. Inicialización del carrusel una vez el DOM está listo
-  //     setTimeout(() => {
-  //       this.initializeSwiper();
-  //     }, 300);
-
-  //   } catch (error) {
-  //     console.error('❌ Error crítico en la carga de datos:', error);
-  //     this.generateFallbackData();
-  //     this.loader = true;
-  //     this.cdr.detectChanges();
-  //   }
-  // }
-  /**
-   * Mapeador Maestro de códigos meteorológicos de la WMO a Objetos Lottie estáticos
-   */
-  // getLottieOptionsByCode(code: number, isDay: number): AnimationOptions {
-  //   let animationData;
-
-  //   // Clasificación oficial de códigos Open-Meteo / WMO
-  //   if ([0].includes(code)) {
-  //     animationData = isDay === 1 ? sunnyAnimation : nightAnimation;
-  //   } else if ([1, 2].includes(code)) {
-  //     animationData = isDay === 1 ? cloudyDayAnimation : cloudyNightAnimation;
-  //   } else if ([3].includes(code)) {
-  //     animationData = cloudyAnimation;
-  //   } else if ([45, 48].includes(code)) {
-  //     animationData = fogAnimation;
-  //   } else if ([51, 53, 55].includes(code)) {
-  //     animationData = drizzleAnimation;
-  //   } else if ([61, 63, 65, 80, 81, 82].includes(code)) {
-  //     animationData = rainAnimation;
-  //   } else if ([71, 73, 75, 77, 85, 86].includes(code)) {
-  //     animationData = snowAnimation;
-  //   } else if ([95, 96, 99].includes(code)) {
-  //     animationData = stormAnimation;
-  //   } else {
-  //     animationData = isDay === 1 ? sunnyAnimation : nightAnimation;
-  //   }
-
-  //   return { loop: true, autoplay: true, animationData, renderer: 'svg' };
-  // }
-
-
-  // async loadWeatherData() {
-  //     try {
-  //       this.loader = false;
-  //       this.weatherData = await Promise.all(
-  //         this.locations.map(async location => {
-  //           const data = await this.supabaseService.getMeteoCondition(location); // Corrección de 'supabase' a 'supabaseService'
-  //           const createdAt = data?.created_at ? new Date(data.created_at) : null;
-  //           const lottiePath = this.getWeatherLottiePath(data?.background || 'sunny');
-  //           return {
-  //             location: data?.location || location || 'N/A',
-  //             temp: data?.temp || 'N/A',
-  //             apparentTemp: data?.apparentTemp || 'N/A',
-  //             precipitation: data?.precipitation || 'N/A',
-  //             windSpeed: data?.windSpeed || 'N/A',
-  //             isDay: data?.isDay || 0,
-  //             date: createdAt,
-  //             time: createdAt?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) || 'N/A',
-  //             background: data?.background || '/assets/backgrounds/soleado.jpg',
-  //             background_image_url: data?.background_image_url || '/assets/backgrounds/soleado.jpg',
-  //             outfit_image_url: data?.outfit_image_url ||  '/assets/backgrounds/prototipo.png',
-  //             description: data?.description || 'N/A',
-  //             lottieOptions: {
-  //                 path: `assets/lottie/${lottiePath}`,
-  //               }
-  //           };
-  //         })
-  //       );
-  //       if (this.weatherData.length === 0) {
-  //         this.weatherData = this.locations.map(location => ({
-  //           location: String(location),
-  //           temp: 'N/A',
-  //           apparentTemp: 'N/A',
-  //           precipitation: 'N/A',
-  //           windSpeed: 'N/A',
-  //           date: null,
-  //           time: 'N/A',
-  //           background: '/assets/backgrounds/soleado.jpg',
-  //           background_image_url: '/assets/backgrounds/soleado.jpg',
-  //           outfit_image_url:'/assets/backgrounds/prototipo.png',
-  //           description: 'N/A'
-  //         }));
-  //       }
-  //       this.loader = true;
-  //       this.cdr.detectChanges();
-  //       setTimeout(() => {
-  //         this.initializeSwiper();
-  //       }, 1000);
-  //     } catch (error) {
-  //       console.error('Error loading weather data:', error);
-  //       this.loader = true;
-  //       this.weatherData = this.locations.map(location => ({
-  //         location: String(location),
-  //         temp: 'N/A',
-  //         apparentTemp: 'N/A',
-  //         precipitation: 'N/A',
-  //         windSpeed: 'N/A',
-  //         date: null,
-  //         time: 'N/A',
-  //         background: '/assets/backgrounds/soleado.jpg',
-  //         background_image_url: '/assets/backgrounds/soleado.jpg',
-  //         outfit_image_url:'/assets/backgrounds/prototipo.png',
-  //         description: 'N/A'
-  //       }));
-  //       this.cdr.detectChanges();
-  //       setTimeout(() => {
-  //         this.initializeSwiper();
-  //       }, 1000);
-  //     }
-  // }
 
   /**
    * Proveedor Dinámico para los Smart Chips de indicadores
    */
-  getIndicatorOptions(type: string): AnimationOptions {
-    let animationData;
-    switch (type) {
-      case 'temp': animationData = tempIndicator; break;
-      case 'humidity': animationData = humidityIndicator; break;
-      case 'wind': animationData = windIndicator; break;
-      case 'uv': animationData = uvIndicator; break;
-      case 'rain_chance': animationData = rainChanceIndicator; break;
-      default: animationData = tempIndicator;
-    }
-    return { loop: true, autoplay: true, animationData, renderer: 'svg' };
-  }
-
-  //  getIndicatorOptions(type: string): AnimationOptions {
+  // getIndicatorOptions(type: string): AnimationOptions {
   //   let animationData;
   //   switch (type) {
   //     case 'temp': animationData = tempIndicator; break;
   //     case 'humidity': animationData = humidityIndicator; break;
   //     case 'wind': animationData = windIndicator; break;
   //     case 'uv': animationData = uvIndicator; break;
-  //     //case 'pressure': animationData = pressureIndicator; break;
+  //     case 'rain_chance': animationData = rainChanceIndicator; break;
   //     default: animationData = tempIndicator;
   //   }
-  //   return { loop: true, autoplay: true, animationData };
+  //   return { loop: true, autoplay: true, animationData, renderer: 'svg' };
   // }
 
-
-
-  // async getWeather() {
-  //   try {
-  //     // 1. Lanzamos las peticiones en paralelo para respetar el orden estricto del array 'locations'
-  //     const promises = this.locations.map(async (town) => {
-  //       const res = await this.supabaseService.getDataByLocation(town);
-
-  //       // Si Supabase devuelve datos para ese pueblo, estructuramos el objeto para el HTML
-  //       if (res && res.length > 0) {
-  //         const row = res[0]; // Extraemos la fila real de datos
-
-  //         return {
-  //           location: row.location,
-  //           date: row.timestamp ? new Date(row.timestamp) : new Date(),
-  //           temp: row.temperature_2m, // Mapeamos 'temperature_2m' a 'temp' tal como pide tu HTML
-  //           windSpeed: row.wind_speed_10m || 0,
-  //           //uvIndex: row.uv_index || 0,
-  //           uvIndex:  0,
-  //           background_image_url: row.background_image_url || 'assets/backgrounds/soleado.jpg',
-  //           outfit_image_url: row.outfit_image_url || 'assets/backgrounds/OUTFIT_HOT.png',
-  //           text_clothing: 'Ropa cómoda'
-  //         };
-  //       }
-  //       return null;
-  //     });
-
-  //     // 2. Esperamos de forma ordenada la resolución de todos los pueblos
-  //     const results = await Promise.all(promises);
-
-  //     // 3. Filtramos los valores nulos por si algún pueblo fallara en la base de datos
-  //     this.weatherData = results.filter(item => item !== null && item !== undefined);
-
-  //     console.log('📊 Datos meteorológicos acoplados a la UI en orden estricto:', this.weatherData);
-
-  //     // 4. Desactivamos el esqueleto/pantalla de carga y actualizamos la vista de Angular
-  //     this.loader = true;
-  //     this.cdr.detectChanges();
-
-  //     // 5. Inicializamos el Swiper una vez que los datos ya están renderizados en el DOM
-  //     setTimeout(() => {
-  //       this.initializeSwiper();
-  //     }, 200);
-
-  //   } catch (error) {
-  //     console.error('❌ Error crítico en el flujo de getWeather:', error);
-  //     this.loader = true;
-  //     this.cdr.detectChanges();
-  //   }
-  // }
-
-  // async getWeather() {
-  //   this.locations.forEach(async (element) => {
-  //     // Nota: Aquí usabas this.supabaseService.getDataByLocation pero en tu flujo real dependías de las reglas
-  //     const res = await this.supabaseService.getDataByLocation(element);
-  //     console.log('Resultados de las condiciones:', res);
-  //     if (res) {
-  //       this.weatherData.push(res);
-  //     }
-  //   });
-  //   console.log('this.weatherData--->', this.weatherData);
-  // }
 
 
   getDisplayLocation(internalLocation: string): string {
@@ -1065,6 +605,7 @@ mapWeatherToBackgroundAccessories(item: WeatherData): { background: string, acce
       precipitation: 0,
       windSpeed: 10,
       uvIndex: 4,
+      soilMoisture: 35, // <--- AÑADIDO AQUÍ PARA CUMPLIR CON LA INTERFAZ
       pressure: 1013,
       weathercode: 0,
       isDay: 1,
@@ -1072,110 +613,10 @@ mapWeatherToBackgroundAccessories(item: WeatherData): { background: string, acce
       outfit_image_url: 'assets/characters/summer_anime.png',
       text_clothing: 'Ropa cómoda',
       accessories: [],
-      primaryLottieOptions: { animationData: sunnyAnimation, loop: true, autoplay: true },
+      primaryLottieOptions: this.sunnyLottie, // Actualizado para usar la variable segura
       pronostico_meteo: []
     }));
   }
-
-
-  /**
-   * MOTOR DE REGLAS: Mapea WeatherData a estilos visuales y accesorios usando constantes.
-   */
-  // mapWeatherToBackgroundAccessories(item: WeatherData): { background: string, accessories: string[] } {
-  //   // 1. Extracción con valores por defecto seguros
-  //   const weatherCode = Number(item.weathercode ?? -1);
-  //   const isDay = Number(item.is_day ?? 1);
-  //   const cloudcover = Number(item.cloudcover ?? 0);
-  //   const temperature = Number(item.temperature_2m ?? 0);
-  //   const precipitation = Number(item.precipitation ?? 0);
-  //   const windSpeed = Number(item.wind_speed_10m ?? 0);
-  //   const visibility = Number(item.visibility ?? 100000);
-  //   const relativeHumidity = Number(item.relative_humidity_2m ?? 0);
-  //   const apparentTemperature = Number(item.apparent_temperature ?? 0);
-
-  //   // 2. Definición de Constantes de Umbral
-  //   const WIND_SPEED_THRESHOLD = 15;
-  //   const TEMPERATURE_COLD_THRESHOLD = 10;
-  //   const APPARENT_TEMPERATURE_COLD_THRESHOLD = 5;
-  //   const TEMPERATURE_VERY_COLD_THRESHOLD = 0;
-  //   const VISIBILITY_FOG_THRESHOLD = 1000;
-  //   const HUMIDITY_FOG_THRESHOLD = 90;
-  //   const TEMPERATURE_HOT_THRESHOLD = 25;
-  //   const CLOUDCOVER_CLEAR_THRESHOLD = 20;
-  //   const WIND_SPEED_CALM_THRESHOLD = 5;
-
-  //   let background = 'soleado.jpg'; // Fallback base
-  //   const accessories: string[] = [];
-
-  //   // --- LÓGICA DE REGLAS ---
-
-  //   if (windSpeed > WIND_SPEED_THRESHOLD && isDay === 0 && precipitation === 0) {
-  //     background = 'vientofuerte_noche.jpg';
-  //     accessories.push('cortaviento');
-  //     if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) accessories.push('bufanda');
-  //     if (temperature < TEMPERATURE_VERY_COLD_THRESHOLD || apparentTemperature < TEMPERATURE_VERY_COLD_THRESHOLD) accessories.push('abrigo-polar');
-  //   }
-  //   else if (windSpeed > WIND_SPEED_THRESHOLD) {
-  //     background = 'vientofuerte.jpg';
-  //     accessories.push('cortaviento');
-  //     if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) accessories.push('bufanda');
-  //     if (temperature < TEMPERATURE_VERY_COLD_THRESHOLD || apparentTemperature < TEMPERATURE_VERY_COLD_THRESHOLD) accessories.push('abrigo-polar');
-  //   }
-  //   else if (weatherCode === 0 && isDay === 0) {
-  //     background = 'nochedespejada.jpg';
-  //   }
-  //   else if ((weatherCode === 3 || weatherCode >= 61) && isDay === 0) {
-  //     background = 'noche_nublada_luna.jpg';
-  //     accessories.push('bufanda');
-  //   }
-  //   else if (weatherCode === 0 && isDay === 1) {
-  //     background = 'despejado_clear.jpg';
-  //   }
-  //   else if ((weatherCode === 1 || weatherCode === 2) && cloudcover < CLOUDCOVER_CLEAR_THRESHOLD && isDay === 1) {
-  //     background = 'soleado.jpg';
-  //     accessories.push('gafas', 'gorra');
-  //   }
-  //   else if (weatherCode === 2 && cloudcover >= CLOUDCOVER_CLEAR_THRESHOLD && isDay === 1) {
-  //     background = 'parcialmentenublado.jpg';
-  //   }
-  //   else if (weatherCode === 3 && isDay === 1) {
-  //     background = 'nublado_cloudy.jpg';
-  //     accessories.push('bufanda');
-  //   }
-  //   else if ([95, 96, 99].includes(weatherCode)) {
-  //     background = 'tormenta_thunder.jpg';
-  //     accessories.push('paraguas', 'impermeable');
-  //   }
-  //   else if ([61, 63, 65, 80, 81, 82].includes(weatherCode)) {
-  //     background = 'lluvia_rain.jpg';
-  //     accessories.push('paraguas', 'impermeable');
-  //     if (temperature < TEMPERATURE_COLD_THRESHOLD || apparentTemperature < APPARENT_TEMPERATURE_COLD_THRESHOLD) accessories.push('abrigo-polar');
-  //   }
-  //   else if ([51, 53, 55].includes(weatherCode)) {
-  //     background = 'llovisnaDrizzle.jpg';
-  //     accessories.push('paraguas');
-  //   }
-  //   else if ([71, 73, 75, 77, 85, 86].includes(weatherCode)) {
-  //     background = 'helada_escarcha.jpg';
-  //     accessories.push('abrigo-polar', 'botas');
-  //   }
-  //   else if (temperature <= TEMPERATURE_VERY_COLD_THRESHOLD && precipitation === 0 && [0, 1, 2, 3].includes(weatherCode)) {
-  //     background = 'helada_escarcha2.jpg';
-  //     accessories.push('bufanda', 'guantes');
-  //   }
-  //   else if ([45, 48].includes(weatherCode) || visibility < VISIBILITY_FOG_THRESHOLD || relativeHumidity > HUMIDITY_FOG_THRESHOLD) {
-  //     background = 'nieblafog.jpg';
-  //     accessories.push('bufanda');
-  //   }
-  //   else if ([0, 1, 2].includes(weatherCode) && temperature > TEMPERATURE_HOT_THRESHOLD && cloudcover < CLOUDCOVER_CLEAR_THRESHOLD && windSpeed < WIND_SPEED_CALM_THRESHOLD) {
-  //     background = 'bruma_calima.jpg';
-  //   }
-
-  //   return {
-  //     background: background,
-  //     accessories: [...new Set(accessories)].filter(acc => acc)
-  //   };
-  // }
 
   getLottiePropByCode(code: number, isDay: number): AnimationOptions {
     if ([0].includes(code)) return isDay === 1 ? this.sunnyLottie : this.nightLottie;

@@ -55,7 +55,7 @@ export class SupabaseService {
       console.log('Fetching data for location:', location);
       const { data, error } = await this.supabase
         .from('current_data')
-        .select('location, temperature_2m, created_at, precipitation, timestamp, wind_speed_10m, relative_humidity_2m, wind_direction_10m, shortwave_radiation, weathercode, is_day, cloudcover, visibility, wind_gusts_10m, snowfall, apparent_temperature, precipitation_probability, et0_fao_evapotranspiration, soil_moisture_0_to_10cm, soil_temperature_0_to_10cm, dewpoint_2m, background_image_url, outfit_image_url')
+        .select('location, temperature_2m, created_at, precipitation, timestamp, wind_speed_10m, relative_humidity_2m, wind_direction_10m, shortwave_radiation, weathercode, is_day, cloudcover, visibility, wind_gusts_10m, snowfall, apparent_temperature, precipitation_probability, et0_fao_evapotranspiration, soil_moisture_0_to_10cm, soil_temperature_0_to_10cm, dewpoint_2m, background_image_url, outfit_image_url, uv_index, pronostico_meteo')
         .eq('location', location)
         .order('created_at', { ascending: false })
         .limit(1);

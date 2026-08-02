@@ -13,6 +13,7 @@ import { WelcomePageRoutingModule } from './welcome-routing.module';
 // --- NUEVA IMPORTACIÓN PARA LOTTIE ---
 import { LottieComponent } from 'ngx-lottie';
 // -------------------------------------
+import { WeatherWidgetPipe } from '../../pipe/weather-widget.pipe';
 
 
 @NgModule({
@@ -22,7 +23,7 @@ import { LottieComponent } from 'ngx-lottie';
     WelcomePageRoutingModule,
     LottieComponent
   ],
-  declarations: [WelcomePage],
+  declarations: [WelcomePage, WeatherWidgetPipe],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class WelcomePageModule {}

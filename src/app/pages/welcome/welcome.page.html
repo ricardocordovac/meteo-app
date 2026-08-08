@@ -89,6 +89,23 @@
             </div>
 
             <div class="hourly-forecast-strip">
+              <div class="hourly-column" *ngFor="let hour of weatherData[activeIndex]?.pronostico_meteo">
+
+                <!-- Muestra "17:00", "18:00", etc. -->
+                <span class="hour-label">{{ hour.horaFormatted }}</span>
+
+                <!-- Lottie dinámico evaluado según weathercode e is_day -->
+                <div class="hour-lottie-container">
+                  <ng-lottie [options]="hour.lottieOptions!" class="mini-lottie"></ng-lottie>
+                </div>
+
+                <!-- Temperatura real del JSON (temperature_2m) -->
+                <span class="hour-temp">{{ hour.temperature_2m | number:'1.0-0' }}°</span>
+
+              </div>
+            </div>
+
+            <!-- <div class="hourly-forecast-strip">
               <div class="hourly-column" *ngFor="let hour of [1,2,3,4,5,6]; let i = index">
                 <span class="hour-label">14:00</span>
                 <div class="hour-lottie-container">
@@ -97,7 +114,7 @@
                 </div>
                 <span class="hour-temp">31°</span>
               </div>
-            </div>
+            </div> -->
 
             <div class="chips-grid">
 

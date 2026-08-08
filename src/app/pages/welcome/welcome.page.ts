@@ -36,19 +36,35 @@ import { WeatherData } from 'src/app/interfaces/weather-data.interface';
 SwiperCore.use([Navigation, Pagination]);
 
 // Estructura Estricta para cada hora del Carrusel
-interface HourlyForecast {
-  fecha_hora: string;
-  hora: string;
-  temp: number;
-  sensacion: number;
-  weathercode: number;
-  pop: number;
-  lluvia_mm: number;
-  uv: number;
-  viento_kmh: number;
-  es_dia: number;
-  lottieOptions?: AnimationOptions; // Inyectado dinámicamente en el Front
+export interface HourlyForecast {
+  time: string;                     // "2026-08-08T17:00"
+  horaFormatted?: string;           // Propiedad helper inyectada en Front: "17:00"
+  temperature_2m: number;           // 27.4
+  apparent_temperature: number;     // 33.7
+  wind_gusts_10m: number;          // 51.5
+  precipitation_probability: number;// 0
+  precipitation: number;            // 0
+  relative_humidity_2m: number;     // 12
+  dewpoint_2m: number;              // -3.7
+  cloudcover: number;               // 73
+  weathercode: number;              // 2
+  is_day: number;                   // 1 (¡Atención: es 'is_day', no 'es_dia'!)
+  background_image_url: string;     // "assets/backgrounds/nublado1.webp"
+  lottieOptions?: AnimationOptions; // Inyectado para ngx-lottie
 }
+// interface HourlyForecast {
+//   fecha_hora: string;
+//   hora: string;
+//   temp: number;
+//   sensacion: number;
+//   weathercode: number;
+//   pop: number;
+//   lluvia_mm: number;
+//   uv: number;
+//   viento_kmh: number;
+//   es_dia: number;
+//   lottieOptions?: AnimationOptions; // Inyectado dinámicamente en el Front
+// }
 
 
 
@@ -211,22 +227,65 @@ async loadWeatherData() {
 
       const row: WeatherData = res[0];
 
-      // 1. Deserialización segura del pronóstico por horas (JSONB)
+
+
+      // 1. Deserialización del pronóstico por horas (JSONB)
       let horasArray: HourlyForecast[] = [];
       if (row.pronostico_meteo) {
         try {
-          const parsed = typeof row.pronostico_meteo === 'string'
+          const parsed: HourlyForecast[] = typeof row.pronostico_meteo === 'string'
             ? JSON.parse(row.pronostico_meteo)
             : row.pronostico_meteo;
 
-          horasArray = parsed.map((hora: any) => ({
-            ...hora,
-            lottieOptions: this.getLottiePropByCode(hora.weathercode, hora.es_dia)
-          }));
+          // A) Mapear Lottie y formatear la hora textual "HH:mm"
+          const mapaCompleto: HourlyForecast[] = parsed.map((item) => {
+            // Extrae "17:00" de "2026-08-08T17:00"
+            const horaFormateada = item.time && item.time.includes('T')
+              ? item.time.split('T')[1].substring(0, 5)
+              : '00:00';
+
+            return {
+              ...item,
+              horaFormatted: horaFormateada,
+              // CORREGIDO: Usamos item.is_day (propiedad exacta del JSON)
+              lottieOptions: this.getLottiePropByCode(item.weathercode ?? 0, item.is_day ?? 1)
+            };
+          });
+
+          // B) Localizar la hora actual para obtener las 6 horas siguientes
+          const fechaHoraRegistro = row.created_at ? new Date(row.created_at) : new Date();
+          const horaActualNum = fechaHoraRegistro.getHours();
+          const horaActualStr = horaActualNum.toString().padStart(2, '0');
+
+          // Obtenemos "YYYY-MM-DD"
+          const fechaISO = fechaHoraRegistro.toISOString().split('T')[0];
+          const patronBusqueda = `${fechaISO}T${horaActualStr}:00`;
+
+          const indiceActual = mapaCompleto.findIndex(h => h.time.startsWith(patronBusqueda));
+          const inicio = indiceActual !== -1 ? indiceActual + 1 : 0;
+
+          // Tomamos exactamente los 6 elementos futuros
+          horasArray = mapaCompleto.slice(inicio, inicio + 6);
+
         } catch (e) {
-          console.error(`❌ Error parseando 'pronostico_meteo' (JSONB) para ${town}:`, e);
+          console.error(`❌ Error parseando 'pronostico_meteo' para ${town}:`, e);
         }
       }
+      // let horasArray: HourlyForecast[] = [];
+      // if (row.pronostico_meteo) {
+      //   try {
+      //     const parsed = typeof row.pronostico_meteo === 'string'
+      //       ? JSON.parse(row.pronostico_meteo)
+      //       : row.pronostico_meteo;
+
+      //     horasArray = parsed.map((hora: any) => ({
+      //       ...hora,
+      //       lottieOptions: this.getLottiePropByCode(hora.weathercode, hora.es_dia)
+      //     }));
+      //   } catch (e) {
+      //     console.error(`❌ Error parseando 'pronostico_meteo' (JSONB) para ${town}:`, e);
+      //   }
+      // }
 
       // 2. RESOLUCIÓN DE FONDOS (CAPA A - Estrictamente desde Backend)
       let finalBg = 'assets/backgrounds/soleado.jpg';

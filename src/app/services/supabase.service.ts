@@ -166,7 +166,7 @@ async getMeteoCondition(location: string): Promise<any> {
       created_at: new Date().toISOString(), // Fallback con ajuste
       background: '/assets/backgrounds/soleado.png',
       background_image_url:'/assets/backgrounds/soleado.png',
-      outfit_image_url:'/assets/backgrounds/prototipo.png',
+      outfit_image_url:'assets/characters/nubio_default.webp',
     };
   }
 }

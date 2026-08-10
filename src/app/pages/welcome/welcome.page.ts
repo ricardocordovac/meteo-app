@@ -294,7 +294,8 @@ async loadWeatherData() {
       }
 
       // 3. RESOLUCIÓN DE OUTFITS
-      let finalOutfit = 'assets/characters/summer_anime.png';
+
+      let finalOutfit = 'assets/characters/nubio_hot.webp';
       if (row.outfit_image_url && row.outfit_image_url.trim() !== '') {
         finalOutfit = row.outfit_image_url;
       }
@@ -669,7 +670,7 @@ async loadWeatherData() {
       weathercode: 0,
       isDay: 1,
       background_image_url: 'assets/backgrounds/soleado.jpg',
-      outfit_image_url: 'assets/characters/summer_anime.png',
+      outfit_image_url: 'assets/characters/nubio_hot.webp',
       text_clothing: 'Ropa cómoda',
       accessories: [],
       primaryLottieOptions: this.sunnyLottie, // Actualizado para usar la variable segura

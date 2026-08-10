@@ -28,25 +28,49 @@ ion-content {
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 10;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
   pointer-events: none;
 
   .nubio-avatar {
-    width: 220px;
-    max-width: 55vw;
+    // 🎯 Aumentamos el ancho en CSS para compensar el lienzo
+    width: 320px;         // Subimos de 220px a 320px
+    max-width: 75vw;      // Que ocupe hasta el 75% del ancho de la pantalla del móvil
     height: auto;
     object-fit: contain;
 
-    // Sombra proyectada exacta al contorno de la nube
-    filter: drop-shadow(0px 15px 25px rgba(0, 0, 0, 0.45));
-
-    // Animación de flotación orgánica
+    filter: drop-shadow(0px 12px 20px rgba(0, 0, 0, 0.35));
     animation: nubioFloating 4s ease-in-out infinite;
   }
 }
+
+// .hero-character-container {
+//   position: absolute;
+//   top: 42%;
+//   left: 50%;
+//   transform: translate(-50%, -50%);
+//   z-index: 10;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   width: 100%;
+//   pointer-events: none;
+
+//   .nubio-avatar {
+//     width: 220px;
+//     max-width: 55vw;
+//     height: auto;
+//     object-fit: contain;
+
+//     // Sombra proyectada exacta al contorno de la nube
+//     filter: drop-shadow(0px 15px 25px rgba(0, 0, 0, 0.45));
+
+//     // Animación de flotación orgánica
+//     animation: nubioFloating 4s ease-in-out infinite;
+//   }
+// }
 
 @keyframes nubioFloating {
   0% {

@@ -21,6 +21,45 @@ ion-content {
 // ==========================================================================
 // ANIMACIÓN COLD-START LOADER (RIPPLE EFFECT)
 // ==========================================================================
+
+.hero-character-container {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  pointer-events: none;
+
+  .nubio-avatar {
+    width: 220px;
+    max-width: 55vw;
+    height: auto;
+    object-fit: contain;
+
+    // Sombra proyectada exacta al contorno de la nube
+    filter: drop-shadow(0px 15px 25px rgba(0, 0, 0, 0.45));
+
+    // Animación de flotación orgánica
+    animation: nubioFloating 4s ease-in-out infinite;
+  }
+}
+
+@keyframes nubioFloating {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(1.5deg);
+  }
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+}
+
 .center_div-loader {
   display: flex;
   align-items: center;

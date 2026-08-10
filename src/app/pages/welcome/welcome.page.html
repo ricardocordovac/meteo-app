@@ -55,10 +55,15 @@
             </div>
     </div>
 
-
-      <div class="character-layer" *ngIf="weatherData[activeIndex]">
+<div class="hero-character-container">
+  <img
+    [src]="weatherData[activeIndex]?.outfit_image_url || 'assets/characters/nubio_default.png'"
+    class="nubio-avatar"
+    alt="Nubio Meteo Mascot">
+</div>
+      <!-- <div class="character-layer" *ngIf="weatherData[activeIndex]">
         <img [src]="weatherData[activeIndex].outfit_image_url" class="anime-floating-img" alt="Character Outfit">
-      </div>
+      </div> -->
 
     <ion-modal
       [isOpen]="loader"

@@ -1,8 +1,5 @@
 {
   "version": 2,
-  "images": {
-    "unoptimized": true
-  },
   "builds": [
     {
       "src": "package.json",

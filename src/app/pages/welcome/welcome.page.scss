@@ -36,12 +36,13 @@ ion-content {
 
   .nubio-avatar {
     // 🎯 Aumentamos el ancho en CSS para compensar el lienzo
-    width: 320px;         // Subimos de 220px a 320px
-    max-width: 75vw;      // Que ocupe hasta el 75% del ancho de la pantalla del móvil
+    width:450px;         // Subimos de 220px a 320px
+    max-width: 80vw;      // Que ocupe hasta el 75% del ancho de la pantalla del móvil
     height: auto;
     object-fit: contain;
 
-    filter: drop-shadow(0px 12px 20px rgba(0, 0, 0, 0.35));
+    filter: drop-shadow(0px 0px 2px rgba(255, 255, 255, 0.8))  // Borde exterior blanco de contraste
+          drop-shadow(0px 12px 20px rgba(0, 0, 0, 0.45));   // Sombra de flotación
     animation: nubioFloating 4s ease-in-out infinite;
   }
 }

@@ -50,6 +50,7 @@ export interface HourlyForecast {
   weathercode: number;              // 2
   is_day: number;                   // 1 (¡Atención: es 'is_day', no 'es_dia'!)
   background_image_url: string;     // "assets/backgrounds/nublado1.webp"
+  outfit_image_url?: string;
   lottieOptions?: AnimationOptions; // Inyectado para ngx-lottie
 }
 // interface HourlyForecast {
@@ -205,10 +206,21 @@ export class WelcomePage implements OnInit, AfterViewInit {
 
       this.swiperInstance.on('slideChange', () => {
         this.activeIndex = this.swiperInstance!.activeIndex;
+        this.selectedHour = null;
         this.cdr.detectChanges();
       });
       this.swiperInstance.update();
     }
+  }
+
+  /**
+   * Resuelve dinámicamente si debe mostrar el fondo del hito seleccionado o el general del municipio
+   */
+  getCurrentBackground(data: WeatherLocationData, index: number): string {
+    if (index === this.activeIndex && this.selectedHour && this.selectedHour.background_image_url) {
+      return `url(${this.selectedHour.background_image_url})`;
+    }
+    return `url(${data.background_image_url})`;
   }
 
   async loadWeatherData() {
@@ -953,6 +965,44 @@ export class WelcomePage implements OnInit, AfterViewInit {
   resetToLiveWeather() {
     this.selectedHour = null;
     this.cdr.detectChanges();
+  }
+
+  /**
+   * Resuelve dinámicamente el outfit de Nubio según la hora seleccionada o el tiempo real
+   */
+  getCurrentOutfit(data: WeatherLocationData, index: number): string {
+    if (index === this.activeIndex && this.selectedHour) {
+      if (this.selectedHour.outfit_image_url) {
+        return this.selectedHour.outfit_image_url;
+      }
+      // Fallback inteligente basado en la temperatura y ciclo solar del hito seleccionado
+      const isDay = this.selectedHour.is_day ?? 1;
+      const temp = this.selectedHour.apparent_temperature ?? this.selectedHour.temperature_2m ?? 20;
+
+      if (isDay === 0) {
+        return 'assets/characters/nubio_default.webp';
+      }
+      return temp > 25 ? 'assets/characters/nubio_hot.webp' : 'assets/characters/nubio_default.webp';
+    }
+    return data.outfit_image_url;
+  }
+
+/**
+   * Resuelve dinámicamente la fecha del encabezado según el hito seleccionado o el tiempo real
+   */
+getCurrentHeaderDate(data: WeatherLocationData, index: number, selectedHour: HourlyForecast | null): string {
+    if (index === this.activeIndex && selectedHour && selectedHour.time) {
+      const fechaIso = selectedHour.time.split('T')[0]; // Ejemplo: "2026-08-14"
+      if (fechaIso) {
+        const [year, month, day] = fechaIso.split('-').map(Number);
+        const fechaHito = new Date(year, month - 1, day, 12, 0, 0);
+
+        const options: Intl.DateTimeFormatOptions = { weekday: 'long', day: 'numeric', month: 'short' };
+        let formatted = fechaHito.toLocaleDateString('es-ES', options);
+        return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+      }
+    }
+    return this.getCustomDate(data.date);
   }
 
 }

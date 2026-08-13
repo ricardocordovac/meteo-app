@@ -17,11 +17,11 @@
   <div class="swiper-background-layer">
     <div class="swiper" #swiper>
       <div class="swiper-wrapper">
-        <div class="swiper-slide" *ngFor="let data of weatherData">
+        <div class="swiper-slide" *ngFor="let data of weatherData; let i = index">
           <!-- Asignación directa de la URL limpia generada por el controlador -->
-          <div class="dynamic-bg" [style.background-image]="'url(' + data.background_image_url + ')'">
-            <div class="bg-overlay"></div>
-          </div>
+            <div class="dynamic-bg" [style.background-image]="getCurrentBackground(data, i)">
+              <div class="bg-overlay"></div>
+            </div>
         </div>
       </div>
     </div>
@@ -30,10 +30,12 @@
    <div class="weather-header-frame" *ngIf="weatherData && weatherData.length > 0 && weatherData[activeIndex]">
             <div class="header-text-column">
 
-              <div class="location-info">
-               <div class="town-name">{{ getDisplayLocation(weatherData[activeIndex]?.location || '') | uppercase }}</div>
-                <div class="header-date">{{ getCustomDate(weatherData[activeIndex]?.date || null) }}</div>
+            <div class="location-info">
+              <div class="town-name">{{ getDisplayLocation(weatherData[activeIndex]?.location || '') | uppercase }}</div>
+              <div class="header-date">
+                {{ getCurrentHeaderDate(weatherData[activeIndex], activeIndex, selectedHour) }}
               </div>
+            </div>
 
               <div class="massive-temp-center">
                 {{ ((selectedHour ? selectedHour.apparent_temperature : weatherData[activeIndex]?.apparentTemp) ?? 0) | number:'1.0-0' }}<span class="degree">°C</span>
@@ -64,7 +66,7 @@
 
 <div class="hero-character-container">
   <img
-    [src]="weatherData[activeIndex]?.outfit_image_url || 'assets/characters/nubio_default.webp'"
+    [src]="getCurrentOutfit(weatherData[activeIndex], activeIndex)"
     class="nubio-avatar"
     alt="Nubio Meteo Mascota">
 </div>

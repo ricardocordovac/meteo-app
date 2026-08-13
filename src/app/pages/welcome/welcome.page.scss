@@ -509,3 +509,23 @@ ion-content {
     }
   }
 }
+
+/* 🟢 Estilo destacado y con brillo de neón para la hora activa en el carrusel */
+.hourly-column.selected-hour {
+  background: rgba(0, 229, 255, 0.18); // Fondo translúcido cian/neón característico
+  border: 1px solid rgba(0, 229, 255, 0.8); // Borde iluminado
+  border-radius: 14px;
+  transform: translateY(-4px) scale(1.06); // Efecto de elevación táctil
+  box-shadow: 0 6px 18px rgba(0, 229, 255, 0.35); // Resplandor envolvente
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  .hour-label {
+    color: #00e5ff;
+    font-weight: 700;
+  }
+
+  .hour-temp {
+    color: #ffffff;
+    font-weight: 700;
+  }
+}

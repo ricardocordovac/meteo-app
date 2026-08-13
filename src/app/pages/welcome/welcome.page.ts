@@ -134,7 +134,8 @@ export class WelcomePage implements OnInit, AfterViewInit {
   locations = ['valdeolmos', 'algete', 'el_casar', 'fuente_el_saz'];
   weatherData: WeatherLocationData[] = [];
 
-
+  // Control de la hora seleccionada en el carrusel (si es null, muestra el tiempo real en vivo)
+  selectedHour: HourlyForecast | null = null;
 
   mapLottieOptions: AnimationOptions = {animationData: mapAnimation,loop: true,autoplay: true,renderer: 'svg' };
   //earthIndicatorOptions: AnimationOptions = { animationData: earthIndicator, loop: true, autoplay: true, renderer: 'svg' };
@@ -160,6 +161,8 @@ export class WelcomePage implements OnInit, AfterViewInit {
   readonly uvIndicator: AnimationOptions = { animationData: uvIndicator, loop: true, autoplay: true, renderer: 'svg' };
   readonly rainChanceIndicator: AnimationOptions = { animationData: rainChanceIndicator, loop: true, autoplay: true, renderer: 'svg' };
   readonly earthIndicator: AnimationOptions = { animationData: earthIndicator, loop: true, autoplay: true, renderer: 'svg' };
+
+
 
   constructor(
     public util: UtilService,
@@ -227,16 +230,18 @@ export class WelcomePage implements OnInit, AfterViewInit {
 
       const row: WeatherData = res[0];
 
-      // 1. Deserialización del pronóstico por horas (JSONB)
+      // 1. Deserialización optimizada de los 6 Hitos de Oro (lee 'pronostico_hitos' con respaldo en 'pronostico_meteo')
       let horasArray: HourlyForecast[] = [];
-      if (row.pronostico_meteo) {
-        try {
-          const parsed: HourlyForecast[] = typeof row.pronostico_meteo === 'string'
-            ? JSON.parse(row.pronostico_meteo)
-            : row.pronostico_meteo;
+      const fuenteHitos = (row as any).pronostico_hitos || row.pronostico_meteo;
 
-          // A) Mapear Lottie y formatear la hora textual "HH:mm"
-          const mapaCompleto: HourlyForecast[] = parsed.map((item) => {
+      if (fuenteHitos) {
+        try {
+          const parsed: HourlyForecast[] = typeof fuenteHitos === 'string'
+            ? JSON.parse(fuenteHitos)
+            : fuenteHitos;
+
+          // Mapear Lottie y formatear la hora textual "HH:mm" de forma directa
+          horasArray = parsed.map((item) => {
             const horaFormateada = item.time && item.time.includes('T')
               ? item.time.split('T')[1].substring(0, 5)
               : '00:00';
@@ -248,39 +253,8 @@ export class WelcomePage implements OnInit, AfterViewInit {
             };
           });
 
-          // B) Localizar la hora actual para filtrar puntos significativos de temperatura
-          const fechaHoraRegistro = row.created_at ? new Date(row.created_at) : new Date();
-          const horaActualNum = fechaHoraRegistro.getHours();
-          const horaActualStr = horaActualNum.toString().padStart(2, '0');
-
-          const fechaISO = fechaHoraRegistro.toISOString().split('T')[0];
-          const patronBusqueda = `${fechaISO}T${horaActualStr}:00`;
-
-          const indiceActual = mapaCompleto.findIndex(h => h.time.startsWith(patronBusqueda));
-          const inicio = indiceActual !== -1 ? indiceActual + 1 : 0;
-
-          // 🌟 FILTRADO INTELIGENTE: Omitir horas consecutivas con la misma temperatura redondeada
-          const horasFuturas = mapaCompleto.slice(inicio);
-          const resultadoDiferencial: HourlyForecast[] = [];
-          let ultimaTempRegistrada: number | null = null;
-
-          for (const horaItem of horasFuturas) {
-            const tempEntera = Math.round(horaItem.temperature_2m);
-
-            if (ultimaTempRegistrada === null || tempEntera !== ultimaTempRegistrada) {
-              resultadoDiferencial.push(horaItem);
-              ultimaTempRegistrada = tempEntera;
-            }
-
-            if (resultadoDiferencial.length === 6) {
-              break;
-            }
-          }
-
-          horasArray = resultadoDiferencial;
-
         } catch (e) {
-          console.error(`❌ Error parseando 'pronostico_meteo' para ${town}:`, e);
+          console.error(`❌ Error parseando 'pronostico_hitos' para ${town}:`, e);
         }
       }
 
@@ -341,6 +315,140 @@ export class WelcomePage implements OnInit, AfterViewInit {
     this.cdr.detectChanges();
   }
 }
+
+//   async loadWeatherData() {
+//   try {
+//     this.loader = false;
+//     this.cdr.detectChanges();
+
+//     const promises = this.locations.map(async (town) => {
+//       // Consulta directa a la tabla current_data en Supabase
+//       const res: WeatherData[] | null = await this.supabaseService.getDataByLocation(town);
+
+//       // --- TRACE LOG: Municipio ausente en Supabase ---
+//       if (!res || res.length === 0) {
+//         console.warn(
+//           `⚠️ [MeteoApp Datacheck] El municipio '${town}' no devolvió ningún registro desde Supabase. Se utilizarán datos ficticios (Fallback global).`
+//         );
+//         return null;
+//       }
+
+//       const row: WeatherData = res[0];
+
+//       // 1. Deserialización del pronóstico por horas (JSONB)
+//       let horasArray: HourlyForecast[] = [];
+//       if (row.pronostico_meteo) {
+//         try {
+//           const parsed: HourlyForecast[] = typeof row.pronostico_meteo === 'string'
+//             ? JSON.parse(row.pronostico_meteo)
+//             : row.pronostico_meteo;
+
+//           // A) Mapear Lottie y formatear la hora textual "HH:mm"
+//           const mapaCompleto: HourlyForecast[] = parsed.map((item) => {
+//             const horaFormateada = item.time && item.time.includes('T')
+//               ? item.time.split('T')[1].substring(0, 5)
+//               : '00:00';
+
+//             return {
+//               ...item,
+//               horaFormatted: horaFormateada,
+//               lottieOptions: this.getLottiePropByCode(item.weathercode ?? 0, item.is_day ?? 1)
+//             };
+//           });
+
+//           // B) Localizar la hora actual para filtrar puntos significativos de temperatura
+//           const fechaHoraRegistro = row.created_at ? new Date(row.created_at) : new Date();
+//           const horaActualNum = fechaHoraRegistro.getHours();
+//           const horaActualStr = horaActualNum.toString().padStart(2, '0');
+
+//           const fechaISO = fechaHoraRegistro.toISOString().split('T')[0];
+//           const patronBusqueda = `${fechaISO}T${horaActualStr}:00`;
+
+//           const indiceActual = mapaCompleto.findIndex(h => h.time.startsWith(patronBusqueda));
+//           const inicio = indiceActual !== -1 ? indiceActual + 1 : 0;
+
+//           // 🌟 FILTRADO INTELIGENTE: Omitir horas consecutivas con la misma temperatura redondeada
+//           const horasFuturas = mapaCompleto.slice(inicio);
+//           const resultadoDiferencial: HourlyForecast[] = [];
+//           let ultimaTempRegistrada: number | null = null;
+
+//           for (const horaItem of horasFuturas) {
+//             const tempEntera = Math.round(horaItem.temperature_2m);
+
+//             if (ultimaTempRegistrada === null || tempEntera !== ultimaTempRegistrada) {
+//               resultadoDiferencial.push(horaItem);
+//               ultimaTempRegistrada = tempEntera;
+//             }
+
+//             if (resultadoDiferencial.length === 6) {
+//               break;
+//             }
+//           }
+
+//           horasArray = resultadoDiferencial;
+
+//         } catch (e) {
+//           console.error(`❌ Error parseando 'pronostico_meteo' para ${town}:`, e);
+//         }
+//       }
+
+//       // 2. RESOLUCIÓN DE FONDOS
+//       let finalBg = 'assets/backgrounds/soleado.jpg';
+//       if (row.background_image_url && row.background_image_url.trim() !== '') {
+//         finalBg = row.background_image_url;
+//       }
+
+//       // 3. RESOLUCIÓN DE OUTFITS
+//       let finalOutfit = 'assets/characters/nubio_hot.webp';
+//       if (row.outfit_image_url && row.outfit_image_url.trim() !== '') {
+//         finalOutfit = row.outfit_image_url;
+//       }
+
+//       return {
+//         location: row.location || town,
+//         date: row.created_at ? new Date(row.created_at) : new Date(),
+//         time: row.created_at ? new Date(row.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
+//         temp: row.temperature_2m ?? 0,
+//         apparentTemp: row.apparent_temperature ?? row.temperature_2m ?? 0,
+//         humidity: row.relative_humidity_2m ?? 0,
+//         precipitation: row.precipitation_probability ?? 0,
+//         windSpeed: row.wind_speed_10m ?? 0,
+//         uvIndex: row.uv_index ?? 0,
+//         soilMoisture: row.soil_moisture_0_to_10cm ? Math.round(row.soil_moisture_0_to_10cm * 100) : 0,
+//         pressure: row.pressure_msl ?? 1013,
+//         weathercode: row.weathercode ?? 0,
+//         isDay: row.is_day ?? 1,
+//         background_image_url: finalBg,
+//         outfit_image_url: finalOutfit,
+//         text_clothing: row.text_clothing || 'Ropa recomendada',
+//         accessories: [],
+//         primaryLottieOptions: this.getLottiePropByCode(row.weathercode ?? 0, row.is_day ?? 1),
+//         pronostico_meteo: horasArray
+//       } as WeatherLocationData;
+//     });
+
+//     const results = await Promise.all(promises);
+//     this.weatherData = results.filter((item): item is WeatherLocationData => item !== null);
+
+//     if (this.weatherData.length === 0) {
+//       console.error('🛑 [MeteoApp Crítico] Ningún municipio tiene datos en Supabase. Levantando datos simulados de emergencia.');
+//       this.generateFallbackData();
+//     }
+
+//     this.loader = true;
+//     this.cdr.detectChanges();
+
+//     setTimeout(() => {
+//       this.initializeSwiper();
+//     }, 300);
+
+//   } catch (error) {
+//     console.error('❌ Error crítico no controlado en la carga general de loadWeatherData:', error);
+//     this.generateFallbackData();
+//     this.loader = true;
+//     this.cdr.detectChanges();
+//   }
+// }
 
 // async loadWeatherData() {
 //   try {
@@ -732,6 +840,7 @@ export class WelcomePage implements OnInit, AfterViewInit {
       return;
     }
     this.activeIndex = index;
+    this.selectedHour = null; // 🌟 Resetea la hora seleccionada al cambiar de municipio
     if (this.swiperInstance) {
       this.swiperInstance.slideTo(index, 400);
     }
@@ -823,6 +932,27 @@ export class WelcomePage implements OnInit, AfterViewInit {
     if ([95, 96, 99].includes(code)) return this.stormLottie;
 
     return this.sunnyLottie; // Fallback
+  }
+
+  /**
+   * Permite previsualizar los datos meteorológicos de una hora específica del carrusel
+   */
+  previewHour(hour: HourlyForecast) {
+    if (this.selectedHour === hour) {
+      // Si vuelve a hacer clic en la misma hora, deselecciona y vuelve al presente
+      this.resetToLiveWeather();
+    } else {
+      this.selectedHour = hour;
+      this.cdr.detectChanges();
+    }
+  }
+
+  /**
+   * Resetea la vista para mostrar los datos reales actuales de la estación
+   */
+  resetToLiveWeather() {
+    this.selectedHour = null;
+    this.cdr.detectChanges();
   }
 
 }

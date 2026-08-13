@@ -23,6 +23,7 @@ export interface WeatherData {
   background_image_url?: string;
   outfit_image_url?: string;
   pronostico_meteo?: string;
+  pronostico_hitos?: string;
   // Campos adicionales que recibes de Supabase
   uv_index?: number;
   pressure_msl?: number;

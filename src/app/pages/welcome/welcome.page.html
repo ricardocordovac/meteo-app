@@ -116,12 +116,12 @@
 
             <div class="hourly-forecast-strip">
               <div class="hourly-column"
-                  *ngFor="let hour of weatherData[activeIndex]?.pronostico_meteo"
+                  *ngFor="let hour of weatherData[activeIndex]?.pronostico_hitos"
                   [ngClass]="{'selected-hour': selectedHour === hour}"
                   (click)="previewHour(hour)">
 
                 <!-- Muestra "17:00", "18:00", etc. -->
-                <span class="hour-label">{{ hour.horaFormatted }}</span>
+                <span class="hour-label">{{ hour.hora }}</span>
 
                 <!-- Lottie dinámico -->
                 <div class="hour-lottie-container">

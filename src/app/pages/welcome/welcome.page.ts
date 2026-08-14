@@ -38,6 +38,7 @@ SwiperCore.use([Navigation, Pagination]);
 // Estructura Estricta para cada hora del Carrusel
 export interface HourlyForecast {
   time: string;                     // "2026-08-08T17:00"
+  hora?: string;                    // 🎯 Añadido: Propiedad que viene directa desde el Backend (Ej: "19:00")
   horaFormatted?: string;           // Propiedad helper inyectada en Front: "17:00"
   temperature_2m: number;           // 27.4
   apparent_temperature: number;     // 33.7
@@ -106,6 +107,7 @@ interface WeatherLocationData {
   accessories: string[];
   primaryLottieOptions: AnimationOptions;
   pronostico_meteo: HourlyForecast[]; // 🌟 Las 72 horas estructuradas aquí
+  pronostico_hitos: HourlyForecast[]; // 🎯 AÑADIDO: Declaramos la variable para que el HTML sea feliz
 }
 
 
@@ -243,32 +245,81 @@ export class WelcomePage implements OnInit, AfterViewInit {
       const row: WeatherData = res[0];
 
       // 1. Deserialización optimizada de los 6 Hitos de Oro (lee 'pronostico_hitos' con respaldo en 'pronostico_meteo')
-      let horasArray: HourlyForecast[] = [];
-      const fuenteHitos = (row as any).pronostico_hitos || row.pronostico_meteo;
+// 1. Deserialización de los 6 Hitos de Oro (EXTRACCIÓN A PRUEBA DE BALAS)
+      let hitosArray: HourlyForecast[] = [];
+      let fuenteHitos = (row as any).pronostico_hitos;
 
       if (fuenteHitos) {
         try {
-          const parsed: HourlyForecast[] = typeof fuenteHitos === 'string'
-            ? JSON.parse(fuenteHitos)
-            : fuenteHitos;
+          let parsed = fuenteHitos;
 
-          // Mapear Lottie y formatear la hora textual "HH:mm" de forma directa
-          horasArray = parsed.map((item) => {
-            const horaFormateada = item.time && item.time.includes('T')
-              ? item.time.split('T')[1].substring(0, 5)
-              : '00:00';
+          // 🛡️ BUCLE DESEMPAQUETADOR (Efecto Matrioska)
+          // Desempaqueta tantas veces como el backend lo haya convertido en string (hasta 3 capas)
+          let ciclos = 0;
+          while (typeof parsed === 'string' && ciclos < 3) {
+            try {
+              parsed = JSON.parse(parsed);
+            } catch (err) {
+              // Si JSON.parse falla por culpa de las barras invertidas rebeldes del C#, limpiamos a mano
+              parsed = parsed.replace(/^"|"$/g, '').replace(/\\"/g, '"');
+            }
+            ciclos++;
+          }
 
-            return {
-              ...item,
-              horaFormatted: horaFormateada,
-              lottieOptions: this.getLottiePropByCode(item.weathercode ?? 0, item.is_day ?? 1)
-            };
-          });
+          // 🎯 VERIFICACIÓN FINAL: ¿Logramos sacar el Array real?
+          if (Array.isArray(parsed)) {
+            console.log(`✅ [${town}] Hitos extraídos con éxito:`, parsed);
+
+            hitosArray = parsed.map((item: any) => {
+              // Si C# manda item.hora ("19:00"), la usa. Si no, la extrae del "time"
+              const horaFinal = item.hora ? item.hora : (item.time && item.time.includes('T')
+                ? item.time.split('T')[1].substring(0, 5)
+                : '00:00');
+
+              return {
+                ...item,
+                hora: horaFinal,
+                horaFormatted: horaFinal,
+                lottieOptions: this.getLottiePropByCode(item.weathercode ?? 0, item.is_day ?? 1)
+              };
+            });
+          } else {
+            console.warn(`⚠️ [${town}] La columna 'pronostico_hitos' se procesó, pero no es un Array:`, parsed);
+          }
 
         } catch (e) {
-          console.error(`❌ Error parseando 'pronostico_hitos' para ${town}:`, e);
+          console.error(`❌ Error crítico desempaquetando 'pronostico_hitos' para ${town}:`, e);
         }
       }
+
+
+
+      // let horasArray: HourlyForecast[] = [];
+      // const fuenteHitos = (row as any).pronostico_hitos || row.pronostico_meteo;
+
+      // if (fuenteHitos) {
+      //   try {
+      //     const parsed: HourlyForecast[] = typeof fuenteHitos === 'string'
+      //       ? JSON.parse(fuenteHitos)
+      //       : fuenteHitos;
+
+      //     // Mapear Lottie y formatear la hora textual "HH:mm" de forma directa
+      //     horasArray = parsed.map((item) => {
+      //       const horaFormateada = item.time && item.time.includes('T')
+      //         ? item.time.split('T')[1].substring(0, 5)
+      //         : '00:00';
+
+      //       return {
+      //         ...item,
+      //         horaFormatted: horaFormateada,
+      //         lottieOptions: this.getLottiePropByCode(item.weathercode ?? 0, item.is_day ?? 1)
+      //       };
+      //     });
+
+      //   } catch (e) {
+      //     console.error(`❌ Error parseando 'pronostico_hitos' para ${town}:`, e);
+      //   }
+      // }
 
       // 2. RESOLUCIÓN DE FONDOS
       let finalBg = 'assets/backgrounds/soleado.jpg';
@@ -301,7 +352,8 @@ export class WelcomePage implements OnInit, AfterViewInit {
         text_clothing: row.text_clothing || 'Ropa recomendada',
         accessories: [],
         primaryLottieOptions: this.getLottiePropByCode(row.weathercode ?? 0, row.is_day ?? 1),
-        pronostico_meteo: horasArray
+        pronostico_meteo: [], // Si en el futuro quieres mostrar las 72h seguidas en otra pestaña
+        pronostico_hitos: hitosArray // 🎯 ¡AQUÍ inyectamos los hitos con sus Lotties listas!
       } as WeatherLocationData;
     });
 
@@ -929,7 +981,8 @@ export class WelcomePage implements OnInit, AfterViewInit {
       text_clothing: 'Ropa cómoda',
       accessories: [],
       primaryLottieOptions: this.sunnyLottie, // Actualizado para usar la variable segura
-      pronostico_meteo: []
+      pronostico_meteo: [],
+      pronostico_hitos: [] // 🎯 Añadido
     }));
   }
 

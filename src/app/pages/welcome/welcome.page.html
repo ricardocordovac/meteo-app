@@ -151,8 +151,26 @@
                 <div class="tech-corner top-left"></div>
                 <ng-lottie [options]="rainChanceIndicator" class="card-lottie"></ng-lottie>
                 <div class="card-data">
-                  <span class="label">PROB. LLUVIA</span>
-                  <span class="value">{{ (selectedHour ? selectedHour.precipitation_probability : weatherData[activeIndex]?.precipitation) }}%</span>
+                  <span class="label">
+                    {{
+                      selectedHour
+                        ? 'PROB. LLUVIA'
+                        : ((weatherData[activeIndex]?.precip_rate || 0) > 0
+                            ? 'INTENSIDAD'
+                            : ((weatherData[activeIndex]?.precip_total || 0) > 0 ? 'ACUMULADO' : 'PRECIPITACIÓN'))
+                    }}
+                  </span>
+                  <span class="value">
+                    {{
+                      selectedHour
+                        ? (selectedHour.precipitation_probability + '%')
+                        : (((weatherData[activeIndex]?.precip_rate || 0) > 0)
+                            ? (weatherData[activeIndex]?.precip_rate + ' mm/h')
+                            : (((weatherData[activeIndex]?.precip_total || 0) > 0)
+                                ? (weatherData[activeIndex]?.precip_total + ' mm')
+                                : ((weatherData[activeIndex]?.precipitation || 0) + ' mm')))
+                    }}
+                  </span>
                 </div>
               </div>
 

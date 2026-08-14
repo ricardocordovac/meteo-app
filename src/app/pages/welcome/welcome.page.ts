@@ -108,6 +108,10 @@ interface WeatherLocationData {
   primaryLottieOptions: AnimationOptions;
   pronostico_meteo: HourlyForecast[]; // 🌟 Las 72 horas estructuradas aquí
   pronostico_hitos: HourlyForecast[]; // 🎯 AÑADIDO: Declaramos la variable para que el HTML sea feliz
+  // 🌟 Añadidos al modelo maestro del Front
+  precip_rate?: number;
+  precip_total?: number;
+  station_id_used?: string;
 }
 
 

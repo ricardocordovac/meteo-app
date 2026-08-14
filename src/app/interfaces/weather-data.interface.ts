@@ -28,4 +28,9 @@ export interface WeatherData {
   uv_index?: number;
   pressure_msl?: number;
   text_clothing?: string;
+  // 🌟 Nuevos campos añadidos para el control de lluvia y estaciones locales
+  precip_rate?: number | string;
+  precip_total?: number | string;
+  station_id_used?: string;
+  alerts_jsonb?: string;
 }

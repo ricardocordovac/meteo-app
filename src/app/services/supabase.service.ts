@@ -55,7 +55,38 @@ export class SupabaseService {
       console.log('Fetching data for location:', location);
       const { data, error } = await this.supabase
         .from('current_data')
-        .select('location, temperature_2m, created_at, precipitation, timestamp, wind_speed_10m, relative_humidity_2m, wind_direction_10m, shortwave_radiation, weathercode, is_day, cloudcover, visibility, wind_gusts_10m, snowfall, apparent_temperature, precipitation_probability, et0_fao_evapotranspiration, soil_moisture_0_to_10cm, soil_temperature_0_to_10cm, dewpoint_2m, background_image_url, outfit_image_url, uv_index, pronostico_meteo, pronostico_hitos')
+        .select(`
+          location,
+          temperature_2m,
+          created_at,
+          precipitation,
+          timestamp,
+          wind_speed_10m,
+          relative_humidity_2m,
+          wind_direction_10m,
+          shortwave_radiation,
+          weathercode,
+          is_day,
+          cloudcover,
+          visibility,
+          wind_gusts_10m,
+          snowfall,
+          apparent_temperature,
+          precipitation_probability,
+          et0_fao_evapotranspiration,
+          soil_moisture_0_to_10cm,
+          soil_temperature_0_to_10cm,
+          dewpoint_2m,
+          background_image_url,
+          outfit_image_url,
+          uv_index,
+          pronostico_meteo,
+          pronostico_hitos,
+          precip_rate,
+          precip_total,
+          station_id_used,
+          alerts_jsonb
+        `)
         .eq('location', location)
         .order('created_at', { ascending: false })
         .limit(1);
@@ -63,24 +94,53 @@ export class SupabaseService {
       if (error) throw error;
 
       const modifiedData = data.map((item: WeatherData) => {
-        // const date = new Date(item.created_at || '');
-        // date.setHours(date.getHours() + 1); // Agrega 2 horas
         const date = new Date(item.created_at || '');
-      const offset = this.getMadridTimezoneOffset(date);
-      date.setHours(date.getHours() + offset);
+        const offset = this.getMadridTimezoneOffset(date);
+        date.setHours(date.getHours() + offset);
         return {
           ...item,
           created_at: date.toISOString()
         };
       });
 
-      console.log('Data fetched and modified:', modifiedData);
-      return modifiedData || [];
+      return modifiedData;
     } catch (error) {
-      console.error('Supabase error:', error);
-      return [];
+      console.error('Error fetching data by location:', error);
+      throw error;
     }
   }
+
+  // async getDataByLocation(location: string): Promise<WeatherData[]> {
+  //   try {
+  //     console.log('Fetching data for location:', location);
+  //     const { data, error } = await this.supabase
+  //       .from('current_data')
+  //       .select('location, temperature_2m, created_at, precipitation, timestamp, wind_speed_10m, relative_humidity_2m, wind_direction_10m, shortwave_radiation, weathercode, is_day, cloudcover, visibility, wind_gusts_10m, snowfall, apparent_temperature, precipitation_probability, et0_fao_evapotranspiration, soil_moisture_0_to_10cm, soil_temperature_0_to_10cm, dewpoint_2m, background_image_url, outfit_image_url, uv_index, pronostico_meteo, pronostico_hitos')
+  //       .eq('location', location)
+  //       .order('created_at', { ascending: false })
+  //       .limit(1);
+
+  //     if (error) throw error;
+
+  //     const modifiedData = data.map((item: WeatherData) => {
+  //       // const date = new Date(item.created_at || '');
+  //       // date.setHours(date.getHours() + 1); // Agrega 2 horas
+  //       const date = new Date(item.created_at || '');
+  //     const offset = this.getMadridTimezoneOffset(date);
+  //     date.setHours(date.getHours() + offset);
+  //       return {
+  //         ...item,
+  //         created_at: date.toISOString()
+  //       };
+  //     });
+
+  //     console.log('Data fetched and modified:', modifiedData);
+  //     return modifiedData || [];
+  //   } catch (error) {
+  //     console.error('Supabase error:', error);
+  //     return [];
+  //   }
+  // }
 
   // Método auxiliar para obtener el offset de zona horaria de Madrid
 private getMadridTimezoneOffset(date: Date): number {

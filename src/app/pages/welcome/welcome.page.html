@@ -1,6 +1,6 @@
-
 <ion-content [fullscreen]="true" [forceOverscroll]="false">
 
+  <!-- LOADER INICIAL CON RIPPLE ANIMATION -->
   <div *ngIf="!loader" class="center_div-loader">
     <div class="ripple-container">
       <div class="thumb-lg ripple-trigger">
@@ -11,75 +11,72 @@
     </div>
   </div>
 
+  <!-- CONTENEDOR PRINCIPAL FLUIDO -->
   <div *ngIf="loader" class="main-layered-container" [ngClass]="{'is-ios': isIos, 'is-android': isAndroid}">
 
-  <!-- CAPA DE FONDOS DINÁMICOS EN SWIPER -->
-  <div class="swiper-background-layer">
-    <div class="swiper" #swiper>
-      <div class="swiper-wrapper">
-        <div class="swiper-slide" *ngFor="let data of weatherData; let i = index">
-          <!-- Asignación directa de la URL limpia generada por el controlador -->
+    <!-- CAPA DE FONDOS DINÁMICOS EN SWIPER -->
+    <div class="swiper-background-layer">
+      <div class="swiper" #swiper>
+        <div class="swiper-wrapper">
+          <div class="swiper-slide" *ngFor="let data of weatherData; let i = index">
+            <!-- Asignación directa de la URL limpia generada por el controlador -->
             <div class="dynamic-bg" [style.background-image]="getCurrentBackground(data, i)">
               <div class="bg-overlay"></div>
             </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-   <div class="weather-header-frame" *ngIf="weatherData && weatherData.length > 0 && weatherData[activeIndex]">
-            <div class="header-text-column">
+    <!-- ENCABEZADO PRINCIPAL (HEADER FRAME) -->
+    <div class="weather-header-frame" *ngIf="weatherData && weatherData.length > 0 && weatherData[activeIndex]">
+      <div class="header-text-column">
 
-            <div class="location-info">
-              <div class="town-name">{{ getDisplayLocation(weatherData[activeIndex]?.location || '') | uppercase }}</div>
-              <div class="header-date">
-                {{ getCurrentHeaderDate(weatherData[activeIndex], activeIndex, selectedHour) }}
-              </div>
-            </div>
+        <div class="location-info">
+          <div class="town-name">{{ getDisplayLocation(weatherData[activeIndex]?.location || '') | uppercase }}</div>
+          <div class="header-date">
+            {{ getCurrentHeaderDate(weatherData[activeIndex], activeIndex, selectedHour) }}
+          </div>
+        </div>
 
-              <div class="massive-temp-center">
-                {{ ((selectedHour ? selectedHour.apparent_temperature : weatherData[activeIndex]?.apparentTemp) ?? 0) | number:'1.0-0' }}<span class="degree">°C</span>
-              </div>
+        <div class="massive-temp-center">
+          {{ ((selectedHour ? selectedHour.apparent_temperature : weatherData[activeIndex]?.apparentTemp) ?? 0) | number:'1.0-0' }}<span class="degree">°C</span>
+        </div>
 
-              <!-- <div class="massive-temp-center">
-                {{ ((selectedHour ? selectedHour.temperature_2m : weatherData[activeIndex]?.temp) ?? 0) | number:'1.0-0' }}<span class="degree">°C</span>
-              </div> -->
+      </div>
 
-            </div>
+      <div class="header-visual-column">
+        <!-- 🚨 PÍLDORA DINÁMICA DE ALERTAS (Interactiva) -->
+        <div class="alert-pill"
+             *ngIf="weatherData[activeIndex]?.alertas?.length"
+             [ngClass]="'pill-type-' + weatherData[activeIndex]?.alertas?.[0]?.tipo"
+             (click)="glassModal.setCurrentBreakpoint(0.53)">
+          <span>{{ weatherData[activeIndex]?.alertas?.[0]?.icono }}</span>
+          {{ weatherData[activeIndex]?.alertas?.[0]?.tipo | uppercase }}
+        </div>
 
-            <div class="header-visual-column">
-                  <div class="alert-pill">
-                    <span>🔥</span>EXTREMO
-                  </div>
-
-                  <div class="interactive-map-block">
-                    <ion-button
-                      fill="clear"
-                      class="map-click-overlay-button"
-                      (click)="openLocationDetailModal()">
-                    </ion-button>
-
-                    <ng-lottie [options]="mapLottieOptions" class="lottie-map-fix"></ng-lottie>
-                  </div>
-            </div>
+        <div class="interactive-map-block">
+          <ion-button
+            fill="clear"
+            class="map-click-overlay-button"
+            (click)="openLocationDetailModal()">
+          </ion-button>
+          <ng-lottie [options]="mapLottieOptions" class="lottie-map-fix"></ng-lottie>
+        </div>
+      </div>
     </div>
 
-<div class="hero-character-container">
-  <img
-    [src]="getCurrentOutfit(weatherData[activeIndex], activeIndex)"
-    class="nubio-avatar"
-    alt="Nubio Meteo Mascota">
-</div>
-
-
-    <!-- <div class="hero-character-container">
+    <!-- PERSONAJE CENTRAL (NUBIO METEO MASCOTA) -->
+    <div class="hero-character-container">
       <img
-        [src]="weatherData[activeIndex]?.outfit_image_url || 'assets/characters/nubio_default.webp'"
+        [src]="getCurrentOutfit(weatherData[activeIndex], activeIndex)"
         class="nubio-avatar"
-        alt="Nubio Meteo Mascot">
-    </div> -->
+        alt="Nubio Meteo Mascota">
+    </div>
 
+    <!-- MODAL INFERIOR GLASSMORPHIC -->
     <ion-modal
+      #glassModal
       [isOpen]="loader"
       [initialBreakpoint]="0.24"
       [breakpoints]="[0.24, 0.53]"
@@ -93,6 +90,7 @@
         <ion-content class="glass-content" [forceOverscroll]="false">
           <div class="glass-wrapper">
 
+            <!-- PESTAÑAS DE MODO -->
             <div class="mode-tabs-container">
               <div class="mode-tabs">
                 <div class="tab-item active">
@@ -107,18 +105,35 @@
               </div>
             </div>
 
-            <!-- 🌟 BOTÓN FLOTANTE: Aparece solo cuando hay una hora seleccionada -->
+            <!-- 🚨 BANNER DE ALERTAS DINÁMICAS HIPERLOCALES -->
+            <div *ngIf="weatherData[activeIndex]?.alertas?.length" class="alerts-carousel-container">
+              <div *ngFor="let alerta of weatherData[activeIndex]?.alertas"
+                   class="glass-alert-card"
+                   [ngClass]="'alert-type-' + alerta.tipo">
+
+                <div class="alert-header">
+                  <span class="alert-icon">{{ alerta.icono }}</span>
+                  <span class="alert-title">{{ alerta.titulo }}</span>
+                  <span class="alert-badge">{{ alerta.tipo | uppercase }}</span>
+                </div>
+
+                <p class="alert-message">{{ alerta.mensaje }}</p>
+              </div>
+            </div>
+
+            <!-- 🌟 BOTÓN FLOTANTE: RETORNO A TIEMPO REAL -->
             <div *ngIf="selectedHour" class="reset-live-container" (click)="resetToLiveWeather()" style="text-align: center; margin: 8px 0; cursor: pointer; z-index: 10;">
               <span style="background: rgba(0, 0, 0, 0.65); padding: 6px 16px; border-radius: 20px; font-size: 12px; color: #fff; backdrop-filter: blur(6px); display: inline-block; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
                 🔄 Volver al tiempo real (Actual)
               </span>
             </div>
 
+            <!-- CARRUSEL HORARIO DE HITOS -->
             <div class="hourly-forecast-strip">
               <div class="hourly-column"
-                  *ngFor="let hour of weatherData[activeIndex]?.pronostico_hitos"
-                  [ngClass]="{'selected-hour': selectedHour === hour}"
-                  (click)="previewHour(hour)">
+                   *ngFor="let hour of weatherData[activeIndex]?.pronostico_hitos"
+                   [ngClass]="{'selected-hour': selectedHour === hour}"
+                   (click)="previewHour(hour)">
 
                 <!-- Muestra "17:00", "18:00", etc. -->
                 <span class="hour-label">{{ hour.hora }}</span>
@@ -128,16 +143,16 @@
                   <ng-lottie [options]="hour.lottieOptions!" class="mini-lottie"></ng-lottie>
                 </div>
 
-                <!-- Temperatura -->
-                 <!-- Cambiado a apparent_temperature para que muestre el calor real de la calle -->
-                  <span class="hour-temp">{{ hour.apparent_temperature | number:'1.0-0' }}°</span>
-                <!-- <span class="hour-temp">{{ hour.temperature_2m | number:'1.0-0' }}°</span> -->
+                <!-- Temperatura (Sensación térmica) -->
+                <span class="hour-temp">{{ hour.apparent_temperature | number:'1.0-0' }}°</span>
 
               </div>
             </div>
 
+            <!-- CHIPS METEOROLÓGICOS (SMART CARDS) -->
             <div class="chips-grid">
 
+              <!-- TEMP AIRE -->
               <div class="weather-info-card active-cyan-card">
                 <div class="tech-corner top-left"></div>
                 <ng-lottie [options]="tempIndicator" class="card-lottie"></ng-lottie>
@@ -147,6 +162,7 @@
                 </div>
               </div>
 
+              <!-- PRECIPITACIÓN -->
               <div class="weather-info-card">
                 <div class="tech-corner top-left"></div>
                 <ng-lottie [options]="rainChanceIndicator" class="card-lottie"></ng-lottie>
@@ -174,6 +190,7 @@
                 </div>
               </div>
 
+              <!-- HUMEDAD -->
               <div class="weather-info-card active-cyan-card">
                 <div class="tech-corner top-left"></div>
                 <ng-lottie [options]="humidityIndicator" class="card-lottie"></ng-lottie>
@@ -183,6 +200,7 @@
                 </div>
               </div>
 
+              <!-- VIENTO -->
               <div class="weather-info-card">
                 <div class="tech-corner top-left"></div>
                 <ng-lottie [options]="windIndicator" class="card-lottie"></ng-lottie>
@@ -192,6 +210,7 @@
                 </div>
               </div>
 
+              <!-- ÍNDICE UV -->
               <div class="weather-info-card active-uv-card">
                 <div class="tech-corner top-left"></div>
                 <ng-lottie [options]="uvIndicator" class="card-lottie"></ng-lottie>
@@ -201,6 +220,7 @@
                 </div>
               </div>
 
+              <!-- HUMEDAD DEL SUELO -->
               <div class="weather-info-card">
                 <div class="tech-corner top-left"></div>
                 <ng-lottie [options]="earthIndicator" class="card-lottie"></ng-lottie>
@@ -212,72 +232,12 @@
 
             </div>
 
-            <!-- <div class="chips-grid">
-
-              <div class="weather-info-card active-cyan-card">
-                <div class="tech-corner top-left"></div>
-                <ng-lottie [options]="tempIndicator" class="card-lottie"></ng-lottie>
-                <div class="card-data">
-                  <span class="label">SENSACIÓN</span>
-                  <span class="value">{{ weatherData[activeIndex]?.apparentTemp }}°C</span>
-                </div>
-              </div>
-
-              <div class="weather-info-card">
-                <div class="tech-corner top-left"></div>
-                 <ng-lottie [options]="rainChanceIndicator" class="card-lottie"></ng-lottie>
-                <div class="card-data">
-                  <span class="label">PROB. LLUVIA</span>
-                  <span class="value">{{ weatherData[activeIndex]?.precipitation }}%</span>
-                </div>
-              </div>
-
-              <div class="weather-info-card active-cyan-card">
-                <div class="tech-corner top-left"></div>
-                    <ng-lottie [options]="humidityIndicator" class="card-lottie"></ng-lottie>
-                <div class="card-data">
-                  <span class="label">HUMEDAD</span>
-                  <span class="value">{{ weatherData[activeIndex]?.humidity }}%</span>
-                </div>
-              </div>
-
-              <div class="weather-info-card">
-                <div class="tech-corner top-left"></div>
-                <ng-lottie [options]="windIndicator" class="card-lottie"></ng-lottie>
-                <div class="card-data">
-                  <span class="label">VIENTO</span>
-                  <span class="value">{{ weatherData[activeIndex]?.windSpeed }} km/h</span>
-                </div>
-              </div>
-
-              <div class="weather-info-card active-uv-card">
-                <div class="tech-corner top-left"></div>
-                <ng-lottie [options]="uvIndicator" class="card-lottie"></ng-lottie>
-                <div class="card-data">
-                  <span class="label">ÍNDICE UV</span>
-                  <span class="value">{{ weatherData[activeIndex]?.uvIndex }}</span>
-                </div>
-              </div>
-
-              <div class="weather-info-card">
-                <div class="tech-corner top-left"></div>
-               <ng-lottie [options]="earthIndicator" class="card-lottie"></ng-lottie>
-                <div class="card-data">
-                  <span class="label">HUM. SUELO</span>
-                  <span class="value">{{ weatherData[activeIndex]?.soilMoisture }}%</span>
-                </div>
-              </div>
-
-            </div>
-         -->
-
           </div>
         </ion-content>
       </ng-template>
     </ion-modal>
 
-
-
+    <!-- MODAL SELECTOR DE PUEBLOS / UBICACIÓN -->
     <ion-modal
       #locationModal
       [isOpen]="isLocationModalOpen"
@@ -300,8 +260,7 @@
                 (click)="selectTownByIndex(i)">
 
                 <div class="town-avatar">
-                  <!-- <img [src]="'/assets/backgrounds/' + (data.background_image_url.split('/').pop() || 'soleado.jpg')" alt="Town thumb"> -->
-                   <img [src]="data.background_image_url" alt="Town thumb">
+                  <img [src]="data.background_image_url" alt="Town thumb">
                 </div>
 
                 <div class="town-info">
@@ -316,7 +275,7 @@
         </ion-content>
       </ng-template>
     </ion-modal>
-     </div>
 
+  </div>
 
 </ion-content>

@@ -607,7 +607,7 @@ ion-content {
     }
 
 .alerts-popup-content {
-      padding: 12px 14px 40px 14px; // 👈 Añadimos más espacio abajo (40px) para que el último cuadro ruede con soltura
+      padding: 12px 14px 120px 14px; // 👈 Añadimos más espacio abajo (40px) para que el último cuadro ruede con soltura
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
       display: flex;

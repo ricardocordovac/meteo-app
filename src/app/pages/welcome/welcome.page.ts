@@ -52,6 +52,7 @@ export class WelcomePage implements OnInit, AfterViewInit {
   activeIndex: number = 0;
   isInfoCardExpanded: boolean = false;
   isLocationModalOpen: boolean = false;
+  isAlertsModalOpen: boolean = false;
 
   // Detección de plataforma móvil nativa
   isIos: boolean = false;
@@ -511,19 +512,29 @@ export class WelcomePage implements OnInit, AfterViewInit {
 /**
    * Resuelve dinámicamente la fecha del encabezado según el hito seleccionado o el tiempo real
    */
-getCurrentHeaderDate(data: WeatherLocationData, index: number, selectedHour: HourlyForecast | null): string {
-    if (index === this.activeIndex && selectedHour && selectedHour.time) {
-      const fechaIso = selectedHour.time.split('T')[0]; // Ejemplo: "2026-08-14"
-      if (fechaIso) {
-        const [year, month, day] = fechaIso.split('-').map(Number);
-        const fechaHito = new Date(year, month - 1, day, 12, 0, 0);
+  getCurrentHeaderDate(data: WeatherLocationData, index: number, selectedHour: HourlyForecast | null): string {
+      if (index === this.activeIndex && selectedHour && selectedHour.time) {
+        const fechaIso = selectedHour.time.split('T')[0]; // Ejemplo: "2026-08-14"
+        if (fechaIso) {
+          const [year, month, day] = fechaIso.split('-').map(Number);
+          const fechaHito = new Date(year, month - 1, day, 12, 0, 0);
 
-        const options: Intl.DateTimeFormatOptions = { weekday: 'long', day: 'numeric', month: 'short' };
-        let formatted = fechaHito.toLocaleDateString('es-ES', options);
-        return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+          const options: Intl.DateTimeFormatOptions = { weekday: 'long', day: 'numeric', month: 'short' };
+          let formatted = fechaHito.toLocaleDateString('es-ES', options);
+          return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+        }
       }
-    }
-    return this.getCustomDate(data.date);
+      return this.getCustomDate(data.date);
+  }
+
+  openAlertsModal() {
+    this.isAlertsModalOpen = true;
+    this.cdr.detectChanges();
+  }
+
+  closeAlertsModal() {
+    this.isAlertsModalOpen = false;
+    this.cdr.detectChanges();
   }
 
 }

@@ -329,10 +329,20 @@
             <span class="popup-icon">⚠️</span>
             <h3>Alertas Meteorológicas</h3>
           </div>
+          <button class="close-popup-btn-native" (click)="closeAlertsModal()">
+            ✕
+          </button>
+        </div>
+
+        <!-- <div class="alerts-popup-header">
+          <div class="popup-title-group">
+            <span class="popup-icon">⚠️</span>
+            <h3>Alertas Meteorológicas</h3>
+          </div>
           <ion-button fill="clear" class="close-popup-btn" (click)="closeAlertsModal()">
             <ion-icon name="close-outline"></ion-icon>
           </ion-button>
-        </div>
+        </div> -->
 
         <div class="alerts-popup-content">
           <div *ngIf="!weatherData[activeIndex]?.alertas || weatherData[activeIndex]?.alertas?.length === 0" class="no-alerts">

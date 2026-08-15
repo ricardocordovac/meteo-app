@@ -531,9 +531,8 @@ ion-content {
 }
 
 
-
 // ==========================================================================
-// 🚨 POPUP DE ALERTAS COMPACTO CON SCROLL INTERNO Y AISLADO
+// 🚨 POPUP DE ALERTAS: ALINEADO ARRIBA, COMPACTO Y CON BOTÓN VISIBLE
 // ==========================================================================
 .alerts-overlay-popup {
   position: fixed;
@@ -542,37 +541,37 @@ ion-content {
   width: 100vw;
   height: 100dvh;
   z-index: 1000;
-  background: rgba(12, 15, 23, 0.8);
+  background: rgba(12, 15, 23, 0.85);
   backdrop-filter: blur(25px) saturate(150%);
   -webkit-backdrop-filter: blur(25px) saturate(150%);
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 16px;
+  align-items: flex-start; // 👈 Lo anclamos arriba del todo
+  padding: calc(env(safe-area-inset-top) + 20px) 16px 16px 16px;
   box-sizing: border-box;
   animation: fadeInPopup 0.2s ease-out forwards;
 
   .alerts-popup-container {
     width: 100%;
-    max-width: 400px;
-    height: 75vh;
-    max-height: 520px;
-    background: rgba(18, 22, 33, 0.92);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 24px;
+    max-width: 410px;
+    height: 72vh; // Altura equilibrada para que no tape los tabs inferiores por completo
+    max-height: 560px;
+    background: rgba(18, 22, 33, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 22px;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
-    overflow: hidden; // Contiene los hijos estrictamente
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7);
+    overflow: hidden;
 
     .alerts-popup-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 16px;
+      padding: 10px 14px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      background: rgba(255, 255, 255, 0.03);
-      flex-shrink: 0; // Evita que se comprima el header
+      background: rgba(255, 255, 255, 0.04);
+      flex-shrink: 0;
 
       .popup-title-group {
         display: flex;
@@ -580,15 +579,15 @@ ion-content {
         gap: 8px;
 
         .popup-icon {
-          font-size: 1rem;
+          font-size: 0.9rem;
         }
 
         h3 {
           color: #ffffff;
-          font-size: 0.95rem;
-          font-weight: 700;
+          font-size: 0.88rem;
+          font-weight: 400; // 👈 Título mucho más delgado y fino
           margin: 0;
-          letter-spacing: 0.3px;
+          letter-spacing: 0.4px;
           white-space: nowrap;
         }
       }
@@ -596,19 +595,24 @@ ion-content {
       .close-popup-btn {
         --color: #ffffff;
         margin: 0;
-        height: 32px;
-        width: 32px;
-        font-size: 1.2rem;
+        height: 28px;
+        width: 28px;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
       }
     }
 
     .alerts-popup-content {
-      padding: 14px 16px;
-      overflow-y: auto; // 👈 Scroll vertical independiente y suave
+      padding: 12px 14px;
+      overflow-y: auto;
       -webkit-overflow-scrolling: touch;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
       flex-grow: 1;
       scrollbar-width: thin;
       scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
@@ -617,17 +621,17 @@ ion-content {
         text-align: center;
         color: rgba(255, 255, 255, 0.5);
         margin-top: 30px;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
       }
 
       .alerta-card-item {
         background: rgba(255, 255, 255, 0.04);
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 14px;
-        padding: 12px;
+        padding: 10px 12px;
         display: flex;
         flex-direction: column;
-        gap: 6px;
+        gap: 5px;
 
         &.tipo-peligro {
           border-color: rgba(255, 59, 48, 0.6);
@@ -650,21 +654,21 @@ ion-content {
           gap: 6px;
 
           .alerta-emoji {
-            font-size: 1rem;
+            font-size: 0.95rem;
           }
 
           .alerta-titulo {
             color: #ffffff;
-            font-weight: 700;
-            font-size: 0.85rem;
+            font-weight: 600;
+            font-size: 0.8rem;
             flex-grow: 1;
           }
 
           .alerta-badge {
-            font-size: 0.5rem;
+            font-size: 0.48rem;
             font-weight: 800;
             padding: 2px 5px;
-            border-radius: 8px;
+            border-radius: 6px;
             background: rgba(255, 255, 255, 0.1);
             color: rgba(255, 255, 255, 0.8);
           }
@@ -672,7 +676,7 @@ ion-content {
 
         .alerta-mensaje {
           color: rgba(255, 255, 255, 0.75);
-          font-size: 0.78rem;
+          font-size: 0.75rem;
           line-height: 1.35;
           margin: 0;
         }
@@ -682,6 +686,27 @@ ion-content {
 }
 
 @keyframes fadeInPopup {
-  from { opacity: 0; transform: scale(0.97); }
-  to { opacity: 1; transform: scale(1); }
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
+
+
+.close-popup-btn-native {
+        background: rgba(255, 255, 255, 0.15);
+        color: #ffffff;
+        border: none;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        font-size: 1rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.2s ease;
+
+        &:active {
+          background: rgba(255, 255, 255, 0.3);
+        }
+      }

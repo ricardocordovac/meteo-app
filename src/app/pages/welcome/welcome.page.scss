@@ -524,7 +524,7 @@ ion-content {
 
   .alerts-popup-container {
     width: 100%;
-    max-width: 400px;
+    max-width: 410px;
     background: #121621;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 20px;
@@ -532,36 +532,109 @@ ion-content {
     max-height: 80vh;
     box-shadow: 0 20px 40px rgba(0,0,0,0.5);
 
-    .alerts-popup-header {
-      display: flex; justify-content: space-between; align-items: center;
+  .alerts-popup-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center; // 👈 Asegura alineación vertical centrada
       padding: 16px;
-      h3 { margin: 0; font-size: 1rem; color: #fff; }
-      .close-popup-btn-native {
-        background: rgba(255,255,255,0.1); border: none; color: #fff;
-        width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
+
+      .popup-title-group {
+        display: flex;
+        align-items: center; // 👈 Alinea el icono y el texto en la misma línea horizontal
+        gap: 10px;           // 👈 Espacio entre el icono y el título
+
+        .popup-icon {
+          font-size: 1.2rem; // Tamaño equilibrado para el icono
+        }
+
+        h3 {
+          margin: 0;
+          color: #ffffff;
+          font-size: 1rem;
+          font-weight: 600;
+        }
       }
     }
 
-    .alerts-popup-content {
-      padding: 0 16px 20px 16px;
+.alerts-popup-content {
+      // 👈 AQUÍ ESTÁ LA CLAVE: 120px de padding inferior para que el último elemento suba
+      padding: 12px 14px 120px 14px;
+
       overflow-y: auto;
-      gap: 12px; display: flex; flex-direction: column;
+      -webkit-overflow-scrolling: touch;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      flex-grow: 1;
+
+      // Estilo de scroll para que se vea limpio
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+
+      .no-alerts {
+        text-align: center;
+        color: rgba(255, 255, 255, 0.5);
+        margin-top: 30px;
+        font-size: 0.85rem;
+      }
 
       .alerta-card-item {
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 12px; padding: 12px;
-        border-left: 4px solid #fff;
+        background: rgba(255, 255, 255, 0.05); // Ligeramente más nítido sobre el fondo oscuro
+        border: 1px solid rgba(255, 255, 255, 0.12); // Borde sutil pero limpio
+        border-radius: 16px;
+        padding: 14px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
 
-        &.tipo-peligro { border-left-color: #ff3b30; }
-        &.tipo-aviso { border-left-color: #ffa500; }
-        &.tipo-hogar { border-left-color: #00f0ff; }
+        // 🌟 CLAVE PARA QUE "RESPIRÉN": Sombra exterior sutil y margen inferior
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+        margin-bottom: 4px; // Asegura separación física extra entre ellas
+
+        // Mantenemos tus tipos de alerta con el borde lateral limpio
+        &.tipo-peligro {
+          border-left: 4px solid #ff3b30;
+          background: linear-gradient(90deg, rgba(255, 59, 48, 0.12) 0%, rgba(255, 255, 255, 0.04) 15%);
+        }
+        &.tipo-aviso {
+          border-left: 4px solid #ffa500;
+          background: linear-gradient(90deg, rgba(255, 183, 3, 0.12) 0%, rgba(255, 255, 255, 0.04) 15%);
+        }
+        &.tipo-hogar {
+          border-left: 4px solid #00f0ff;
+          background: linear-gradient(90deg, rgba(0, 240, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 15%);
+        }
 
         .alerta-card-header {
-          display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
-          .alerta-titulo { font-weight: 700; font-size: 0.9rem; color: #fff; flex: 1; }
-          .alerta-badge { font-size: 0.6rem; background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 4px; }
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          .alerta-emoji {
+            font-size: 1rem;
+          }
+          .alerta-titulo {
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.85rem;
+            flex-grow: 1;
+          }
+          .alerta-badge {
+            font-size: 0.5rem;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.12);
+            color: rgba(255, 255, 255, 0.85);
+          }
         }
-        .alerta-mensaje { font-size: 0.8rem; color: #ccc; margin: 0; line-height: 1.4; }
+
+        .alerta-mensaje {
+          color: rgba(255, 255, 255, 0.8);
+          font-size: 0.78rem;
+          line-height: 1.4;
+          margin: 0;
+        }
       }
     }
   }

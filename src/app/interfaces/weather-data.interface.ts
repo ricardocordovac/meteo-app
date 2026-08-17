@@ -99,4 +99,9 @@ export interface WeatherLocationData {
   precip_rate?: number;
   precip_total?: number;
   station_id_used?: string;
+  // 🌟 NUEVAS VARIABLES PARA EL UI DE EXTREMOS DIARIOS
+  maxTemp?: number;
+  minTemp?: number;
+  horaMax?: string;
+  horaMin?: string;
 }

@@ -28,7 +28,40 @@
   </div>
 
    <div class="weather-header-frame" *ngIf="weatherData && weatherData.length > 0 && weatherData[activeIndex]">
-            <div class="header-text-column">
+
+    <div class="header-text-column">
+
+              <div class="location-info">
+                <div class="town-name">{{ getDisplayLocation(weatherData[activeIndex]?.location || '') | uppercase }}</div>
+                <div class="header-date">
+                  {{ getCurrentHeaderDate(weatherData[activeIndex], activeIndex, selectedHour) }}
+                </div>
+              </div>
+
+              <!-- Temperatura Gigante Actual -->
+              <div class="massive-temp-center">
+                {{ ((selectedHour ? selectedHour.temperature_2m : weatherData[activeIndex]?.temp) ?? 0) | number:'1.0-0' }}<span class="degree">°C</span>
+              </div>
+
+              <!-- 🌟 NUEVO: UI Premium para Máximas y Mínimas Diarias -->
+              <div class="daily-extremes-pill" *ngIf="weatherData[activeIndex]">
+                  <div class="extreme-item max-temp">
+                      <ion-icon name="caret-up-outline"></ion-icon>
+                      <span class="val">{{ weatherData[activeIndex]?.maxTemp | number:'1.0-0' }}°</span>
+                      <!-- Nota: mapea horaMax desde tu JSON/Backend o elimínalo si no lo pasas -->
+                      <span class="time">{{ weatherData[activeIndex]?.horaMax || '17:00' }}</span>
+                  </div>
+                  <div class="extreme-divider"></div>
+                  <div class="extreme-item min-temp">
+                      <ion-icon name="caret-down-outline"></ion-icon>
+                      <span class="val">{{ weatherData[activeIndex]?.minTemp | number:'1.0-0' }}°</span>
+                      <span class="time">{{ weatherData[activeIndex]?.horaMin || '07:00' }}</span>
+                  </div>
+              </div>
+
+            </div>
+
+            <!-- <div class="header-text-column">
 
             <div class="location-info">
               <div class="town-name">{{ getDisplayLocation(weatherData[activeIndex]?.location || '') | uppercase }}</div>
@@ -41,11 +74,7 @@
               {{ ((selectedHour ? selectedHour.temperature_2m : weatherData[activeIndex]?.temp) ?? 0) | number:'1.0-0' }}<span class="degree">°C</span>
             </div>
 
-              <!-- <div class="massive-temp-center">
-                {{ ((selectedHour ? selectedHour.temperature_2m : weatherData[activeIndex]?.temp) ?? 0) | number:'1.0-0' }}<span class="degree">°C</span>
-              </div> -->
-
-            </div>
+            </div> -->
 
             <div class="header-visual-column">
                   <div class="alert-pill" (click)="openAlertsModal()" *ngIf="(weatherData[activeIndex]?.alertas?.length || 0) > 0" style="cursor: pointer;">

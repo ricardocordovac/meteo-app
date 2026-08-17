@@ -711,3 +711,37 @@ ion-content {
           background: rgba(255, 255, 255, 0.3);
         }
       }
+
+
+.daily-extremes-pill {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 20px;
+    padding: 4px 12px;
+    margin-top: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.extreme-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.extreme-item.max-temp { color: #ff8b8b; }
+.extreme-item.min-temp { color: #8bc8ff; }
+.extreme-item .val { color: #fff; }
+.extreme-item .time { color: rgba(255, 255, 255, 0.7); font-size: 11px; margin-left: 2px; }
+
+.extreme-divider {
+    width: 1px;
+    height: 14px;
+    background: rgba(255, 255, 255, 0.3);
+    margin: 0 10px;
+}

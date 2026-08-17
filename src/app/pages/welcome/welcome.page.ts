@@ -219,6 +219,57 @@ export class WelcomePage implements OnInit, AfterViewInit {
           }
         }
 
+        // ====================================================================
+        // 🌟 EXTRACCIÓN DINÁMICA DE MÁXIMAS Y MÍNIMAS (24H)
+        // ====================================================================
+        let maxTemp = row.temperature_2m ?? 0;
+        let minTemp = row.temperature_2m ?? 0;
+        let horaMax = "N/A";
+        let horaMin = "N/A";
+
+        let fuenteMeteo = (row as any).pronostico_meteo;
+        if (fuenteMeteo) {
+          try {
+            let parsedMeteo = fuenteMeteo;
+            let ciclos = 0;
+            // Desempaquetador Matrioska (igual que en los hitos)
+            while (typeof parsedMeteo === 'string' && ciclos < 3) {
+              try { parsedMeteo = JSON.parse(parsedMeteo); }
+              catch (err) { parsedMeteo = parsedMeteo.replace(/^"|"$/g, '').replace(/\\"/g, '"'); }
+              ciclos++;
+            }
+
+            if (Array.isArray(parsedMeteo) && parsedMeteo.length > 0) {
+              // Escaneamos las primeras 24 horas del array
+              const radar24h = parsedMeteo.slice(0, 24);
+
+              // Reseteamos a valores extremos para comparar
+              maxTemp = -999;
+              minTemp = 999;
+
+              radar24h.forEach((item: any) => {
+                const t = item.temperature_2m ?? 0;
+                // Formateamos la hora si existe, ej: "2026-08-15T17:00" -> "17:00"
+                let horaItem = "00:00";
+                if (item.time && item.time.includes('T')) {
+                  horaItem = item.time.split('T')[1].substring(0, 5);
+                }
+
+                if (t > maxTemp) {
+                  maxTemp = t;
+                  horaMax = horaItem;
+                }
+                if (t < minTemp) {
+                  minTemp = t;
+                  horaMin = horaItem;
+                }
+              });
+            }
+          } catch(e) {
+            console.error(`❌ Error calculando max/min para ${town}:`, e);
+          }
+        }
+        // ====================================================================
 
         // 2. RESOLUCIÓN DE FONDOS
         let finalBg = 'assets/backgrounds/soleado.jpg';
@@ -281,7 +332,14 @@ export class WelcomePage implements OnInit, AfterViewInit {
             primaryLottieOptions: this.getLottiePropByCode(row.weathercode ?? 0, row.is_day ?? 1),
             pronostico_meteo: [],
             pronostico_hitos: hitosArray,
-            alertas: alertasArray // 👈 Inyección tipada directa
+            alertas: alertasArray,  // 👈 Inyección tipada directa
+
+            // 🌟 INYECTAMOS LOS CÁLCULOS AL OBJETO FINAL PARA EL HTML
+            maxTemp: maxTemp,
+            minTemp: minTemp,
+            horaMax: horaMax,
+            horaMin: horaMin
+
       } as WeatherLocationData;
       });
 

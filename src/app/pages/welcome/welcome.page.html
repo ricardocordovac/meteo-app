@@ -363,17 +363,30 @@
           </button>
         </div>
 
-        <!-- <div class="alerts-popup-header">
-          <div class="popup-title-group">
-            <span class="popup-icon">⚠️</span>
-            <h3>Alertas Meteorológicas</h3>
-          </div>
-          <ion-button fill="clear" class="close-popup-btn" (click)="closeAlertsModal()">
-            <ion-icon name="close-outline"></ion-icon>
-          </ion-button>
-        </div> -->
 
         <div class="alerts-popup-content">
+          <div *ngIf="!weatherData[activeIndex]?.alertas || weatherData[activeIndex]?.alertas?.length === 0" class="no-alerts">
+            <p>No hay alertas activas en este momento para {{ getDisplayLocation(weatherData[activeIndex]?.location || '') }}.</p>
+          </div>
+
+          <!-- 🌟 SECCIÓN 1: ALERTAS INMEDIATAS / MADRUGADA / HOY -->
+        <!-- ✅ LÍNEA CORREGIDA (usando operador de navegación segura '?.') -->
+        <div class="alert-section-group" *ngIf="(weatherData[activeIndex]?.alertas?.length || 0) > 0">
+            <div *ngFor="let alerta of weatherData[activeIndex]?.alertas" class="alerta-card-item" [ngClass]="'tipo-' + alerta.tipo">
+              <div class="alerta-card-header">
+                <span class="alerta-emoji">{{ alerta.icono }}</span>
+                <div class="alerta-title-group">
+                  <span class="alerta-titulo">{{ alerta.titulo }}</span>
+                </div>
+                <span class="alerta-badge">{{ alerta.tipo | uppercase }}</span>
+              </div>
+              <p class="alerta-mensaje">{{ alerta.mensaje }}</p>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- <div class="alerts-popup-content">
           <div *ngIf="!weatherData[activeIndex]?.alertas || weatherData[activeIndex]?.alertas?.length === 0" class="no-alerts">
             <p>No hay alertas activas en este momento para {{ getDisplayLocation(weatherData[activeIndex]?.location || '') }}.</p>
           </div>
@@ -386,7 +399,7 @@
             </div>
             <p class="alerta-mensaje">{{ alerta.mensaje }}</p>
           </div>
-        </div>
+        </div> -->
 
       </div>
     </div>

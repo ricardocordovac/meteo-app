@@ -47,31 +47,6 @@ ion-content {
   }
 }
 
-// .hero-character-container {
-//   position: absolute;
-//   top: 42%;
-//   left: 50%;
-//   transform: translate(-50%, -50%);
-//   z-index: 10;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   width: 100%;
-//   pointer-events: none;
-
-//   .nubio-avatar {
-//     width: 220px;
-//     max-width: 55vw;
-//     height: auto;
-//     object-fit: contain;
-
-//     // Sombra proyectada exacta al contorno de la nube
-//     filter: drop-shadow(0px 15px 25px rgba(0, 0, 0, 0.45));
-
-//     // Animación de flotación orgánica
-//     animation: nubioFloating 4s ease-in-out infinite;
-//   }
-// }
 
 @keyframes nubioFloating {
   0% {
@@ -84,6 +59,8 @@ ion-content {
     transform: translateY(0px) rotate(0deg);
   }
 }
+
+
 
 .center_div-loader {
   display: flex;
@@ -530,166 +507,232 @@ ion-content {
   }
 }
 
-
 // ==========================================================================
-// 🚨 POPUP DE ALERTAS: ALINEADO ARRIBA, COMPACTO Y CON BOTÓN VISIBLE
+// POPUP DE ALERTAS (NUEVO DISEÑO COMPACTO)
 // ==========================================================================
 .alerts-overlay-popup {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100dvh;
+  top: 0; left: 0; width: 100vw; height: 100dvh;
   z-index: 1000;
-  background: rgba(12, 15, 23, 0.85);
-  backdrop-filter: blur(25px) saturate(150%);
-  -webkit-backdrop-filter: blur(25px) saturate(150%);
+  background: rgba(12, 15, 23, 0.9);
+  backdrop-filter: blur(20px);
   display: flex;
   justify-content: center;
-  align-items: flex-start; // 👈 Lo anclamos arriba del todo
-  padding: calc(env(safe-area-inset-top) + 20px) 16px 16px 16px;
-  box-sizing: border-box;
-  animation: fadeInPopup 0.2s ease-out forwards;
+  align-items: flex-start;
+  padding: 40px 16px;
+  animation: fadeInPopup 0.2s ease-out;
 
   .alerts-popup-container {
     width: 100%;
-    max-width: 410px;
-    height: 72vh; // Altura equilibrada para que no tape los tabs inferiores por completo
-    max-height: 560px;
-    background: rgba(18, 22, 33, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 22px;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7);
-    overflow: hidden;
+    max-width: 400px;
+    background: #121621;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    display: flex; flex-direction: column;
+    max-height: 80vh;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
 
     .alerts-popup-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 14px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      background: rgba(255, 255, 255, 0.04);
-      flex-shrink: 0;
-
-      .popup-title-group {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-
-        .popup-icon {
-          font-size: 0.9rem;
-        }
-
-        h3 {
-          color: #ffffff;
-          font-size: 0.88rem;
-          font-weight: 400; // 👈 Título mucho más delgado y fino
-          margin: 0;
-          letter-spacing: 0.4px;
-          white-space: nowrap;
-        }
-      }
-
-      .close-popup-btn {
-        --color: #ffffff;
-        margin: 0;
-        height: 28px;
-        width: 28px;
-        font-size: 1.1rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 50%;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 16px;
+      h3 { margin: 0; font-size: 1rem; color: #fff; }
+      .close-popup-btn-native {
+        background: rgba(255,255,255,0.1); border: none; color: #fff;
+        width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
       }
     }
 
-.alerts-popup-content {
-      padding: 12px 14px 120px 14px; // 👈 Añadimos más espacio abajo (40px) para que el último cuadro ruede con soltura
+    .alerts-popup-content {
+      padding: 0 16px 20px 16px;
       overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      flex-grow: 1;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
-
-      .no-alerts {
-        text-align: center;
-        color: rgba(255, 255, 255, 0.5);
-        margin-top: 30px;
-        font-size: 0.85rem;
-      }
+      gap: 12px; display: flex; flex-direction: column;
 
       .alerta-card-item {
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 14px;
-        padding: 10px 12px;
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px; padding: 12px;
+        border-left: 4px solid #fff;
 
-        &.tipo-peligro {
-          border-color: rgba(255, 59, 48, 0.6);
-          background: rgba(255, 59, 48, 0.06);
-        }
-
-        &.tipo-aviso {
-          border-color: rgba(255, 183, 3, 0.6);
-          background: rgba(255, 183, 3, 0.06);
-        }
-
-        &.tipo-hogar {
-          border-color: rgba(0, 240, 255, 0.6);
-          background: rgba(0, 240, 255, 0.06);
-        }
+        &.tipo-peligro { border-left-color: #ff3b30; }
+        &.tipo-aviso { border-left-color: #ffa500; }
+        &.tipo-hogar { border-left-color: #00f0ff; }
 
         .alerta-card-header {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-
-          .alerta-emoji {
-            font-size: 0.95rem;
-          }
-
-          .alerta-titulo {
-            color: #ffffff;
-            font-weight: 600;
-            font-size: 0.8rem;
-            flex-grow: 1;
-          }
-
-          .alerta-badge {
-            font-size: 0.48rem;
-            font-weight: 800;
-            padding: 2px 5px;
-            border-radius: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.8);
-          }
+          display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
+          .alerta-titulo { font-weight: 700; font-size: 0.9rem; color: #fff; flex: 1; }
+          .alerta-badge { font-size: 0.6rem; background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 4px; }
         }
-
-        .alerta-mensaje {
-          color: rgba(255, 255, 255, 0.75);
-          font-size: 0.75rem;
-          line-height: 1.35;
-          margin: 0;
-        }
+        .alerta-mensaje { font-size: 0.8rem; color: #ccc; margin: 0; line-height: 1.4; }
       }
     }
-
   }
 }
 
 @keyframes fadeInPopup {
-  from { opacity: 0; transform: translateY(-10px); }
+  from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+
+
+// ==========================================================================
+// 🚨 POPUP DE ALERTAS: ALINEADO ARRIBA, COMPACTO Y CON BOTÓN VISIBLE
+// ==========================================================================
+// .alerts-overlay-popup {
+//   position: fixed;
+//   top: 0;
+//   left: 0;
+//   width: 100vw;
+//   height: 100dvh;
+//   z-index: 1000;
+//   background: rgba(12, 15, 23, 0.85);
+//   backdrop-filter: blur(25px) saturate(150%);
+//   -webkit-backdrop-filter: blur(25px) saturate(150%);
+//   display: flex;
+//   justify-content: center;
+//   align-items: flex-start; // 👈 Lo anclamos arriba del todo
+//   padding: calc(env(safe-area-inset-top) + 20px) 16px 16px 16px;
+//   box-sizing: border-box;
+//   animation: fadeInPopup 0.2s ease-out forwards;
+
+//   .alerts-popup-container {
+//     width: 100%;
+//     max-width: 410px;
+//     height: 72vh; // Altura equilibrada para que no tape los tabs inferiores por completo
+//     max-height: 560px;
+//     background: rgba(18, 22, 33, 0.95);
+//     border: 1px solid rgba(255, 255, 255, 0.2);
+//     border-radius: 22px;
+//     display: flex;
+//     flex-direction: column;
+//     box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7);
+//     overflow: hidden;
+
+//     .alerts-popup-header {
+//       display: flex;
+//       justify-content: space-between;
+//       align-items: center;
+//       padding: 10px 14px;
+//       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+//       background: rgba(255, 255, 255, 0.04);
+//       flex-shrink: 0;
+
+//       .popup-title-group {
+//         display: flex;
+//         align-items: center;
+//         gap: 8px;
+
+//         .popup-icon {
+//           font-size: 0.9rem;
+//         }
+
+//         h3 {
+//           color: #ffffff;
+//           font-size: 0.88rem;
+//           font-weight: 400; // 👈 Título mucho más delgado y fino
+//           margin: 0;
+//           letter-spacing: 0.4px;
+//           white-space: nowrap;
+//         }
+//       }
+
+//       .close-popup-btn {
+//         --color: #ffffff;
+//         margin: 0;
+//         height: 28px;
+//         width: 28px;
+//         font-size: 1.1rem;
+//         display: flex;
+//         align-items: center;
+//         justify-content: center;
+//         background: rgba(255, 255, 255, 0.1);
+//         border-radius: 50%;
+//       }
+//     }
+
+// .alerts-popup-content {
+//       padding: 12px 14px 120px 14px; // 👈 Añadimos más espacio abajo (40px) para que el último cuadro ruede con soltura
+//       overflow-y: auto;
+//       -webkit-overflow-scrolling: touch;
+//       display: flex;
+//       flex-direction: column;
+//       gap: 10px;
+//       flex-grow: 1;
+//       scrollbar-width: thin;
+//       scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+
+//       .no-alerts {
+//         text-align: center;
+//         color: rgba(255, 255, 255, 0.5);
+//         margin-top: 30px;
+//         font-size: 0.85rem;
+//       }
+
+//       .alerta-card-item {
+//         background: rgba(255, 255, 255, 0.04);
+//         border: 1px solid rgba(255, 255, 255, 0.08);
+//         border-radius: 14px;
+//         padding: 10px 12px;
+//         display: flex;
+//         flex-direction: column;
+//         gap: 5px;
+
+//         &.tipo-peligro {
+//           border-color: rgba(255, 59, 48, 0.6);
+//           background: rgba(255, 59, 48, 0.06);
+//         }
+
+//         &.tipo-aviso {
+//           border-color: rgba(255, 183, 3, 0.6);
+//           background: rgba(255, 183, 3, 0.06);
+//         }
+
+//         &.tipo-hogar {
+//           border-color: rgba(0, 240, 255, 0.6);
+//           background: rgba(0, 240, 255, 0.06);
+//         }
+
+//         .alerta-card-header {
+//           display: flex;
+//           align-items: center;
+//           gap: 6px;
+
+//           .alerta-emoji {
+//             font-size: 0.95rem;
+//           }
+
+//           .alerta-titulo {
+//             color: #ffffff;
+//             font-weight: 600;
+//             font-size: 0.8rem;
+//             flex-grow: 1;
+//           }
+
+//           .alerta-badge {
+//             font-size: 0.48rem;
+//             font-weight: 800;
+//             padding: 2px 5px;
+//             border-radius: 6px;
+//             background: rgba(255, 255, 255, 0.1);
+//             color: rgba(255, 255, 255, 0.8);
+//           }
+//         }
+
+//         .alerta-mensaje {
+//           color: rgba(255, 255, 255, 0.75);
+//           font-size: 0.75rem;
+//           line-height: 1.35;
+//           margin: 0;
+//         }
+//       }
+//     }
+
+//   }
+// }
+
+// @keyframes fadeInPopup {
+//   from { opacity: 0; transform: translateY(-10px); }
+//   to { opacity: 1; transform: translateY(0); }
+// }
 
 
 .close-popup-btn-native {

@@ -37,9 +37,9 @@
               </div>
             </div>
 
-              <div class="massive-temp-center">
-                {{ ((selectedHour ? selectedHour.apparent_temperature : weatherData[activeIndex]?.apparentTemp) ?? 0) | number:'1.0-0' }}<span class="degree">°C</span>
-              </div>
+            <div class="massive-temp-center">
+              {{ ((selectedHour ? selectedHour.temperature_2m : weatherData[activeIndex]?.temp) ?? 0) | number:'1.0-0' }}<span class="degree">°C</span>
+            </div>
 
               <!-- <div class="massive-temp-center">
                 {{ ((selectedHour ? selectedHour.temperature_2m : weatherData[activeIndex]?.temp) ?? 0) | number:'1.0-0' }}<span class="degree">°C</span>
@@ -132,7 +132,7 @@
 
                 <!-- Temperatura -->
                  <!-- Cambiado a apparent_temperature para que muestre el calor real de la calle -->
-                  <span class="hour-temp">{{ hour.apparent_temperature | number:'1.0-0' }}°</span>
+                 <span class="hour-temp">{{ hour.temperature_2m | number:'1.0-0' }}°</span>
                 <!-- <span class="hour-temp">{{ hour.temperature_2m | number:'1.0-0' }}°</span> -->
 
               </div>
@@ -140,14 +140,14 @@
 
             <div class="chips-grid">
 
-              <div class="weather-info-card active-cyan-card">
-                <div class="tech-corner top-left"></div>
-                <ng-lottie [options]="tempIndicator" class="card-lottie"></ng-lottie>
-                <div class="card-data">
-                  <span class="label">TEMP. AIRE</span>
-                  <span class="value">{{ (selectedHour ? selectedHour.temperature_2m : weatherData[activeIndex]?.temp) | number:'1.0-0' }}°C</span>
-                </div>
+            <div class="weather-info-card active-cyan-card">
+              <div class="tech-corner top-left"></div>
+              <ng-lottie [options]="tempIndicator" class="card-lottie"></ng-lottie>
+              <div class="card-data">
+                <span class="label">SENSACIÓN</span>
+                <span class="value">{{ (selectedHour ? selectedHour.apparent_temperature : weatherData[activeIndex]?.apparentTemp) | number:'1.0-0' }}°C</span>
               </div>
+            </div>
 
               <div class="weather-info-card">
                 <div class="tech-corner top-left"></div>

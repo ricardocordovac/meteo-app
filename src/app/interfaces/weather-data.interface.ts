@@ -94,6 +94,7 @@ export interface WeatherLocationData {
   accessories: string[];
   primaryLottieOptions: AnimationOptions;
   pronostico_meteo: HourlyForecast[];
+  pronostico_24h: HourlyForecast[];
   pronostico_hitos: HourlyForecast[];
   alertas: AlertaCualitativa[];    // 🚨 Array tipado consumido por el HTML
   precip_rate?: number;

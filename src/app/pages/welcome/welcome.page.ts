@@ -143,11 +143,68 @@ export class WelcomePage implements OnInit, AfterViewInit {
   /**
    * Resuelve dinámicamente si debe mostrar el fondo del hito seleccionado o el general del municipio
    */
+  // getCurrentBackground(data: WeatherLocationData, index: number): string {
+  //   if (index === this.activeIndex && this.selectedHour && this.selectedHour.background_image_url) {
+  //     return `url(${this.selectedHour.background_image_url})`;
+  //   }
+  //   return `url(${data.background_image_url})`;
+  // }
+
+    /**
+   * Resuelve dinámicamente el outfit de Nubio según la hora seleccionada o el tiempo real
+   */
+  // getCurrentOutfit(data: WeatherLocationData, index: number): string {
+  //   if (index === this.activeIndex && this.selectedHour) {
+  //     if (this.selectedHour.outfit_image_url) {
+  //       return this.selectedHour.outfit_image_url;
+  //     }
+  //     // Fallback inteligente basado en la temperatura y ciclo solar del hito seleccionado
+  //     const isDay = this.selectedHour.is_day ?? 1;
+  //     const temp = this.selectedHour.apparent_temperature ?? this.selectedHour.temperature_2m ?? 20;
+
+  //     if (isDay === 0) {
+  //       return 'assets/characters/nubio_default.webp';
+  //     }
+  //     return temp > 25 ? 'assets/characters/nubio_hot.webp' : 'assets/characters/nubio_default.webp';
+  //   }
+  //   return data.outfit_image_url;
+  // }
+
   getCurrentBackground(data: WeatherLocationData, index: number): string {
-    if (index === this.activeIndex && this.selectedHour && this.selectedHour.background_image_url) {
-      return `url(${this.selectedHour.background_image_url})`;
+      if (index === this.activeIndex && this.selectedHour) {
+        if (this.selectedHour.background_image_url) {
+          return `url(${this.selectedHour.background_image_url})`;
+        }
+        // 🧠 DEDUCCIÓN DE FONDO PARA HORAS FUTURAS
+        const isDay = this.selectedHour.is_day ?? 1;
+        const code = this.selectedHour.weathercode ?? 0;
+        let bgName = isDay === 1 ? 'soleado.jpg' : 'despejado_noche.jpg'; // Por defecto
+
+        if ([1, 2, 3, 45, 48].includes(code)) bgName = isDay === 1 ? 'nublado.jpg' : 'nublado_noche.jpg';
+        if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) bgName = 'lluvia.jpg';
+        if ([95, 96, 99].includes(code)) bgName = 'tormenta.jpg';
+        if ([71, 73, 75, 77, 85, 86].includes(code)) bgName = 'nieve.jpg';
+
+        return `url(assets/backgrounds/${bgName})`;
+      }
+      return `url(${data.background_image_url})`;
+  }
+
+  getCurrentOutfit(data: WeatherLocationData, index: number): string {
+    if (index === this.activeIndex && this.selectedHour) {
+      if (this.selectedHour.outfit_image_url && this.selectedHour.outfit_image_url.trim() !== '') {
+        return this.selectedHour.outfit_image_url;
+      }
+      // 🧠 DEDUCCIÓN DE ROPA PARA HORAS FUTURAS
+      const isDay = this.selectedHour.is_day ?? 1;
+      const temp = this.selectedHour.apparent_temperature ?? this.selectedHour.temperature_2m ?? 20;
+
+      if (isDay === 0) return 'assets/characters/nubio_default.webp'; // Noche fresca
+      if (temp >= 28) return 'assets/characters/nubio_hot.webp';
+      if (temp <= 14) return 'assets/characters/nubio_cold.webp';
+      return 'assets/characters/nubio_default.webp';
     }
-    return `url(${data.background_image_url})`;
+    return data.outfit_image_url;
   }
 
     async loadWeatherData() {
@@ -172,7 +229,7 @@ export class WelcomePage implements OnInit, AfterViewInit {
         const row: WeatherData = res[0];
 
         // 1. Deserialización optimizada de los 6 Hitos de Oro (lee 'pronostico_hitos' con respaldo en 'pronostico_meteo')
-  // 1. Deserialización de los 6 Hitos de Oro (EXTRACCIÓN A PRUEBA DE BALAS)
+        // 1. Deserialización de los 6 Hitos de Oro (EXTRACCIÓN A PRUEBA DE BALAS)
         let hitosArray: HourlyForecast[] = [];
         let fuenteHitos = (row as any).pronostico_hitos;
 
@@ -219,20 +276,20 @@ export class WelcomePage implements OnInit, AfterViewInit {
           }
         }
 
-        // ====================================================================
-        // 🌟 EXTRACCIÓN DINÁMICA DE MÁXIMAS Y MÍNIMAS (24H)
+       // ====================================================================
+        // 🌟 EXTRACCIÓN DINÁMICA DE MÁXIMAS, MÍNIMAS Y ARRAY 24H (DCA)
         // ====================================================================
         let maxTemp = row.temperature_2m ?? 0;
         let minTemp = row.temperature_2m ?? 0;
         let horaMax = "N/A";
         let horaMin = "N/A";
+        let array24hFormatted: HourlyForecast[] = []; // El motor de la Máquina del Tiempo
 
         let fuenteMeteo = (row as any).pronostico_meteo;
         if (fuenteMeteo) {
           try {
             let parsedMeteo = fuenteMeteo;
             let ciclos = 0;
-            // Desempaquetador Matrioska (igual que en los hitos)
             while (typeof parsedMeteo === 'string' && ciclos < 3) {
               try { parsedMeteo = JSON.parse(parsedMeteo); }
               catch (err) { parsedMeteo = parsedMeteo.replace(/^"|"$/g, '').replace(/\\"/g, '"'); }
@@ -240,35 +297,78 @@ export class WelcomePage implements OnInit, AfterViewInit {
             }
 
             if (Array.isArray(parsedMeteo) && parsedMeteo.length > 0) {
-              // Escaneamos las primeras 24 horas del array
               const radar24h = parsedMeteo.slice(0, 24);
+              maxTemp = -999; minTemp = 999;
 
-              // Reseteamos a valores extremos para comparar
-              maxTemp = -999;
-              minTemp = 999;
-
-              radar24h.forEach((item: any) => {
+              array24hFormatted = radar24h.map((item: any) => {
                 const t = item.temperature_2m ?? 0;
-                // Formateamos la hora si existe, ej: "2026-08-15T17:00" -> "17:00"
-                let horaItem = "00:00";
-                if (item.time && item.time.includes('T')) {
-                  horaItem = item.time.split('T')[1].substring(0, 5);
-                }
+                let horaItem = item.hora ? item.hora : (item.time && item.time.includes('T') ? item.time.split('T')[1].substring(0, 5) : '00:00');
 
-                if (t > maxTemp) {
-                  maxTemp = t;
-                  horaMax = horaItem;
-                }
-                if (t < minTemp) {
-                  minTemp = t;
-                  horaMin = horaItem;
-                }
+                if (t > maxTemp) { maxTemp = t; horaMax = horaItem; }
+                if (t < minTemp) { minTemp = t; horaMin = horaItem; }
+
+                return {
+                  ...item,
+                  hora: horaItem,
+                  horaFormatted: horaItem,
+                  lottieOptions: this.getLottiePropByCode(item.weathercode ?? 0, item.is_day ?? 1)
+                };
               });
             }
           } catch(e) {
-            console.error(`❌ Error calculando max/min para ${town}:`, e);
+            console.error(`❌ Error calculando array 24h para ${town}:`, e);
           }
         }
+
+
+
+        // let maxTemp = row.temperature_2m ?? 0;
+        // let minTemp = row.temperature_2m ?? 0;
+        // let horaMax = "N/A";
+        // let horaMin = "N/A";
+
+        // let fuenteMeteo = (row as any).pronostico_meteo;
+        // if (fuenteMeteo) {
+        //   try {
+        //     let parsedMeteo = fuenteMeteo;
+        //     let ciclos = 0;
+        //     // Desempaquetador Matrioska (igual que en los hitos)
+        //     while (typeof parsedMeteo === 'string' && ciclos < 3) {
+        //       try { parsedMeteo = JSON.parse(parsedMeteo); }
+        //       catch (err) { parsedMeteo = parsedMeteo.replace(/^"|"$/g, '').replace(/\\"/g, '"'); }
+        //       ciclos++;
+        //     }
+
+        //     if (Array.isArray(parsedMeteo) && parsedMeteo.length > 0) {
+        //       // Escaneamos las primeras 24 horas del array
+        //       const radar24h = parsedMeteo.slice(0, 24);
+
+        //       // Reseteamos a valores extremos para comparar
+        //       maxTemp = -999;
+        //       minTemp = 999;
+
+        //       radar24h.forEach((item: any) => {
+        //         const t = item.temperature_2m ?? 0;
+        //         // Formateamos la hora si existe, ej: "2026-08-15T17:00" -> "17:00"
+        //         let horaItem = "00:00";
+        //         if (item.time && item.time.includes('T')) {
+        //           horaItem = item.time.split('T')[1].substring(0, 5);
+        //         }
+
+        //         if (t > maxTemp) {
+        //           maxTemp = t;
+        //           horaMax = horaItem;
+        //         }
+        //         if (t < minTemp) {
+        //           minTemp = t;
+        //           horaMin = horaItem;
+        //         }
+        //       });
+        //     }
+        //   } catch(e) {
+        //     console.error(`❌ Error calculando max/min para ${town}:`, e);
+        //   }
+        // }
         // ====================================================================
 
         // 2. RESOLUCIÓN DE FONDOS
@@ -330,7 +430,8 @@ export class WelcomePage implements OnInit, AfterViewInit {
             text_clothing: row.text_clothing || 'Ropa recomendada',
             accessories: [],
             primaryLottieOptions: this.getLottiePropByCode(row.weathercode ?? 0, row.is_day ?? 1),
-            pronostico_meteo: [],
+            pronostico_meteo: array24hFormatted, // Conservamos el crudo si hace falta
+            pronostico_24h: array24hFormatted,   // 👈 Inyectamos la Tira de 24 horas
             pronostico_hitos: hitosArray,
             alertas: alertasArray,  // 👈 Inyección tipada directa
 
@@ -508,6 +609,7 @@ export class WelcomePage implements OnInit, AfterViewInit {
       accessories: [],
       primaryLottieOptions: this.sunnyLottie, // Actualizado para usar la variable segura
       pronostico_meteo: [],
+      pronostico_24h: [], // 🎯 AQUÍ ESTÁ LA CORRECCIÓN AL ERROR TS2322
       pronostico_hitos: [], // 🎯 Añadido
       alertas: []
     }));
@@ -547,25 +649,7 @@ export class WelcomePage implements OnInit, AfterViewInit {
     this.cdr.detectChanges();
   }
 
-  /**
-   * Resuelve dinámicamente el outfit de Nubio según la hora seleccionada o el tiempo real
-   */
-  getCurrentOutfit(data: WeatherLocationData, index: number): string {
-    if (index === this.activeIndex && this.selectedHour) {
-      if (this.selectedHour.outfit_image_url) {
-        return this.selectedHour.outfit_image_url;
-      }
-      // Fallback inteligente basado en la temperatura y ciclo solar del hito seleccionado
-      const isDay = this.selectedHour.is_day ?? 1;
-      const temp = this.selectedHour.apparent_temperature ?? this.selectedHour.temperature_2m ?? 20;
 
-      if (isDay === 0) {
-        return 'assets/characters/nubio_default.webp';
-      }
-      return temp > 25 ? 'assets/characters/nubio_hot.webp' : 'assets/characters/nubio_default.webp';
-    }
-    return data.outfit_image_url;
-  }
 
 /**
    * Resuelve dinámicamente la fecha del encabezado según el hito seleccionado o el tiempo real

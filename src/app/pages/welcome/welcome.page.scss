@@ -272,51 +272,129 @@ ion-content {
     gap: 12px; height: auto; box-sizing: border-box;
   }
 
-  // PESTAÑAS DE MODOS
+  // 1. PESTAÑA USER UNIFICADA CENTRADA
   .mode-tabs-container { width: 100%; display: flex; justify-content: center; margin-top: 2px; }
-
   .mode-tabs {
     display: flex; background: rgba(0, 0, 0, 0.4); padding: 3px;
-    border-radius: 24px; width: 100%; max-width: 285px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-
+    border-radius: 24px; min-width: 130px; border: 1px solid rgba(255, 255, 255, 0.08);
+    &.single-mode { justify-content: center; }
     .tab-item {
-      flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px;
-      padding: 7px 0; color: rgba(255, 255, 255, 0.4); font-size: 0.72rem;
-      font-weight: 700; border-radius: 20px; border: 1px solid transparent;
-      transition: all 0.2s ease;
-
+      flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 6px 20px; color: rgba(255, 255, 255, 0.5); font-size: 0.72rem;
+      font-weight: 700; border-radius: 20px; transition: all 0.2s ease;
       &.active {
-        background: rgba(0, 240, 255, 0.04);
-        color: #ffffff;
-        border: 1px solid $cyan-neon;
-        box-shadow: 0 0 10px rgba(0, 240, 255, 0.35);
+        background: rgba(0, 240, 255, 0.05); color: #ffffff;
+        border: 1px solid $cyan-neon; box-shadow: 0 0 10px rgba(0, 240, 255, 0.35);
       }
     }
   }
 
-  // TIRA PRONÓSTICO HORARIO
-  .hourly-forecast-strip {
-    display: flex; width: 100%; overflow-x: auto; padding: 4px 0; scrollbar-width: none;
-    &::-webkit-scrollbar { display: none; }
+  // 2. BOTÓN FLOTANTE (MÁQUINA DEL TIEMPO)
+  .reset-live-container {
+    display: flex; justify-content: center; align-items: center;
+    margin: 4px 0 8px 0; z-index: 15;
+    animation: popInReset 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 
-    .hourly-column {
-      flex: 1 0 16.66%; display: flex; flex-direction: column; align-items: center; padding: 4px 0;
-      border-right: 1px solid rgba(255, 255, 255, 0.15);
+    .reset-live-pill {
+      background: rgba(0, 240, 255, 0.15);
+      border: 1px solid rgba(0, 240, 255, 0.6);
+      color: #ffffff; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.3px;
+      padding: 6px 18px; border-radius: 20px;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.3), 0 4px 10px rgba(0, 0, 0, 0.4);
+      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+      transition: all 0.2s ease;
 
-      &:last-child { border-right: none; }
-
-      .hour-label { font-size: 0.65rem; color: rgba(255, 255, 255, 0.45); font-weight: 600; }
-      .hour-lottie-container { width: 22px; height: 22px; margin: 2px 0; }
-      .hour-temp { font-size: 0.82rem; font-weight: 700; color: #ffffff; }
+      ion-icon { font-size: 1.1rem; }
+      &:active { transform: scale(0.94); background: rgba(0, 240, 255, 0.3); }
     }
   }
 
-  // GRIDS ANALÍTICAS ULTRA-COMPACTAS
-  .chips-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; width: 100%;
-    padding-bottom: 4px;
+  @keyframes popInReset {
+    from { opacity: 0; transform: translateY(-10px) scale(0.9); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
   }
+
+  // PESTAÑAS DE MODOS
+  // .mode-tabs-container { width: 100%; display: flex; justify-content: center; margin-top: 2px; }
+
+  // .mode-tabs {
+  //   display: flex; background: rgba(0, 0, 0, 0.4); padding: 3px;
+  //   border-radius: 24px; width: 100%; max-width: 285px;
+  //   border: 1px solid rgba(255, 255, 255, 0.05);
+
+  //   .tab-item {
+  //     flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px;
+  //     padding: 7px 0; color: rgba(255, 255, 255, 0.4); font-size: 0.72rem;
+  //     font-weight: 700; border-radius: 20px; border: 1px solid transparent;
+  //     transition: all 0.2s ease;
+
+  //     &.active {
+  //       background: rgba(0, 240, 255, 0.04);
+  //       color: #ffffff;
+  //       border: 1px solid $cyan-neon;
+  //       box-shadow: 0 0 10px rgba(0, 240, 255, 0.35);
+  //     }
+  //   }
+  // }
+
+
+  // 3. TIRA DE 24 HORAS CONTINUA (Fija ancho de columna)
+  .hourly-forecast-strip {
+    display: flex; width: 100%; overflow-x: auto; padding: 8px 2px;
+    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    &::-webkit-scrollbar { display: none; }
+
+    .hourly-column {
+      position: relative; // Para los puntos heatmap
+      flex: 0 0 60px;     // 👈 ANCHO FIJO: Entran 24 horas haciendo scroll suave
+      display: flex; flex-direction: column; align-items: center; padding: 6px 0;
+      border-right: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.2s ease;
+      &:last-child { border-right: none; }
+
+      // 4. PUNTOS MINI HEATMAP 💧🔥
+      .mini-alert-dot {
+        position: absolute; top: -6px; font-size: 0.65rem; line-height: 1;
+        &.rain { color: #00f0ff; filter: drop-shadow(0 0 4px #00f0ff); }
+        &.heat { color: #ff3b30; filter: drop-shadow(0 0 4px #ff3b30); }
+      }
+
+      .hour-label { font-size: 0.65rem; color: rgba(255, 255, 255, 0.5); font-weight: 600; }
+      .hour-lottie-container { width: 24px; height: 24px; margin: 3px 0; }
+      .hour-temp { font-size: 0.85rem; font-weight: 700; color: #ffffff; }
+    }
+  }
+
+  // TIRA PRONÓSTICO HORARIO
+  // .hourly-forecast-strip {
+  //   display: flex; width: 100%; overflow-x: auto; padding: 4px 0; scrollbar-width: none;
+  //   &::-webkit-scrollbar { display: none; }
+
+  //   .hourly-column {
+  //     flex: 1 0 16.66%; display: flex; flex-direction: column; align-items: center; padding: 4px 0;
+  //     border-right: 1px solid rgba(255, 255, 255, 0.15);
+
+  //     &:last-child { border-right: none; }
+
+  //     .hour-label { font-size: 0.65rem; color: rgba(255, 255, 255, 0.45); font-weight: 600; }
+  //     .hour-lottie-container { width: 22px; height: 22px; margin: 2px 0; }
+  //     .hour-temp { font-size: 0.82rem; font-weight: 700; color: #ffffff; }
+  //   }
+  // }
+
+
+ // 5. GRID DE 3 PÍLDORAS
+  .chips-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); // Mantenemos 3 columnas uniformes
+    gap: 8px; width: 100%; padding-bottom: 4px;
+  }
+
+  // GRIDS ANALÍTICAS ULTRA-COMPACTAS
+  // .chips-grid {
+  //   display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; width: 100%;
+  //   padding-bottom: 4px;
+  // }
 
   .weather-info-card {
     position: relative; background: rgba(255, 255, 255, 0.03);

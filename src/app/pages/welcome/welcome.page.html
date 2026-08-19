@@ -102,35 +102,25 @@
       handle="true"
       class="glass-modal">
 
-      <ng-template>
+   <ng-template>
         <ion-content class="glass-content" [forceOverscroll]="false">
           <div class="glass-wrapper">
 
-            <!-- MODO UNIFICADO USER (Limpio y centrado) -->
-            <div class="mode-tabs-container">
-              <div class="mode-tabs single-mode">
-                <div class="tab-item active">
-                  <ion-icon name="person-outline" class="tab-icon"></ion-icon> USER
-                </div>
-              </div>
-            </div>
-
-            <!-- 🌟 BOTÓN FLOTANTE: "MÁQUINA DEL TIEMPO" -->
+            <!-- 🔄 BOTÓN FLOTANTE: "MÁQUINA DEL TIEMPO" (Aparece al explorar futuro) -->
             <div class="reset-live-container" *ngIf="selectedHour" (click)="resetToLiveWeather()">
               <div class="reset-live-pill">
                 <ion-icon name="time-outline"></ion-icon> Volver al Presente
               </div>
             </div>
 
-            <!-- 🕒 TIRA HORARIA CONTINUA (24 HORAS DCA) -->
+            <!-- 🕒 TIRA HORARIA CONTINUA (24 HORAS DCA) - Shiftea arriba al quitar USER tab -->
             <div class="hourly-forecast-strip">
-              <!-- Cambiado a pronostico_24h -->
               <div class="hourly-column"
                   *ngFor="let hour of (weatherData[activeIndex]?.pronostico_24h || weatherData[activeIndex]?.pronostico_hitos)"
                   [ngClass]="{'selected-hour': selectedHour === hour}"
                   (click)="previewHour(hour)">
 
-                <!-- 🔥/💧 HEATMAP PUNTOS DE ALERTA -->
+                <!-- 🔥/💧 mini indicadores heatmap horarias -->
                 <span *ngIf="(hour.precipitation_probability ?? 0) >= 50" class="mini-alert-dot rain">💧</span>
                 <span *ngIf="(hour.temperature_2m ?? 0) >= 35" class="mini-alert-dot heat">🔥</span>
 
@@ -144,24 +134,25 @@
               </div>
             </div>
 
-            <!-- 📊 GRID DE 3 PÍLDORAS ELEGANTES (SENSACIÓN, LLUVIA, VIENTO) -->
-            <div class="chips-grid">
+            <!-- 📊 TIRA HORIZONTAL COMPACTA DE DETALLES (SENSACIÓN, LLUVIA, VIENTO) -->
+            <!-- 🎯 Reemplaza .chips-grid grande por .compact-details-strip proporcionada -->
+            <div class="compact-details-strip">
 
-              <!-- Sensación -->
-              <div class="weather-info-card active-cyan-card">
-                <div class="tech-corner top-left"></div>
-                <ng-lottie [options]="tempIndicator" class="card-lottie"></ng-lottie>
-                <div class="card-data">
+              <!-- Sensación (Compacto) - Se mantiene el borde cian/azul dinámico -->
+              <div class="compact-info-item active-cyan-item">
+                <ng-lottie [options]="tempIndicator" class="item-lottie"></ng-lottie>
+                <div class="item-data">
                   <span class="label">SENSACIÓN</span>
                   <span class="value">{{ (selectedHour ? selectedHour.apparent_temperature : weatherData[activeIndex]?.apparentTemp) | number:'1.0-0' }}°</span>
                 </div>
               </div>
 
-              <!-- Lluvia / Precipitación -->
-              <div class="weather-info-card">
-                <div class="tech-corner top-left"></div>
-                <ng-lottie [options]="rainChanceIndicator" class="card-lottie"></ng-lottie>
-                <div class="card-data">
+              <div class="extreme-divider"></div>
+
+              <!-- Lluvia / Precipitación (Compacto) -->
+              <div class="compact-info-item">
+                <ng-lottie [options]="rainChanceIndicator" class="item-lottie"></ng-lottie>
+                <div class="item-data">
                   <span class="label">LLUVIA</span>
                   <span class="value">
                     {{ selectedHour ? (selectedHour.precipitation_probability + '%') : ((weatherData[activeIndex]?.precipitation || 0) + ' mm') }}
@@ -169,11 +160,12 @@
                 </div>
               </div>
 
-              <!-- Viento -->
-              <div class="weather-info-card">
-                <div class="tech-corner top-left"></div>
-                <ng-lottie [options]="windIndicator" class="card-lottie"></ng-lottie>
-                <div class="card-data">
+              <div class="extreme-divider"></div>
+
+              <!-- Viento (Compacto) -->
+              <div class="compact-info-item">
+                <ng-lottie [options]="windIndicator" class="item-lottie"></ng-lottie>
+                <div class="item-data">
                   <span class="label">VIENTO</span>
                   <span class="value">{{ (selectedHour ? selectedHour.wind_gusts_10m : weatherData[activeIndex]?.windSpeed) | number:'1.0-1' }} km/h</span>
                 </div>

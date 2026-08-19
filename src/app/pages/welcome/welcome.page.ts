@@ -140,66 +140,45 @@ export class WelcomePage implements OnInit, AfterViewInit {
     }
   }
 
-  /**
+
+/**
    * Resuelve dinámicamente si debe mostrar el fondo del hito seleccionado o el general del municipio
+   * 🧠 DEDUCCIÓN DE FONDO PARA HORAS FUTURAS EN MÁQUINA DEL TIEMPO
    */
-  // getCurrentBackground(data: WeatherLocationData, index: number): string {
-  //   if (index === this.activeIndex && this.selectedHour && this.selectedHour.background_image_url) {
-  //     return `url(${this.selectedHour.background_image_url})`;
-  //   }
-  //   return `url(${data.background_image_url})`;
-  // }
-
-    /**
-   * Resuelve dinámicamente el outfit de Nubio según la hora seleccionada o el tiempo real
-   */
-  // getCurrentOutfit(data: WeatherLocationData, index: number): string {
-  //   if (index === this.activeIndex && this.selectedHour) {
-  //     if (this.selectedHour.outfit_image_url) {
-  //       return this.selectedHour.outfit_image_url;
-  //     }
-  //     // Fallback inteligente basado en la temperatura y ciclo solar del hito seleccionado
-  //     const isDay = this.selectedHour.is_day ?? 1;
-  //     const temp = this.selectedHour.apparent_temperature ?? this.selectedHour.temperature_2m ?? 20;
-
-  //     if (isDay === 0) {
-  //       return 'assets/characters/nubio_default.webp';
-  //     }
-  //     return temp > 25 ? 'assets/characters/nubio_hot.webp' : 'assets/characters/nubio_default.webp';
-  //   }
-  //   return data.outfit_image_url;
-  // }
-
   getCurrentBackground(data: WeatherLocationData, index: number): string {
-      if (index === this.activeIndex && this.selectedHour) {
-        if (this.selectedHour.background_image_url) {
-          return `url(${this.selectedHour.background_image_url})`;
-        }
-        // 🧠 DEDUCCIÓN DE FONDO PARA HORAS FUTURAS
-        const isDay = this.selectedHour.is_day ?? 1;
-        const code = this.selectedHour.weathercode ?? 0;
-        let bgName = isDay === 1 ? 'soleado.jpg' : 'despejado_noche.jpg'; // Por defecto
-
-        if ([1, 2, 3, 45, 48].includes(code)) bgName = isDay === 1 ? 'nublado.jpg' : 'nublado_noche.jpg';
-        if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) bgName = 'lluvia.jpg';
-        if ([95, 96, 99].includes(code)) bgName = 'tormenta.jpg';
-        if ([71, 73, 75, 77, 85, 86].includes(code)) bgName = 'nieve.jpg';
-
-        return `url(assets/backgrounds/${bgName})`;
+    if (index === this.activeIndex && this.selectedHour) {
+      if (this.selectedHour.background_image_url) {
+        return `url(${this.selectedHour.background_image_url})`;
       }
-      return `url(${data.background_image_url})`;
+
+      const isDay = this.selectedHour.is_day ?? 1;
+      const code = this.selectedHour.weathercode ?? 0;
+      let bgName = isDay === 1 ? 'soleado.jpg' : 'despejado_noche.jpg'; // Fallback por defecto
+
+      if ([1, 2, 3, 45, 48].includes(code)) bgName = isDay === 1 ? 'nublado.jpg' : 'nublado_noche.jpg';
+      if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) bgName = 'lluvia.jpg';
+      if ([95, 96, 99].includes(code)) bgName = 'tormenta.jpg';
+      if ([71, 73, 75, 77, 85, 86].includes(code)) bgName = 'nieve.jpg';
+
+      return `url(assets/backgrounds/${bgName})`;
+    }
+    return `url(${data.background_image_url})`;
   }
 
+  /**
+   * Resuelve dinámicamente el outfit de Nubio según la hora seleccionada o el tiempo real
+   * 🧠 DEDUCCIÓN DE ROPA PARA HORAS FUTURAS EN MÁQUINA DEL TIEMPO
+   */
   getCurrentOutfit(data: WeatherLocationData, index: number): string {
     if (index === this.activeIndex && this.selectedHour) {
       if (this.selectedHour.outfit_image_url && this.selectedHour.outfit_image_url.trim() !== '') {
         return this.selectedHour.outfit_image_url;
       }
-      // 🧠 DEDUCCIÓN DE ROPA PARA HORAS FUTURAS
+
       const isDay = this.selectedHour.is_day ?? 1;
       const temp = this.selectedHour.apparent_temperature ?? this.selectedHour.temperature_2m ?? 20;
 
-      if (isDay === 0) return 'assets/characters/nubio_default.webp'; // Noche fresca
+      if (isDay === 0) return 'assets/characters/nubio_default.webp'; // Fresco nocturno
       if (temp >= 28) return 'assets/characters/nubio_hot.webp';
       if (temp <= 14) return 'assets/characters/nubio_cold.webp';
       return 'assets/characters/nubio_default.webp';

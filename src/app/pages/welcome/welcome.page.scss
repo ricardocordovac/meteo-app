@@ -246,7 +246,7 @@ ion-content {
 }
 
 // ==========================================================================
-// [CAPA 3] REDISEÑO OPTIMIZADO (MAQUINA DEL TIEMPO + COMPACT DETAILS)
+// [CAPA 3] REDISEÑO OPTIMIZADO (MÁQUINA DEL TIEMPO + COMPACT DETAILS)
 // ==========================================================================
 .glass-modal {
   --background: transparent;
@@ -270,30 +270,13 @@ ion-content {
     // Shiftea arriba el contenido al quitar tabs
     padding: 10px 14px calc(env(safe-area-inset-bottom) + 12px) 14px;
     display: flex; flex-direction: column; justify-content: flex-start;
-    gap: 8px; height: auto; box-sizing: border-box;
+    gap: 12px; height: auto; box-sizing: border-box;
   }
 
-  // 1. PESTAÑA USER UNIFICADA CENTRADA
-  .mode-tabs-container { width: 100%; display: flex; justify-content: center; margin-top: 2px; }
-  .mode-tabs {
-    display: flex; background: rgba(0, 0, 0, 0.4); padding: 3px;
-    border-radius: 24px; min-width: 130px; border: 1px solid rgba(255, 255, 255, 0.08);
-    &.single-mode { justify-content: center; }
-    .tab-item {
-      flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
-      padding: 6px 20px; color: rgba(255, 255, 255, 0.5); font-size: 0.72rem;
-      font-weight: 700; border-radius: 20px; transition: all 0.2s ease;
-      &.active {
-        background: rgba(0, 240, 255, 0.05); color: #ffffff;
-        border: 1px solid $cyan-neon; box-shadow: 0 0 10px rgba(0, 240, 255, 0.35);
-      }
-    }
-  }
-
-  // 2. BOTÓN FLOTANTE (MÁQUINA DEL TIEMPO)
-.reset-live-container {
+  // 1. 🔄 BOTÓN FLOTANTE (MÁQUINA DEL TIEMPO)
+  .reset-live-container {
     display: flex; justify-content: center; align-items: center;
-    margin: 4px 0 6px 0; z-index: 15;
+    margin: 0; z-index: 15;
     animation: popInReset 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 
     .reset-live-pill {
@@ -316,43 +299,18 @@ ion-content {
     to { opacity: 1; transform: translateY(0) scale(1); }
   }
 
-  // PESTAÑAS DE MODOS
-  // .mode-tabs-container { width: 100%; display: flex; justify-content: center; margin-top: 2px; }
-
-  // .mode-tabs {
-  //   display: flex; background: rgba(0, 0, 0, 0.4); padding: 3px;
-  //   border-radius: 24px; width: 100%; max-width: 285px;
-  //   border: 1px solid rgba(255, 255, 255, 0.05);
-
-  //   .tab-item {
-  //     flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px;
-  //     padding: 7px 0; color: rgba(255, 255, 255, 0.4); font-size: 0.72rem;
-  //     font-weight: 700; border-radius: 20px; border: 1px solid transparent;
-  //     transition: all 0.2s ease;
-
-  //     &.active {
-  //       background: rgba(0, 240, 255, 0.04);
-  //       color: #ffffff;
-  //       border: 1px solid $cyan-neon;
-  //       box-shadow: 0 0 10px rgba(0, 240, 255, 0.35);
-  //     }
-  //   }
-  // }
-
-
- // 2. 🕒 TIRA DE 24 HORAS CONTINUA (DCA) - Mantenemos proporciones
+  // 2. 🕒 TIRA DE 24 HORAS CONTINUA (DCA)
   .hourly-forecast-strip {
     display: flex; width: 100%; overflow-x: auto; padding: 6px 2px;
     scrollbar-width: none; -webkit-overflow-scrolling: touch;
     &::-webkit-scrollbar { display: none; }
 
     .hourly-column {
-      position: relative; flex: 0 0 60px;     // ANCHO FIJO: scroll suave
+      position: relative; flex: 0 0 60px;
       display: flex; flex-direction: column; align-items: center; padding: 6px 0;
       border-right: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.2s ease;
       &:last-child { border-right: none; }
 
-      // 🔥/💧 MINI HEATMAPINDICADORES
       .mini-alert-dot {
         position: absolute; top: -6px; font-size: 0.65rem; line-height: 1;
         &.rain { color: #00f0ff; filter: drop-shadow(0 0 4px #00f0ff); }
@@ -362,81 +320,48 @@ ion-content {
       .hour-label { font-size: 0.65rem; color: rgba(255, 255, 255, 0.5); font-weight: 600; }
       .hour-lottie-container { width: 24px; height: 24px; margin: 3px 0; }
       .hour-temp { font-size: 0.85rem; font-weight: 700; color: #ffffff; }
+
+      // Destacado interactivo para la Máquina del Tiempo
+      &.selected-hour {
+        background: rgba(0, 229, 255, 0.18);
+        border: 1px solid rgba(0, 229, 255, 0.8);
+        border-radius: 14px;
+        transform: translateY(-4px) scale(1.06);
+        box-shadow: 0 6px 18px rgba(0, 229, 255, 0.35);
+        .hour-label { color: #00e5ff; font-weight: 700; }
+        .hour-temp { color: #ffffff; font-weight: 700; }
+      }
     }
   }
 
-  // TIRA PRONÓSTICO HORARIO
-  // .hourly-forecast-strip {
-  //   display: flex; width: 100%; overflow-x: auto; padding: 4px 0; scrollbar-width: none;
-  //   &::-webkit-scrollbar { display: none; }
+  // 3. 📊 TIRA HORIZONTAL COMPACTA (Sustituye a los chips grandes)
+  .compact-details-strip {
+    display: flex; width: 100%; justify-content: space-evenly; align-items: center; gap: 8px;
+    background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px; padding: 12px 6px; box-sizing: border-box;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
 
-  //   .hourly-column {
-  //     flex: 1 0 16.66%; display: flex; flex-direction: column; align-items: center; padding: 4px 0;
-  //     border-right: 1px solid rgba(255, 255, 255, 0.15);
-
-  //     &:last-child { border-right: none; }
-
-  //     .hour-label { font-size: 0.65rem; color: rgba(255, 255, 255, 0.45); font-weight: 600; }
-  //     .hour-lottie-container { width: 22px; height: 22px; margin: 2px 0; }
-  //     .hour-temp { font-size: 0.82rem; font-weight: 700; color: #ffffff; }
-  //   }
-  // }
-
-
- // 5. GRID DE 3 PÍLDORAS
-  .chips-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); // Mantenemos 3 columnas uniformes
-    gap: 8px; width: 100%; padding-bottom: 4px;
+    .extreme-divider { width: 1px; height: 20px; background: rgba(255, 255, 255, 0.15); }
   }
 
-  // GRIDS ANALÍTICAS ULTRA-COMPACTAS
-  // .chips-grid {
-  //   display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; width: 100%;
-  //   padding-bottom: 4px;
-  // }
+  // 4. ÍTEM INDIVIDUAL COMPACTO
+  .compact-info-item {
+    display: flex; align-items: center; gap: 8px; flex: 1; justify-content: center;
+    border: 1px solid transparent; border-radius: 12px; padding: 4px;
+    transition: all 0.2s ease;
 
-  .weather-info-card {
-    position: relative; background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 14px;
-    padding: 8px 4px; display: flex; flex-direction: column; align-items: center;
-    justify-content: center; text-align: center; min-height: 66px;
-    box-sizing: border-box; transition: all 0.2s ease;
-
-    &.active-cyan-card {
-      border: 1px solid $cyan-neon;
-      background: rgba(0, 240, 255, 0.02);
-      box-shadow: inset 0 0 6px rgba(0, 240, 255, 0.1);
+    &.active-cyan-item {
+      border: 1px solid $cyan-neon; background: rgba(0, 240, 255, 0.04);
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.15), inset 0 0 6px rgba(0, 240, 255, 0.1);
     }
 
-    &.active-uv-card {
-      border: 1px solid $uv-gold;
-      background: rgba(255, 183, 3, 0.02);
-      box-shadow: inset 0 0 6px rgba(255, 183, 3, 0.1);
+    .item-lottie { width: 22px; height: 22px; flex-shrink: 0; }
+
+    .item-data {
+      display: flex; flex-direction: column; align-items: flex-start;
+      .label { font-size: 0.55rem; color: rgba(255, 255, 255, 0.45); font-weight: 700; letter-spacing: 0.2px; white-space: nowrap; }
+      .value { font-size: 0.9rem; font-weight: 700; color: #ffffff; margin-top: -1px; }
     }
-
-    .card-lottie { width: 20px; height: 20px; margin-bottom: 2px; }
-
-    .card-data {
-      display: flex; flex-direction: column; align-items: center;
-      .label { font-size: 0.52rem; color: rgba(255, 255, 255, 0.4); font-weight: 700; letter-spacing: 0.1px; white-space: nowrap; }
-      .value { font-size: 0.82rem; font-weight: 700; color: #ffffff; margin-top: 1px; }
-    }
-
-    .tech-corner {
-      position: absolute; width: 3px; height: 3px; background: rgba(255,255,255,0.2);
-      &.top-left { top: 0; left: 0; border-top: 1px solid rgba(255,255,255,0.4); border-left: 1px solid rgba(255,255,255,0.4); }
-    }
-
-    .card-icon {
-      width: 26px;
-      height: 26px;
-      margin-bottom: 4px;
-      object-fit: contain;
-      border-radius: 4px;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-    }
-
   }
 }
 
